@@ -15,8 +15,6 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
@@ -41,7 +39,7 @@ import java.util.concurrent.Executors;
  * MonacoEditorActivityEnhanced - Full-featured IDE using Monaco Editor
  * Phase 2 Enhanced Version with File Explorer, Git, Terminal, AI Assistant, and Plugin System
  */
-public class MonacoEditorActivity extends Activity {
+public class MonacoEditorActivityEnhanced extends Activity {
     
     private static final String TAG = "MonacoEditorActivityEnhanced";
     private static final String PREFS_NAME = "monaco_editor_enhanced_prefs";
