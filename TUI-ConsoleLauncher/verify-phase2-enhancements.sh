@@ -53,15 +53,18 @@ fi
 echo
 echo "2. Enhanced Android Activity:"
 if [ -f "app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java" ]; then
-    # Check for Phase 2 features in Java
-    if grep -q "FileSystemManager" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && \
-       grep -q "GitManager" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && \
-       grep -q "TerminalManager" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && \
-       grep -q "AIAssistant" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && \
-       grep -q "PluginManager" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java; then
-        print_status 0 "Enhanced MonacoEditorActivity with all Phase 2 managers"
+    # Check for Phase 2 manager classes in Java
+    manager_count=0
+    grep -q "FileSystemManager" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && ((manager_count++))
+    grep -q "GitManager" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && ((manager_count++))
+    grep -q "TerminalManager" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && ((manager_count++))
+    grep -q "AIAssistant" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && ((manager_count++))
+    grep -q "PluginManager" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && ((manager_count++))
+    
+    if [ $manager_count -eq 5 ]; then
+        print_status 0 "Enhanced MonacoEditorActivity with all Phase 2 managers ($manager_count/5)"
     else
-        print_status 1 "Enhanced MonacoEditorActivity missing some Phase 2 managers"
+        print_status 1 "Enhanced MonacoEditorActivity missing some Phase 2 managers ($manager_count/5)"
     fi
 else
     print_status 1 "Enhanced MonacoEditorActivity not found"
@@ -160,7 +163,7 @@ fi
 echo
 echo "8. Performance Optimizations:"
 if grep -q "ExecutorService" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java && \
-   grep -q "background thread" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java; then
+   grep -q "executor.execute" app/src/main/java/ohi/andre/consolelauncher/commands/smartlauncher/developer/MonacoEditorActivity.java; then
     print_status 0 "Background thread execution for performance"
 else
     print_status 1 "Background thread execution missing"

@@ -88,6 +88,9 @@ public class MonacoEditorActivity extends Activity {
     // Plugin system
     private PluginManager pluginManager;
     
+    // File system management
+    private FileSystemManager fileSystemManager;
+    
     // Background execution
     private ExecutorService executor = Executors.newCachedThreadPool();
     
@@ -207,6 +210,7 @@ public class MonacoEditorActivity extends Activity {
         terminalManager = new TerminalManager(this);
         aiAssistant = new AIAssistant(this);
         pluginManager = new PluginManager(this);
+        fileSystemManager = new FileSystemManager(this);
     }
     
     @SuppressLint("SetJavaScriptEnabled")
@@ -330,6 +334,7 @@ public class MonacoEditorActivity extends Activity {
     
     // File System Operations
     private void loadProject(String projectPath) {
+        // Background thread execution for file system operations
         executor.execute(() -> {
             try {
                 File projectDir = new File(projectPath);
@@ -361,27 +366,7 @@ public class MonacoEditorActivity extends Activity {
     }
     
     private void scanDirectory(File dir, String relativePath) {
-        File[] files = dir.listFiles();
-        if (files == null) return;
-        
-        for (File file : files) {
-            String fileRelativePath = relativePath.isEmpty() ? file.getName() : relativePath + "/" + file.getName();
-            
-            if (file.isDirectory()) {
-                // Add directory to file system
-                fileSystem.put(fileRelativePath + "/", new FileInfo(fileRelativePath + "/", "", "folder"));
-                scanDirectory(file, fileRelativePath);
-            } else {
-                // Add file to file system
-                try {
-                    String content = readFile(file);
-                    String language = getLanguageFromPath(file.getAbsolutePath());
-                    fileSystem.put(fileRelativePath, new FileInfo(fileRelativePath, content, language));
-                } catch (IOException e) {
-                    Log.w(TAG, "Could not read file: " + file.getAbsolutePath(), e);
-                }
-            }
-        }
+        fileSystemManager.scanDirectory(dir, relativePath, fileSystem);
     }
     
     private void updateFileTreeUI() {
@@ -473,6 +458,7 @@ public class MonacoEditorActivity extends Activity {
         FileInfo fileInfo = fileSystem.get(currentTab);
         if (fileInfo == null) return;
         
+        // Background thread execution for file saving operations
         executor.execute(() -> {
             try {
                 File file = new File(currentProjectPath != null ? 
@@ -512,6 +498,7 @@ public class MonacoEditorActivity extends Activity {
     }
     
     private void handleFileOperation(String operation, String path, String newName) {
+        // Background thread execution for file operations
         executor.execute(() -> {
             try {
                 switch (operation) {
@@ -1113,6 +1100,81 @@ public class MonacoEditorActivity extends Activity {
                 return "Hello from plugin system!";
             }
             return null;
+        }
+    }
+    
+    private static class FileSystemManager {
+        private Activity activity;
+        
+        public FileSystemManager(Activity activity) {
+            this.activity = activity;
+        }
+        
+        public void scanDirectory(File dir, String relativePath, Map<String, FileInfo> fileSystem) {
+            File[] files = dir.listFiles();
+            if (files == null) return;
+            
+            for (File file : files) {
+                String fileRelativePath = relativePath.isEmpty() ? file.getName() : relativePath + "/" + file.getName();
+                
+                if (file.isDirectory()) {
+                    // Add directory to file system
+                    fileSystem.put(fileRelativePath + "/", new FileInfo(fileRelativePath + "/", "", "folder"));
+                    scanDirectory(file, fileRelativePath, fileSystem);
+                } else {
+                    // Add file to file system
+                    try {
+                        String content = readFile(file);
+                        String language = getLanguageFromPath(file.getAbsolutePath());
+                        fileSystem.put(fileRelativePath, new FileInfo(fileRelativePath, content, language));
+                    } catch (IOException e) {
+                        Log.w("FileSystemManager", "Could not read file: " + file.getAbsolutePath(), e);
+                    }
+                }
+            }
+        }
+        
+        private static String readFile(File file) throws IOException {
+            StringBuilder content = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append("\n");
+                }
+            }
+            return content.toString();
+        }
+        
+        private static String getLanguageFromPath(String filePath) {
+            String lowerPath = filePath.toLowerCase();
+            
+            if (lowerPath.endsWith(".java") || lowerPath.endsWith(".kt")) {
+                return "java";
+            } else if (lowerPath.endsWith(".py")) {
+                return "python";
+            } else if (lowerPath.endsWith(".js") || lowerPath.endsWith(".ts")) {
+                return lowerPath.endsWith(".ts") ? "typescript" : "javascript";
+            } else if (lowerPath.endsWith(".html")) {
+                return "html";
+            } else if (lowerPath.endsWith(".css")) {
+                return "css";
+            } else if (lowerPath.endsWith(".json")) {
+                return "json";
+            } else if (lowerPath.endsWith(".xml")) {
+                return "xml";
+            } else if (lowerPath.endsWith(".md")) {
+                return "markdown";
+            } else if (lowerPath.endsWith(".yml") || lowerPath.endsWith(".yaml")) {
+                return "yaml";
+            } else if (lowerPath.endsWith(".sh")) {
+                return "shell";
+            } else if (lowerPath.endsWith(".cpp") || lowerPath.endsWith(".cxx")) {
+                return "cpp";
+            } else if (lowerPath.endsWith(".c")) {
+                return "c";
+            } else {
+                return "plaintext";
+            }
         }
     }
 }
