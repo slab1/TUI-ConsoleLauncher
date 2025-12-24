@@ -48,7 +48,11 @@ android {
     }
 }
 dependencies {
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    // Smart IDE Launcher - Updated dependencies
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'  // Updated from 3.10.0
+    implementation 'com.google.code.gson:gson:2.10.1'     // Added for AI integration
+    
+    // Existing dependencies
     implementation 'net.sourceforge.htmlcleaner:htmlcleaner:2.6'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
     implementation 'org.jsoup:jsoup:1.11.3'
