@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">T-UI Smart Launcher</string>
+    <string name="command_hint">Type command...</string>
+    <string name="clear">Clear</string>
+    <string name="welcome_message">Welcome to T-UI Smart Launcher</string>
+    <string name="help_command">help</string>
+    <string name="launch_command">launch</string>
+    <string name="ai_command">??</string>
+</resources>

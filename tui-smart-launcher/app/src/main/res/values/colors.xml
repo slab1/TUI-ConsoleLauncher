@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors - Dark Terminal Theme -->
+    <color name="primary">#1A1A1A</color>
+    <color name="primary_dark">#000000</color>
+    <color name="accent">#00FF00</color>
+    
+    <!-- Terminal Colors -->
+    <color name="terminal_background">#000000</color>
+    <color name="terminal_text">#FFFFFF</color>
+    <color name="terminal_input">#00FF00</color>
+    <color name="terminal_error">#FF5252</color>
+    <color name="terminal_info">#2196F3</color>
+    <color name="terminal_warning">#FFC107</color>
+    
+    <!-- UI Colors -->
+    <color name="input_background">#1A1A1A</color>
+    <color name="hint_text">#808080</color>
+    <color name="divider">#333333</color>
+    
+    <!-- Status Colors -->
+    <color name="success">#4CAF50</color>
+    <color name="error_color">#F44336</color>
+    <color name="warning_color">#FF9800</color>
+</resources>

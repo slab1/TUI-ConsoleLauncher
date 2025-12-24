@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".MainActivity">
+
+    <!-- Terminal Display Area -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/terminal_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/input_container"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
+
+    <!-- Input Container -->
+    <LinearLayout
+        android:id="@+id/input_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="#1A1A1A"
+        android:padding="8dp"
+        android:elevation="4dp">
+
+        <!-- Command Input -->
+        <EditText
+            android:id="@+id/command_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="Type command..."
+            android:inputType="text"
+            android:maxLines="3"
+            android:padding="8dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#808080"
+            android:textSize="14sp"
+            android:fontFamily="monospace"
+            android:imeOptions="actionSend" />
+
+        <!-- Clear Button -->
+        <ImageButton
+            android:id="@+id/clear_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Clear"
+            android:src="@android:drawable/ic_menu_delete"
+            android:padding="8dp"
+            android:tint="#FFFFFF" />
+
+    </LinearLayout>
+
+</RelativeLayout>
