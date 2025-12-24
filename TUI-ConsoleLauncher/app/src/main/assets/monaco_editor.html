@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco Editor - T-UI Smart IDE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .editor-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .status-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background-color: #007acc;
+            color: white;
+            font-size: 12px;
+            padding: 4px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .status-left {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .status-right {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #007acc;
+            font-size: 16px;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #007acc;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Monaco Editor custom styling */
+        .monaco-editor {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <div id="loading" class="loading">
+            <div>Loading Monaco Editor...</div>
+        </div>
+        
+        <div id="editor" style="width: 100%; height: calc(100vh - 24px);"></div>
+        
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="language">Plain Text</span>
+                <span id="encoding">UTF-8</span>
+                <span id="eol">LF</span>
+            </div>
+            <div class="status-right">
+                <span id="position">Line 1, Col 1</span>
+                <span id="selection">Sel: 0</span>
+                <span id="mode">INSERT</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monaco Editor from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    
+    <script>
+        // Global editor instance
+        let editor = null;
+        let currentContent = '';
+        let isDirty = false;
+        
+        // Initialize Monaco Editor
+        require.config({ 
+            paths: { 
+                'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' 
+            } 
+        });
+        
+        require(['vs/editor/editor.main'], function () {
+            // Editor is ready, initialize it
+            initializeEditor();
+        });
+        
+        function initializeEditor(initialContent = '', language = 'plaintext', isNew = false) {
+            // Create editor instance
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                value: initialContent,
+                language: language,
+                theme: 'vs-dark',
+                automaticLayout: true,
+                fontSize: 14,
+                fontFamily: 'Consolas, Monaco, Courier New, monospace',
+                fontLigatures: true,
+                lineNumbers: 'on',
+                minimap: { enabled: true },
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                tabSize: 4,
+                insertSpaces: true,
+                folding: true,
+                foldingHighlight: true,
+                showFoldingControls: 'mouseover',
+                bracketPairColorization: { enabled: true },
+                guides: {
+                    bracketPairs: true,
+                    indentation: true
+                },
+                suggestOnTriggerCharacters: true,
+                acceptSuggestionOnEnter: 'on',
+                quickSuggestions: true,
+                parameterHints: { enabled: true },
+                hover: { enabled: true },
+                lightbulb: { enabled: true },
+                contextmenu: true,
+                selectOnLineNumbers: true,
+                roundedSelection: false,
+                readOnly: false,
+                cursorStyle: 'line',
+                automaticLayout: true,
+                scrollbar: {
+                    vertical: 'auto',
+                    horizontal: 'auto',
+                    useShadows: false,
+                    verticalScrollbarSize: 10,
+                    horizontalScrollbarSize: 10
+                }
+            });
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Update UI
+            updateStatusBar();
+            
+            // Hide loading indicator
+            document.getElementById('loading').classList.add('hidden');
+            
+            // Focus editor
+            editor.focus();
+            
+            // Store initial content
+            currentContent = initialContent;
+            isDirty = isNew;
+        }
+        
+        function setupEventListeners() {
+            // Content change listener
+            editor.onDidChangeModelContent(() => {
+                const newContent = editor.getValue();
+                if (newContent !== currentContent) {
+                    isDirty = true;
+                    currentContent = newContent;
+                    
+                    // Notify Android
+                    if (window.Android && window.Android.onContentChanged) {
+                        window.Android.onContentChanged(newContent);
+                    }
+                }
+                updateStatusBar();
+            });
+            
+            // Cursor position change
+            editor.onDidChangeCursorPosition((e) => {
+                updateStatusBar();
+            });
+            
+            // Selection change
+            editor.onDidChangeCursorSelection((e) => {
+                updateStatusBar();
+            });
+            
+            // Save shortcut
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveFile();
+                }
+            });
+            
+            // Find shortcut
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    toggleFindWidget();
+                }
+            });
+        }
+        
+        function updateStatusBar() {
+            if (!editor) return;
+            
+            const position = editor.getPosition();
+            const selection = editor.getSelection();
+            const model = editor.getModel();
+            
+            // Update language
+            document.getElementById('language').textContent = model.getLanguageId();
+            
+            // Update position
+            document.getElementById('position').textContent = 
+                `Line ${position.lineNumber}, Col ${position.column}`;
+            
+            // Update selection
+            if (selection && !selection.isEmpty()) {
+                const selectedText = model.getValueInRange(selection);
+                document.getElementById('selection').textContent = 
+                    `Sel: ${selectedText.length}`;
+            } else {
+                document.getElementById('selection').textContent = 'Sel: 0';
+            }
+            
+            // Update mode (INSERT/OVERWRITE)
+            document.getElementById('mode').textContent = 
+                editor.getModel().getEOL() === '\r\n' ? 'OVERWRITE' : 'INSERT';
+        }
+        
+        function saveFile() {
+            if (window.Android && window.Android.onSaveRequested) {
+                window.Android.onSaveRequested();
+            }
+        }
+        
+        function toggleFindWidget() {
+            if (editor) {
+                editor.getAction('actions.find').run();
+            }
+        }
+        
+        // Public API for Android
+        window.getEditorContent = function() {
+            return editor ? editor.getValue() : '';
+        };
+        
+        window.setTheme = function(theme) {
+            if (editor) {
+                monaco.editor.setTheme(theme);
+            }
+        };
+        
+        window.toggleFindWidget = function() {
+            toggleFindWidget();
+        };
+        
+        window.openFile = function(filePath) {
+            if (window.Android && window.Android.onOpenFile) {
+                window.Android.onOpenFile(filePath);
+            }
+        };
+        
+        window.executeGitCommand = function(command) {
+            if (window.Android && window.Android.onGitCommand) {
+                window.Android.onGitCommand(command);
+            }
+        };
+        
+        // Error handling
+        window.onerror = function(msg, url, line, col, error) {
+            console.error('Monaco Editor Error:', msg, 'at', url, ':', line);
+            return false;
+        };
+        
+        // Expose initialization function globally
+        window.initializeEditor = function(initialContent, language, isNew) {
+            initializeEditor(initialContent, language, isNew);
+        };
+        
+        // Initialize editor when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if Monaco is already loaded
+            if (typeof monaco !== 'undefined') {
+                // Monaco is loaded, initialize immediately
+                initializeEditor();
+            } else {
+                // Wait for Monaco to load
+                setTimeout(() => {
+                    if (typeof monaco !== 'undefined') {
+                        initializeEditor();
+                    } else {
+                        console.error('Monaco Editor failed to load');
+                        document.getElementById('loading').innerHTML = 
+                            '<div style="color: #f44747;">Failed to load Monaco Editor</div>';
+                    }
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

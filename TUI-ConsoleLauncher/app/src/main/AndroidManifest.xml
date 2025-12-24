@@ -236,6 +236,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!-- Monaco Editor Activity -->
+        <activity
+            android:name=".commands.smartlauncher.developer.MonacoEditorActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/monaco_editor_title"
+            android:noHistory="true"
+            android:theme="@style/Custom.Solid"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LauncherActivity" />
+        </activity>
     </application>
 
 </manifest>
