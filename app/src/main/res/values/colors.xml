@@ -7,4 +7,14 @@
 
     <color name="hint_color">#AAA</color>
 
+    <!-- Microphone button colors -->
+    <color name="microphone_idle">#FF6200EE</color>
+    <color name="microphone_listening">#FF04B404</color>
+    <color name="microphone_error">#FFFF0000</color>
+
+    <!-- AI status colors -->
+    <color name="ai_configured">#FF04B404</color>
+    <color name="ai_not_configured">#FFFF0000</color>
+    <color name="ai_thinking">#FFFFA500</color>
+
 </resources>

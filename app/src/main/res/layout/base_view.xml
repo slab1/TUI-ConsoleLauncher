@@ -10,4 +10,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <!-- Voice Input Container -->
+    <FrameLayout
+        android:id="@+id/voice_input_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:background="@drawable/voice_input_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="12dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_microphone"
+            android:contentDescription="@string/voice_input"
+            android:tint="?android:attr/textColorPrimary" />
+
+    </FrameLayout>
+
 </LinearLayout>

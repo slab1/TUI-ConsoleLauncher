@@ -32,6 +32,7 @@ import java.util.Set;
 
 import ohi.andre.consolelauncher.commands.main.MainPack;
 import ohi.andre.consolelauncher.commands.tuixt.TuixtActivity;
+import ohi.andre.consolelauncher.managers.CommandManager;
 import ohi.andre.consolelauncher.managers.ContactManager;
 import ohi.andre.consolelauncher.managers.RegexManager;
 import ohi.andre.consolelauncher.managers.TerminalManager;
@@ -47,6 +48,7 @@ import ohi.andre.consolelauncher.managers.xml.options.Behavior;
 import ohi.andre.consolelauncher.managers.xml.options.Notifications;
 import ohi.andre.consolelauncher.managers.xml.options.Theme;
 import ohi.andre.consolelauncher.managers.xml.options.Ui;
+import ohi.andre.consolelauncher.settings.SettingsInitializer;
 import ohi.andre.consolelauncher.tuils.Assist;
 import ohi.andre.consolelauncher.tuils.CustomExceptionHandler;
 import ohi.andre.consolelauncher.tuils.LongClickableSpan;
@@ -66,8 +68,11 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
     public static final int LOCATION_REQUEST_PERMISSION = 13;
 
     public static final int TUIXT_REQUEST = 10;
+    public static final int VOICE_REQUEST_PERMISSION = 14;
 
     private UIManager ui;
+    private CommandManager commandManager;
+    private View voiceInputContainer;
     private MainManager main;
 
     private PrivateIOReceiver privateIOReceiver;
@@ -213,6 +218,16 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
 
         Thread.currentThread().setUncaughtExceptionHandler(new CustomExceptionHandler());
 
+        // Initialize unified settings architecture
+        boolean settingsInitialized = SettingsInitializer.initialize(this);
+        if (!settingsInitialized) {
+            Tuils.sendOutput(this, "Warning: Settings initialization failed. Some features may not work correctly.");
+        }
+
+        // Initialize CommandManager for command registration
+        commandManager = new CommandManager(this);
+        commandManager.registerCommands();
+
         XMLPrefsManager.loadCommons(this);
         new RegexManager(LauncherActivity.this);
         new TimeManager(this);
@@ -330,6 +345,9 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         categories = new HashSet<>();
 
         main = new MainManager(this);
+        
+        // Set command manager reference in main for AI command integration
+        main.setCommandManager(commandManager);
 
         ViewGroup mainView = (ViewGroup) findViewById(R.id.mainview);
 
@@ -342,6 +360,9 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         }
 
         ui = new UIManager(this, mainView, main.getMainPack(), canApplyTheme, main.executer());
+        
+        // Initialize voice input view if enabled
+        initVoiceInputView(mainView);
 
         main.setRedirectionListener(ui.buildRedirectionListener());
         ui.pack = main.getMainPack();
@@ -350,6 +371,9 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         ui.focusTerminal();
 
         if(fullscreen) Assist.assistActivity(this);
+        
+        // Request voice recognition permission if not granted
+        checkVoicePermission();
 
         System.gc();
     }
@@ -359,6 +383,60 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         super.onStart();
 
         if (ui != null) ui.onStart(openKeyboardOnStart);
+    }
+    
+    private void initVoiceInputView(ViewGroup parent) {
+        try {
+            voiceInputContainer = findViewById(R.id.voice_input_container);
+            if (voiceInputContainer != null) {
+                voiceInputContainer.setOnClickListener(v -> {
+                    startVoiceInput();
+                });
+            }
+        } catch (Exception e) {
+            Tuils.log("Voice input view not found or initialization failed: " + e.getMessage());
+        }
+    }
+    
+    private void checkVoicePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) 
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, 
+                    new String[]{Manifest.permission.RECORD_AUDIO}, 
+                    VOICE_REQUEST_PERMISSION);
+        }
+    }
+    
+    public void startVoiceInput() {
+        if (voiceInputContainer != null) {
+            voiceInputContainer.setSelected(true);
+            // Voice input will be triggered through the view
+        }
+    }
+    
+    public void onVoiceResult(String recognizedText) {
+        if (voiceInputContainer != null) {
+            voiceInputContainer.setSelected(false);
+        }
+        
+        if (recognizedText != null && !recognizedText.isEmpty()) {
+            // Send the recognized text to the terminal input
+            Tuils.sendInput(this, recognizedText);
+            
+            // Automatically execute the command
+            Intent intent = new Intent(MainManager.ACTION_EXEC);
+            intent.putExtra(MainManager.CMD_COUNT, MainManager.commandCount);
+            intent.putExtra(MainManager.CMD, recognizedText);
+            intent.putExtra(MainManager.NEED_WRITE_INPUT, true);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+        }
+    }
+    
+    public void onVoiceError(String errorMessage) {
+        if (voiceInputContainer != null) {
+            voiceInputContainer.setSelected(false);
+        }
+        Tuils.sendOutput(this, "Voice recognition error: " + errorMessage);
     }
 
     @Override
@@ -573,6 +651,13 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
                     i.putExtra(XMLPrefsManager.VALUE_ATTRIBUTE, grantResults[0]);
                     LocalBroadcastManager.getInstance(this.getApplicationContext()).sendBroadcast(i);
 
+                    break;
+                case VOICE_REQUEST_PERMISSION:
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Tuils.sendOutput(this, "Voice recognition permission granted.");
+                    } else {
+                        Tuils.sendOutput(this, "Voice recognition permission denied. Voice commands will not be available.");
+                    }
                     break;
             }
         } catch (Exception e) {}
