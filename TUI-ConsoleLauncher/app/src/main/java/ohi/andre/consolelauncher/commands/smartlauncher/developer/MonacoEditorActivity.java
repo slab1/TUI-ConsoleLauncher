@@ -91,6 +91,9 @@ public class MonacoEditorActivity extends Activity {
     // File system management
     private FileSystemManager fileSystemManager;
     
+    // Phase 3: Debug management
+    private DebugManager debugManager;
+    
     // Background execution
     private ExecutorService executor = Executors.newCachedThreadPool();
     
@@ -175,6 +178,48 @@ public class MonacoEditorActivity extends Activity {
         public void onPluginCommand(String command, String args) {
             executePluginCommand(command, args);
         }
+        
+        // Phase 3: LSP (Language Server Protocol) Integration
+        @JavascriptInterface
+        public void onLSPRequest(String requestType, String payload) {
+            handleLSPRequest(requestType, payload);
+        }
+        
+        @JavascriptInterface
+        public void onCompletionRequest(String documentUri, int line, int column, String triggerCharacter) {
+            handleCompletionRequest(documentUri, line, column, triggerCharacter);
+        }
+        
+        @JavascriptInterface
+        public void onDefinitionRequest(String documentUri, int line, int column) {
+            handleDefinitionRequest(documentUri, line, column);
+        }
+        
+        @JavascriptInterface
+        public void onHoverRequest(String documentUri, int line, int column) {
+            handleHoverRequest(documentUri, line, column);
+        }
+        
+        @JavascriptInterface
+        public void onDiagnosticsRequest(String documentUri) {
+            handleDiagnosticsRequest(documentUri);
+        }
+        
+        // Phase 3: Debugging Integration
+        @JavascriptInterface
+        public void onBreakpointToggle(String filePath, int lineNumber, boolean enabled) {
+            handleBreakpointToggle(filePath, lineNumber, enabled);
+        }
+        
+        @JavascriptInterface
+        public void onDebugCommand(String command, String args) {
+            handleDebugCommand(command, args);
+        }
+        
+        @JavascriptInterface
+        public void onVariableWatch(String variableName, String expression) {
+            handleVariableWatch(variableName, expression);
+        }
     }
     
     @Override
@@ -211,6 +256,7 @@ public class MonacoEditorActivity extends Activity {
         aiAssistant = new AIAssistant(this);
         pluginManager = new PluginManager(this);
         fileSystemManager = new FileSystemManager(this);
+        debugManager = new DebugManager(); // Phase 3: Debug Manager
     }
     
     @SuppressLint("SetJavaScriptEnabled")
@@ -1176,5 +1222,271 @@ public class MonacoEditorActivity extends Activity {
                 return "plaintext";
             }
         }
+    }
+    
+    // Phase 3: LSP (Language Server Protocol) Implementation
+    private void handleLSPRequest(String requestType, String payload) {
+        try {
+            JSONObject jsonPayload = new JSONObject(payload);
+            
+            switch (requestType) {
+                case "initialize":
+                    initializeLanguageServer(jsonPayload);
+                    break;
+                case "shutdown":
+                    shutdownLanguageServer();
+                    break;
+                case "open":
+                    documentOpened(jsonPayload);
+                    break;
+                case "change":
+                    documentChanged(jsonPayload);
+                    break;
+                case "close":
+                    documentClosed(jsonPayload);
+                    break;
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing LSP request: " + requestType, e);
+        }
+    }
+    
+    private void handleCompletionRequest(String documentUri, int line, int column, String triggerCharacter) {
+        try {
+            // Simulate LSP completion response
+            JSONObject completionItem = new JSONObject();
+            completionItem.put("label", "console.log");
+            completionItem.put("kind", 14); // Function
+            completionItem.put("detail", "console.log(message: any): void");
+            completionItem.put("insertText", "console.log(${1:message});");
+            completionItem.put("insertTextFormat", 2); // Snippet
+            
+            JSONArray completions = new JSONArray();
+            completions.put(completionItem);
+            
+            JSONObject response = new JSONObject();
+            response.put("items", completions);
+            
+            sendToWebView("onLSPCompletionResponse", response.toString());
+            
+        } catch (JSONException e) {
+            Log.e(TAG, "Error handling completion request", e);
+        }
+    }
+    
+    private void handleDefinitionRequest(String documentUri, int line, int column) {
+        try {
+            // Simulate LSP definition response
+            JSONArray definitions = new JSONArray();
+            
+            JSONObject definition = new JSONObject();
+            definition.put("uri", documentUri);
+            definition.put("range", createRange(line - 1, column - 1, line - 1, column + 10));
+            
+            definitions.put(definition);
+            
+            sendToWebView("onLSPDefinitionResponse", definitions.toString());
+            
+        } catch (JSONException e) {
+            Log.e(TAG, "Error handling definition request", e);
+        }
+    }
+    
+    private void handleHoverRequest(String documentUri, int line, int column) {
+        try {
+            JSONObject hover = new JSONObject();
+            hover.put("contents", "Console.log method\n\nPrints a message to the console.");
+            hover.put("range", createRange(line - 1, column - 1, line - 1, column + 1));
+            
+            sendToWebView("onLSPHoverResponse", hover.toString());
+            
+        } catch (JSONException e) {
+            Log.e(TAG, "Error handling hover request", e);
+        }
+    }
+    
+    private void handleDiagnosticsRequest(String documentUri) {
+        try {
+            JSONArray diagnostics = new JSONArray();
+            
+            // Simulate a warning diagnostic
+            JSONObject diagnostic = new JSONObject();
+            diagnostic.put("range", createRange(5, 0, 5, 15));
+            diagnostic.put("severity", 2); // Warning
+            diagnostic.put("message", "Unused variable 'unusedVar'");
+            diagnostic.put("source", "JavaScript");
+            
+            diagnostics.put(diagnostic);
+            
+            sendToWebView("onLSPDiagnosticsResponse", diagnostics.toString());
+            
+        } catch (JSONException e) {
+            Log.e(TAG, "Error handling diagnostics request", e);
+        }
+    }
+    
+    private void initializeLanguageServer(JSONObject params) {
+        Log.i(TAG, "Initializing Language Server Protocol");
+        sendToWebView("onLSPInitialized", "{}");
+    }
+    
+    private void shutdownLanguageServer() {
+        Log.i(TAG, "Shutting down Language Server Protocol");
+    }
+    
+    private void documentOpened(JSONObject params) {
+        Log.i(TAG, "Document opened for LSP");
+    }
+    
+    private void documentChanged(JSONObject params) {
+        Log.i(TAG, "Document changed for LSP");
+    }
+    
+    private void documentClosed(JSONObject params) {
+        Log.i(TAG, "Document closed for LSP");
+    }
+    
+    private JSONObject createRange(int startLine, int startCol, int endLine, int endCol) throws JSONException {
+        JSONObject range = new JSONObject();
+        range.put("start", createPosition(startLine, startCol));
+        range.put("end", createPosition(endLine, endCol));
+        return range;
+    }
+    
+    private JSONObject createPosition(int line, int column) throws JSONException {
+        JSONObject position = new JSONObject();
+        position.put("line", line);
+        position.put("character", column);
+        return position;
+    }
+    
+    // Phase 3: Debugging Implementation
+    private void handleBreakpointToggle(String filePath, int lineNumber, boolean enabled) {
+        try {
+            JSONObject breakpoint = new JSONObject();
+            breakpoint.put("filePath", filePath);
+            breakpoint.put("lineNumber", lineNumber);
+            breakpoint.put("enabled", enabled);
+            
+            // Store breakpoint in debug manager
+            if (debugManager != null) {
+                debugManager.toggleBreakpoint(filePath, lineNumber, enabled);
+            }
+            
+            Log.i(TAG, "Breakpoint " + (enabled ? "set" : "removed") + " at " + filePath + ":" + lineNumber);
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling breakpoint toggle", e);
+        }
+    }
+    
+    private void handleDebugCommand(String command, String args) {
+        try {
+            switch (command) {
+                case "start":
+                    startDebugSession();
+                    break;
+                case "continue":
+                    continueDebugSession();
+                    break;
+                case "stepOver":
+                    stepOverDebug();
+                    break;
+                case "stepInto":
+                    stepIntoDebug();
+                    break;
+                case "stepOut":
+                    stepOutDebug();
+                    break;
+                case "stop":
+                    stopDebugSession();
+                    break;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling debug command: " + command, e);
+        }
+    }
+    
+    private void handleVariableWatch(String variableName, String expression) {
+        try {
+            JSONObject watch = new JSONObject();
+            watch.put("variableName", variableName);
+            watch.put("expression", expression);
+            watch.put("value", "undefined"); // Would be populated by actual debugger
+            
+            sendToWebView("onVariableWatchUpdate", watch.toString());
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling variable watch", e);
+        }
+    }
+    
+    private void startDebugSession() {
+        Log.i(TAG, "Starting debug session");
+        sendToWebView("onDebugStatusChanged", "{\"status\": \"running\"}");
+    }
+    
+    private void continueDebugSession() {
+        Log.i(TAG, "Continuing debug session");
+        sendToWebView("onDebugStatusChanged", "{\"status\": \"running\"}");
+    }
+    
+    private void stepOverDebug() {
+        Log.i(TAG, "Stepping over in debug session");
+        sendToWebView("onDebugStep", "{\"action\": \"stepOver\"}");
+    }
+    
+    private void stepIntoDebug() {
+        Log.i(TAG, "Stepping into in debug session");
+        sendToWebView("onDebugStep", "{\"action\": \"stepInto\"}");
+    }
+    
+    private void stepOutDebug() {
+        Log.i(TAG, "Stepping out in debug session");
+        sendToWebView("onDebugStep", "{\"action\": \"stepOut\"}");
+    }
+    
+    private void stopDebugSession() {
+        Log.i(TAG, "Stopping debug session");
+        sendToWebView("onDebugStatusChanged", "{\"status\": \"stopped\"}");
+    }
+    
+    // Phase 3: Debug Manager Class
+    private class DebugManager {
+        private Map<String, List<Integer>> breakpoints = new HashMap<>();
+        private String currentStatus = "stopped";
+        
+        public void toggleBreakpoint(String filePath, int lineNumber, boolean enabled) {
+            if (!breakpoints.containsKey(filePath)) {
+                breakpoints.put(filePath, new ArrayList<>());
+            }
+            
+            List<Integer> fileBreakpoints = breakpoints.get(filePath);
+            if (enabled) {
+                if (!fileBreakpoints.contains(lineNumber)) {
+                    fileBreakpoints.add(lineNumber);
+                }
+            } else {
+                fileBreakpoints.remove(Integer.valueOf(lineNumber));
+            }
+        }
+        
+        public List<Integer> getBreakpoints(String filePath) {
+            return breakpoints.getOrDefault(filePath, new ArrayList<>());
+        }
+        
+        public void setStatus(String status) {
+            this.currentStatus = status;
+        }
+        
+        public String getStatus() {
+            return currentStatus;
+        }
+    }
+    
+    // Phase 3: Helper method to send messages to WebView
+    private void sendToWebView(String method, String data) {
+        String script = "window." + method + "(" + data + ");";
+        webView.evaluateJavascript(script, null);
     }
 }

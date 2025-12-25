@@ -313,6 +313,104 @@
             cursor: not-allowed;
         }
         
+        /* Phase 3 LSP Panel Styles */
+        .lsp-panel {
+            display: none;
+        }
+        
+        .lsp-panel.active {
+            display: block;
+        }
+        
+        .lsp-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .lsp-action-btn {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            min-height: var(--touch-target-size);
+            transition: background-color 0.15s;
+        }
+        
+        .lsp-action-btn:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .lsp-action-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        /* Phase 3 Debug Panel Styles */
+        .debug-panel {
+            display: none;
+        }
+        
+        .debug-panel.active {
+            display: block;
+        }
+        
+        .debug-toolbar {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        
+        .debug-toolbar .kb-btn {
+            flex: 1;
+            min-width: 60px;
+            padding: 6px 8px;
+            font-size: 10px;
+        }
+        
+        .breakpoint-indicator {
+            position: absolute;
+            left: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #cb2431;
+            z-index: 10;
+        }
+        
+        .debug-line-highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+            border-left: 3px solid #ffff00;
+        }
+        
+        .variable-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-radius: 2px;
+            margin-bottom: 2px;
+        }
+        
+        .variable-item:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .variable-name {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .variable-value {
+            color: var(--text-color);
+            font-family: monospace;
+        }
+        
         /* Source Control - Enhanced */
         .source-control {
             display: none;
@@ -778,6 +876,8 @@
                     <button class="sidebar-tab active" data-panel="file-explorer">Files</button>
                     <button class="sidebar-tab" data-panel="source-control">Git</button>
                     <button class="sidebar-tab" data-panel="cloud-panel">Cloud</button>
+                    <button class="sidebar-tab" data-panel="lsp-panel">LSP</button>
+                    <button class="sidebar-tab" data-panel="debug-panel">Debug</button>
                     <button class="sidebar-tab" data-panel="extensions">Extensions</button>
                 </div>
                 
@@ -812,6 +912,51 @@
                             <div class="git-branch" id="gitBranch">main</div>
                             <div id="gitFiles">
                                 <!-- Git files will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase 3 LSP (Language Server Protocol) Panel -->
+                    <div class="lsp-panel" id="lsp-panel">
+                        <div style="font-size: 12px; padding: 16px;">
+                            <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 12px;">Language Server Protocol</div>
+                            <div id="lspStatus" style="margin-bottom: 16px;">
+                                <span class="status-indicator disconnected"></span>
+                                <span id="lspStatusText">Disconnected</span>
+                            </div>
+                            <div class="lsp-actions">
+                                <button class="cloud-action-btn" onclick="initializeLSP()">Initialize LSP</button>
+                                <button class="cloud-action-btn" onclick="restartLSP()">Restart Server</button>
+                                <button class="cloud-action-btn" onclick="toggleDiagnostics()">Toggle Diagnostics</button>
+                            </div>
+                            <div id="lspDiagnostics" style="margin-top: 16px; max-height: 200px; overflow-y: auto;">
+                                <div style="font-weight: bold; margin-bottom: 8px;">Diagnostics</div>
+                                <div id="diagnosticsList" style="color: #888;">No diagnostics available</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase 3 Debug Panel -->
+                    <div class="debug-panel" id="debug-panel">
+                        <div style="font-size: 12px; padding: 16px;">
+                            <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 12px;">Debug Console</div>
+                            <div id="debugStatus" style="margin-bottom: 16px;">
+                                <span class="status-indicator disconnected"></span>
+                                <span id="debugStatusText">Not Debugging</span>
+                            </div>
+                            <div class="debug-toolbar" style="display: flex; gap: 4px; margin-bottom: 16px;">
+                                <button class="kb-btn" onclick="debugCommand('start')">Start</button>
+                                <button class="kb-btn" onclick="debugCommand('continue')">Continue</button>
+                                <button class="kb-btn" onclick="debugCommand('stepOver')">Step Over</button>
+                                <button class="kb-btn" onclick="debugCommand('stop')">Stop</button>
+                            </div>
+                            <div class="breakpoints-section" style="margin-bottom: 16px;">
+                                <div style="font-weight: bold; margin-bottom: 8px;">Breakpoints</div>
+                                <div id="breakpointsList" style="color: #888;">No breakpoints set</div>
+                            </div>
+                            <div class="variables-section">
+                                <div style="font-weight: bold; margin-bottom: 8px;">Variables</div>
+                                <div id="variablesList" style="color: #888;">No variables in scope</div>
                             </div>
                         </div>
                     </div>
@@ -912,6 +1057,8 @@
                 <span id="eol">LF</span>
                 <span id="gitStatus" class="status-item" onclick="showGitPanel()">📁 main</span>
                 <span id="cloudStatusMini" class="status-item" onclick="showCloudPanel()">☁️ Offline</span>
+                <span id="lspStatusMini" class="status-item" onclick="showLSPPanel()">🔌 LSP</span>
+                <span id="debugStatusMini" class="status-item" onclick="showDebugPanel()">🐛 Debug</span>
             </div>
             <div class="status-right">
                 <span id="position">Line 1, Col 1</span>
@@ -1261,6 +1408,9 @@
             document.querySelectorAll('.resize-handle').forEach(handle => {
                 setupResizeHandle(handle);
             });
+            
+            // Phase 3: Setup breakpoint handling
+            setupBreakpointHandling();
         }
         
         function handlePhase3KeyboardShortcuts(e) {
@@ -1341,6 +1491,95 @@
                     }
                 }
             });
+        }
+        
+        function setupBreakpointHandling() {
+            if (!editor) return;
+            
+            // Add click handler to editor gutter for breakpoint toggling
+            editor.onMouseDown(function(e) {
+                if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) {
+                    const lineNumber = e.target.position.lineNumber;
+                    toggleBreakpoint(lineNumber);
+                    hapticFeedback();
+                }
+            });
+        }
+        
+        function toggleBreakpoint(lineNumber) {
+            const filePath = currentFile || 'untitled';
+            
+            // Check if breakpoint already exists
+            const existingDecorations = editor.getLineDecorations(lineNumber);
+            const hasBreakpoint = existingDecorations && existingDecorations.some(dec => 
+                dec.options.className === 'breakpoint-indicator'
+            );
+            
+            if (hasBreakpoint) {
+                // Remove breakpoint
+                removeBreakpoint(lineNumber);
+                if (window.Android && window.Android.onBreakpointToggle) {
+                    window.Android.onBreakpointToggle(filePath, lineNumber, false);
+                }
+                showStatusMessage('Breakpoint removed at line ' + lineNumber);
+            } else {
+                // Add breakpoint
+                addBreakpoint(lineNumber);
+                if (window.Android && window.Android.onBreakpointToggle) {
+                    window.Android.onBreakpointToggle(filePath, lineNumber, true);
+                }
+                showStatusMessage('Breakpoint set at line ' + lineNumber);
+            }
+            
+            updateBreakpointsList();
+        }
+        
+        function addBreakpoint(lineNumber) {
+            const decorationOptions = {
+                isWholeLine: false,
+                linesDecorationsClassName: 'breakpoint-indicator',
+                glyphMarginClassName: 'breakpoint-indicator',
+                glyphMarginHoverMessage: { value: 'Breakpoint - Click to remove' }
+            };
+            
+            const range = new monaco.Range(lineNumber, 1, lineNumber, 1);
+            editor.deltaDecorations([], [{
+                range: range,
+                options: decorationOptions
+            }]);
+        }
+        
+        function removeBreakpoint(lineNumber) {
+            const decorations = editor.getLineDecorations(lineNumber);
+            if (decorations) {
+                editor.deltaDecorations(decorations, []);
+            }
+        }
+        
+        function updateBreakpointsList() {
+            const breakpointsList = document.getElementById('breakpointsList');
+            if (!breakpointsList || !editor) return;
+            
+            // This is a simplified implementation - in a real app you'd maintain
+            // a proper list of breakpoints across all files
+            const allDecorations = [];
+            for (let i = 1; i <= editor.getModel().getLineCount(); i++) {
+                const decorations = editor.getLineDecorations(i);
+                if (decorations && decorations.some(dec => 
+                    dec.options.className === 'breakpoint-indicator')) {
+                    allDecorations.push(i);
+                }
+            }
+            
+            if (allDecorations.length === 0) {
+                breakpointsList.textContent = 'No breakpoints set';
+            } else {
+                breakpointsList.innerHTML = allDecorations.map(line => 
+                    `<div style="color: #cb2431; cursor: pointer;" onclick="toggleBreakpoint(${line})">
+                        Line ${line}
+                    </div>`
+                ).join('');
+            }
         }
         
         function setupVirtualScrolling() {
@@ -1557,6 +1796,250 @@
             if (isMobile) {
                 toggleMobileSidebar();
             }
+        }
+        
+        // Phase 3 LSP Functions
+        function showLSPPanel() {
+            switchSidebarTab('lsp-panel');
+            if (isMobile) {
+                toggleMobileSidebar();
+            }
+        }
+        
+        function showDebugPanel() {
+            switchSidebarTab('debug-panel');
+            if (isMobile) {
+                toggleMobileSidebar();
+            }
+        }
+        
+        function initializeLSP() {
+            if (window.Android && window.Android.onLSPRequest) {
+                const params = {
+                    rootUri: 'file:///path/to/project',
+                    capabilities: {
+                        textDocument: {
+                            completion: { completionItem: { snippetSupport: true } },
+                            definition: true,
+                            hover: true,
+                            references: true
+                        }
+                    }
+                };
+                window.Android.onLSPRequest('initialize', JSON.stringify(params));
+                updateLSPStatus('connected');
+                showStatusMessage('LSP Server initialized');
+                hapticFeedback();
+            }
+        }
+        
+        function restartLSP() {
+            if (window.Android && window.Android.onLSPRequest) {
+                window.Android.onLSPRequest('shutdown', '{}');
+                setTimeout(() => {
+                    initializeLSP();
+                }, 1000);
+            }
+        }
+        
+        function toggleDiagnostics() {
+            if (window.Android && window.Android.onDiagnosticsRequest) {
+                const documentUri = 'file://' + (currentFile || 'untitled');
+                window.Android.onDiagnosticsRequest(documentUri);
+            }
+        }
+        
+        function updateLSPStatus(status) {
+            const statusIndicator = document.querySelector('#lsp-panel .status-indicator');
+            const statusText = document.getElementById('lspStatusText');
+            
+            if (status === 'connected') {
+                statusIndicator.className = 'status-indicator connected';
+                statusText.textContent = 'Connected';
+            } else {
+                statusIndicator.className = 'status-indicator disconnected';
+                statusText.textContent = 'Disconnected';
+            }
+        }
+        
+        // Phase 3 Debug Functions
+        function debugCommand(command, args = '') {
+            if (window.Android && window.Android.onDebugCommand) {
+                window.Android.onDebugCommand(command, args);
+                
+                switch (command) {
+                    case 'start':
+                        updateDebugStatus('running');
+                        showStatusMessage('Debug session started');
+                        break;
+                    case 'continue':
+                        showStatusMessage('Continuing execution');
+                        break;
+                    case 'stepOver':
+                        showStatusMessage('Stepping over');
+                        break;
+                    case 'stop':
+                        updateDebugStatus('stopped');
+                        showStatusMessage('Debug session stopped');
+                        break;
+                }
+                hapticFeedback();
+            }
+        }
+        
+        function updateDebugStatus(status) {
+            const statusIndicator = document.querySelector('#debug-panel .status-indicator');
+            const statusText = document.getElementById('debugStatusText');
+            
+            if (status === 'running') {
+                statusIndicator.className = 'status-indicator connected';
+                statusText.textContent = 'Debugging';
+            } else {
+                statusIndicator.className = 'status-indicator disconnected';
+                statusText.textContent = 'Not Debugging';
+            }
+        }
+        
+        // LSP Response Handlers (called from Android)
+        window.onLSPCompletionResponse = function(data) {
+            try {
+                const response = JSON.parse(data);
+                if (response.items && editor) {
+                    // Register completion items with Monaco
+                    const provider = {
+                        provideCompletionItems: function(model, position) {
+                            return {
+                                suggestions: response.items.map(item => ({
+                                    label: item.label,
+                                    kind: item.kind,
+                                    insertText: item.insertText,
+                                    insertTextFormat: item.insertTextFormat
+                                }))
+                            };
+                        }
+                    };
+                    monaco.languages.registerCompletionItemProvider('javascript', provider);
+                }
+            } catch (e) {
+                console.error('Error handling LSP completion response:', e);
+            }
+        };
+        
+        window.onLSPDefinitionResponse = function(data) {
+            try {
+                const response = JSON.parse(data);
+                if (response && editor) {
+                    // Handle definition response
+                    if (response.length > 0) {
+                        const definition = response[0];
+                        const range = definition.range;
+                        const position = new monaco.Position(
+                            range.start.line + 1,
+                            range.start.character + 1
+                        );
+                        editor.revealPositionInCenter(position);
+                    }
+                }
+            } catch (e) {
+                console.error('Error handling LSP definition response:', e);
+            }
+        };
+        
+        window.onLSPHoverResponse = function(data) {
+            try {
+                const response = JSON.parse(data);
+                if (response && editor) {
+                    // Show hover tooltip
+                    const position = editor.getPosition();
+                    editor.trigger('mouse', 'editor.action.showHover', {
+                        hover: response.contents,
+                        range: response.range
+                    });
+                }
+            } catch (e) {
+                console.error('Error handling LSP hover response:', e);
+            }
+        };
+        
+        window.onLSPDiagnosticsResponse = function(data) {
+            try {
+                const diagnostics = JSON.parse(data);
+                const diagnosticsList = document.getElementById('diagnosticsList');
+                
+                if (diagnostics.length === 0) {
+                    diagnosticsList.textContent = 'No diagnostics available';
+                } else {
+                    diagnosticsList.innerHTML = diagnostics.map(diag => 
+                        `<div style="color: ${diag.severity === 1 ? '#cb2431' : '#d0990b'}; margin-bottom: 4px;">
+                            Line ${diag.range.start.line + 1}: ${diag.message}
+                        </div>`
+                    ).join('');
+                }
+            } catch (e) {
+                console.error('Error handling LSP diagnostics response:', e);
+            }
+        };
+        
+        // Debug Response Handlers (called from Android)
+        window.onDebugStatusChanged = function(data) {
+            try {
+                const response = JSON.parse(data);
+                updateDebugStatus(response.status);
+            } catch (e) {
+                console.error('Error handling debug status response:', e);
+            }
+        };
+        
+        window.onDebugStep = function(data) {
+            try {
+                const response = JSON.parse(data);
+                // Highlight the current execution line
+                if (response.line !== undefined && editor) {
+                    highlightDebugLine(response.line);
+                }
+            } catch (e) {
+                console.error('Error handling debug step response:', e);
+            }
+        };
+        
+        window.onVariableWatchUpdate = function(data) {
+            try {
+                const watch = JSON.parse(data);
+                const variablesList = document.getElementById('variablesList');
+                
+                if (variablesList) {
+                    variablesList.innerHTML = `
+                        <div class="variable-item">
+                            <span class="variable-name">${watch.variableName}</span>
+                            <span class="variable-value">${watch.value}</span>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                console.error('Error handling variable watch update:', e);
+            }
+        };
+        
+        function highlightDebugLine(lineNumber) {
+            if (!editor) return;
+            
+            // Remove previous debug highlights
+            const decorations = editor.getLineDecorations(lineNumber);
+            if (decorations) {
+                editor.deltaDecorations(decorations, []);
+            }
+            
+            // Add debug line highlight
+            const decorationOptions = {
+                isWholeLine: true,
+                className: 'debug-line-highlight'
+            };
+            
+            const range = new monaco.Range(lineNumber, 1, lineNumber, 1);
+            editor.deltaDecorations([], [{
+                range: range,
+                options: decorationOptions
+            }]);
         }
         
         // Phase 3 Collaborative Functions
@@ -1829,6 +2312,9 @@
             
             document.getElementById('gitStatus').textContent = `📁 ${currentGitBranch}`;
             document.getElementById('cloudStatusMini').textContent = cloudConnected ? '☁️ Online' : '☁️ Offline';
+            // Phase 3: LSP and Debug status (would be updated by actual status)
+            document.getElementById('lspStatusMini').textContent = '🔌 LSP';
+            document.getElementById('debugStatusMini').textContent = '🐛 Debug';
         }
         
         function showStatusMessage(message) {
