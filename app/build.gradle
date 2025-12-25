@@ -51,7 +51,10 @@ dependencies {
     // Smart IDE Launcher - Updated dependencies
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'  // Updated from 3.10.0
     implementation 'com.google.code.gson:gson:2.10.1'     // Added for AI integration
-    
+
+    // Security - Encrypted SharedPreferences (OWASP M2 Compliance)
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+
     // Existing dependencies
     implementation 'net.sourceforge.htmlcleaner:htmlcleaner:2.6'
     implementation 'com.jayway.jsonpath:json-path:2.4.0'
