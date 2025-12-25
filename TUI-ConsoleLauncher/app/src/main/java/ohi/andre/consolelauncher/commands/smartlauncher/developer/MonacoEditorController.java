@@ -9,17 +9,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.EditorSettings;
+import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.EditorSettingsManager;
+import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.MonacoSettingsBridge;
 
 /**
  * MonacoEditorController - Separates business logic from Activity
@@ -47,6 +39,7 @@ public class MonacoEditorController {
     private final LanguageServerManager lspManager;
     private final DebugManager debugManager;
     private final FileSystemManager fileSystemManager;
+    private final EditorSettingsManager settingsManager;
     
     public MonacoEditorController(Activity activity, WebView webView, ExecutorService executor) {
         this.activity = activity;
@@ -57,6 +50,155 @@ public class MonacoEditorController {
         this.lspManager = new LanguageServerManager();
         this.debugManager = new DebugManager();
         this.fileSystemManager = new FileSystemManager();
+        this.settingsManager = EditorSettingsManager.getInstance();
+        
+        // Initialize settings manager
+        initializeSettingsManager();
+    }
+    
+    // ======= Settings Management =======
+    
+    /**
+     * Initialize the settings manager with context
+     */
+    private void initializeSettingsManager() {
+        if (activity != null) {
+            settingsManager.initialize(activity);
+            
+            // Add settings change listener
+            settingsManager.addListener("MonacoEditorController", new EditorSettingsManager.SettingsChangeListener() {
+                @Override
+                public void onSettingsChanged(EditorSettings settings, String key) {
+                    onEditorSettingsChanged(settings, key);
+                }
+                
+                @Override
+                public void onSettingsReset() {
+                    onEditorSettingsReset();
+                }
+            });
+        }
+    }
+    
+    /**
+     * Handle settings change from manager
+     */
+    private void onEditorSettingsChanged(EditorSettings settings, String key) {
+        activity.runOnUiThread(() -> {
+            // Apply editor preference changes to WebView
+            if (key != null) {
+                switch (key) {
+                    case "theme":
+                        sendToWebView("window.applyTheme", "'" + settings.getTheme() + "'");
+                        break;
+                    case "fontSize":
+                        sendToWebView("window.applyFontSize", String.valueOf(settings.getFontSize()));
+                        break;
+                    case "wordWrap":
+                        sendToWebView("window.applyWordWrap", "'" + settings.getWordWrap() + "'");
+                        break;
+                    case "minimapEnabled":
+                        sendToWebView("window.applyMinimap", String.valueOf(settings.isMinimapEnabled()));
+                        break;
+                    case "sidebarVisible":
+                        sendToWebView("window.toggleSidebar", String.valueOf(settings.isSidebarVisible()));
+                        break;
+                    case "autoSave":
+                        sendToWebView("window.applyAutoSave", String.valueOf(settings.isAutoSave()));
+                        break;
+                    case "lspEnabled":
+                        sendToWebView("window.applyLspEnabled", String.valueOf(settings.isLspEnabled()));
+                        break;
+                    case "debugEnabled":
+                        sendToWebView("window.applyDebugEnabled", String.valueOf(settings.isDebugEnabled()));
+                        break;
+                }
+            }
+        });
+    }
+    
+    /**
+     * Handle settings reset
+     */
+    private void onEditorSettingsReset() {
+        activity.runOnUiThread(() -> {
+            EditorSettings defaults = EditorSettings.getDefaults();
+            sendToWebView("window.applyAllSettings", defaults.toJson().toString());
+            Toast.makeText(activity, "Settings reset to defaults", Toast.LENGTH_SHORT).show();
+        });
+    }
+    
+    /**
+     * Get the settings manager for external access
+     */
+    public EditorSettingsManager getSettingsManager() {
+        return settingsManager;
+    }
+    
+    /**
+     * Get current editor settings
+     */
+    public EditorSettings getEditorSettings() {
+        return settingsManager.getSettings();
+    }
+    
+    /**
+     * Initialize settings bridge for WebView
+     */
+    public void initializeSettingsBridge(MonacoSettingsBridge.SettingsChangeCallback callback) {
+        if (webView != null) {
+            MonacoSettingsBridge bridge = new MonacoSettingsBridge(settingsManager, callback);
+            webView.addJavascriptInterface(bridge, "AndroidEditorSettings");
+        }
+    }
+    
+    /**
+     * Load and apply initial settings to editor
+     */
+    public void loadInitialSettings() {
+        settingsManager.loadSettings(new EditorSettingsManager.SettingsCallback() {
+            @Override
+            public void onSettingsLoaded(EditorSettings settings) {
+                activity.runOnUiThread(() -> {
+                    // Send settings to WebView
+                    String settingsJson = settings.toJson().toString();
+                    sendToWebView("window.initSettings", settingsJson);
+                    
+                    // Send Monaco-specific options
+                    String monacoOptions = settings.toMonacoOptions().toString();
+                    sendToWebView("window.applyMonacoOptions", monacoOptions);
+                });
+            }
+            
+            @Override
+            public void onSettingsSaved(String key, boolean success) {
+                // Not used for initial load
+            }
+            
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "Error loading settings: " + error);
+            }
+        });
+    }
+    
+    /**
+     * Update a setting from WebView
+     */
+    public void updateSetting(String key, Object value) {
+        settingsManager.saveSetting(key, value, null);
+    }
+    
+    /**
+     * Apply editor settings to current session
+     */
+    public void applyEditorSettings(EditorSettings settings) {
+        if (settings == null) return;
+        
+        activity.runOnUiThread(() -> {
+            JSONObject options = settings.toMonacoOptions();
+            sendToWebView("window.applyEditorSettings", options.toString());
+        });
     }
     
     // ======= File Operations =======
