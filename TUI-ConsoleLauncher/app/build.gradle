@@ -1,20 +1,23 @@
 apply plugin: 'com.android.application'
-android {
-    compileSdkVersion 27
-    buildToolsVersion '28.0.3'
-    dexOptions {
-    }
 
+android {
+    compileSdkVersion 34
+    buildToolsVersion '34.0.0'
+    
     defaultConfig {
         applicationId "ohi.andre.consolelauncher"
 
-        minSdkVersion 14
-        targetSdkVersion 27
+        minSdkVersion 21
+        targetSdkVersion 34
         flavorDimensions "default"
 
-        versionName "v6.15"
-        versionCode 205
+        versionName "v6.16"
+        versionCode 206
+        
+        // Enable multidex for large projects
+        multiDexEnabled true
     }
+    
     buildTypes {
         release {
             minifyEnabled true
@@ -22,42 +25,112 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
         }
+        debug {
+            minifyEnabled false
+            debuggable true
+        }
     }
+    
     productFlavors {
         fdroid {
+            // F-Droid flavor - no proprietary dependencies
         }
         playstore {
+            // Play Store flavor - includes all features
         }
     }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    dependencies {
-        implementation 'com.android.support:appcompat-v7:27.1.1'
-    }
+    
     lintOptions {
-        checkReleaseBuilds false
+        checkReleaseBuilds true
+        abortOnError false
+        warningsAsErrors false
+        disable 'MissingTranslation'
     }
-    android.applicationVariants.all { variant ->
-        def formattedDate = new Date().format('hh.mm')
-
-        variant.outputs.all {
-            outputFileName = "./${variant.versionName}/${variant.applicationId}_${variant.getFlavorName()}_${variant.versionCode}_${formattedDate}.apk"
+    
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
         }
     }
+    
+    android.applicationVariants.all { variant ->
+        def formattedDate = new Date().format('yyyy.MM.dd_HH.mm')
+        
+        variant.outputs.all {
+            outputFileName = "./${variant.versionName}/${variant.applicationId}_${variant.flavorName}_${variant.versionCode}_${formattedDate}.apk"
+        }
+    }
+    
+    packagingOptions {
+        // Exclude files that may cause conflicts
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+    }
 }
+
 dependencies {
-    // Smart IDE Launcher - Updated dependencies
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'  // Updated from 3.10.0
-    implementation 'com.google.code.gson:gson:2.10.1'     // Added for AI integration
-
-    // Security - Encrypted SharedPreferences (OWASP M2 Compliance)
+    // =====================================================
+    // AndroidX Core Libraries (Migration from old Support)
+    // =====================================================
+    
+    // AndroidX AppCompat for Activity and Fragment support
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    
+    // AndroidX Core utilities
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    
+    // AndroidX Security - Encrypted SharedPreferences (OWASP M2 Compliance)
+    // Critical for secure storage of API keys and credentials
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-
-    // Existing dependencies
-    implementation 'net.sourceforge.htmlcleaner:htmlcleaner:2.6'
-    implementation 'com.jayway.jsonpath:json-path:2.4.0'
-    implementation 'org.jsoup:jsoup:1.11.3'
+    
+    // =====================================================
+    // Networking Libraries
+    // =====================================================
+    
+    // OkHttp - HTTP client for AI API communication
+    // Provides connection pooling, caching, and interceptors
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    
+    // Gson - JSON serialization/deserialization for API communication
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // =====================================================
+    // Existing Dependencies (Maintained for backward compatibility)
+    // =====================================================
+    
+    // HTML Cleaner - Sanitizes HTML content
+    implementation 'net.sourceforge.htmlcleaner:htmlcleaner:2.29'
+    
+    // JSON Path - Query JSON data structures
+    implementation 'com.jayway.jsonpath:json-path:2.9.0'
+    
+    // jsoup - HTML parsing and manipulation
+    implementation 'org.jsoup:jsoup:1.17.2'
+    
+    // CompareString2 - String comparison utilities
     implementation 'it.andreuzzi:CompareString2:1.0.9'
+    
+    // =====================================================
+    // Testing Dependencies
+    // =====================================================
+    
+    // Unit testing
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.8.0'
+    testImplementation 'org.robolectric:robolectric:4.11.1'
+    
+    // Android testing
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
