@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import ohi.andre.consolelauncher.commands.Command;
 import ohi.andre.consolelauncher.commands.CommandGroup;
+import ohi.andre.consolelauncher.commands.MultiCommandGroup;
 import ohi.andre.consolelauncher.commands.CommandTuils;
 import ohi.andre.consolelauncher.commands.main.MainPack;
 import ohi.andre.consolelauncher.commands.main.raw.location;
@@ -99,7 +100,14 @@ public class MainManager {
         this.redirectionListener = redirectionListener;
     }
 
-    private final String COMMANDS_PKG = "ohi.andre.consolelauncher.commands.main.raw";
+    // Smart IDE Launcher - Multi-package command support
+    private final String[] COMMAND_PACKAGES = {
+        "ohi.andre.consolelauncher.commands.main.raw",
+        "ohi.andre.consolelauncher.commands.smartlauncher.ai",
+        "ohi.andre.consolelauncher.commands.smartlauncher.developer", 
+        "ohi.andre.consolelauncher.commands.smartlauncher.productivity",
+        "ohi.andre.consolelauncher.commands.smartlauncher.automation"
+    };
 
     private CmdTrigger[] triggers = new CmdTrigger[] {
             new GroupTrigger(),
@@ -147,7 +155,8 @@ public class MainManager {
 
         multipleCmdSeparator = XMLPrefsManager.get(Behavior.multiple_cmd_separator);
 
-        CommandGroup group = new CommandGroup(mContext, COMMANDS_PKG);
+        // Smart IDE Launcher Integration - MultiCommandGroup for enhanced functionality
+        CommandGroup group = new MultiCommandGroup(mContext, COMMAND_PACKAGES);
 
         try {
             contactManager = new ContactManager(mContext);

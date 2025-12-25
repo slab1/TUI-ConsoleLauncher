@@ -439,4 +439,7 @@
         \n$ open [pathToFile]
     </string>
 
+    <!-- Smart IDE Launcher - Monaco Editor -->
+    <string name="monaco_editor_title">Monaco Editor</string>
+
 </resources>

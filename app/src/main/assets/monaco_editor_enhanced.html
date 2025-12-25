@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monaco Editor - T-UI Smart IDE Enhanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --sidebar-width: 250px;
+            --terminal-height: 200px;
+            --status-bar-height: 24px;
+            --primary-bg: #1e1e1e;
+            --secondary-bg: #2d2d30;
+            --border-color: #3c3c3c;
+            --text-color: #d4d4d4;
+            --accent-color: #007acc;
+            --git-added: #28a745;
+            --git-modified: #d0990b;
+            --git-deleted: #cb2431;
+            --panel-bg: #252526;
+            --hover-bg: #ffffff10;
+        }
+        
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .workspace {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--status-bar-height));
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: width 0.2s ease;
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed {
+            width: 0;
+        }
+        
+        .sidebar-header {
+            height: 35px;
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            gap: 4px;
+        }
+        
+        .sidebar-tab {
+            padding: 4px 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 3px;
+            transition: background-color 0.15s;
+        }
+        
+        .sidebar-tab:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .sidebar-tab.active {
+            background-color: var(--accent-color);
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            overflow: auto;
+            padding: 8px;
+        }
+        
+        /* File Explorer */
+        .file-explorer {
+            display: none;
+        }
+        
+        .file-explorer.active {
+            display: block;
+        }
+        
+        .file-tree {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 2px 4px;
+            cursor: pointer;
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .file-item:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .file-item.selected {
+            background-color: var(--accent-color);
+        }
+        
+        .file-item.dirty::after {
+            content: '•';
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-left: 4px;
+        }
+        
+        .file-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+        }
+        
+        .file-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .git-modified .file-name {
+            color: var(--git-modified);
+        }
+        
+        .git-added .file-name {
+            color: var(--git-added);
+        }
+        
+        .git-deleted .file-name {
+            color: var(--git-deleted);
+            text-decoration: line-through;
+        }
+        
+        .indent {
+            margin-left: 16px;
+        }
+        
+        /* Source Control */
+        .source-control {
+            display: none;
+        }
+        
+        .source-control.active {
+            display: block;
+        }
+        
+        .git-status {
+            font-size: 12px;
+            padding: 4px 0;
+        }
+        
+        .git-branch {
+            font-weight: bold;
+            color: var(--accent-color);
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 8px;
+        }
+        
+        .git-file {
+            display: flex;
+            align-items: center;
+            padding: 2px 4px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .git-file:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .git-file-icon {
+            width: 12px;
+            height: 12px;
+            margin-right: 6px;
+            border-radius: 2px;
+        }
+        
+        .git-file-added {
+            background-color: var(--git-added);
+        }
+        
+        .git-file-modified {
+            background-color: var(--git-modified);
+        }
+        
+        .git-file-deleted {
+            background-color: var(--git-deleted);
+        }
+        
+        /* Main Editor Area */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .editor-tabs {
+            height: 35px;
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            overflow-x: auto;
+        }
+        
+        .editor-tab {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            border-right: 1px solid var(--border-color);
+            min-width: 120px;
+            justify-content: space-between;
+        }
+        
+        .editor-tab:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .editor-tab.active {
+            background-color: var(--primary-bg);
+            color: var(--accent-color);
+        }
+        
+        .tab-close {
+            margin-left: 8px;
+            padding: 2px;
+            border-radius: 2px;
+            opacity: 0.6;
+        }
+        
+        .tab-close:hover {
+            opacity: 1;
+            background-color: var(--hover-bg);
+        }
+        
+        .editor-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        /* Terminal Panel */
+        .terminal-panel {
+            height: var(--terminal-height);
+            background-color: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            display: none;
+            flex-direction: column;
+        }
+        
+        .terminal-panel.visible {
+            display: flex;
+        }
+        
+        .terminal-header {
+            height: 30px;
+            background-color: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 12px;
+        }
+        
+        .terminal-tabs {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .terminal-tab {
+            padding: 4px 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 11px;
+            border-radius: 3px;
+        }
+        
+        .terminal-tab.active {
+            background-color: var(--accent-color);
+        }
+        
+        .terminal-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #terminal {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #00ff00;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            border: none;
+            outline: none;
+            resize: none;
+        }
+        
+        /* AI Assistant */
+        .ai-suggestion {
+            position: absolute;
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .ai-suggestion.visible {
+            display: block;
+        }
+        
+        .ai-suggestion .suggestion-text {
+            color: #888;
+            font-style: italic;
+        }
+        
+        .ai-suggestion .suggestion-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 4px;
+        }
+        
+        .ai-btn {
+            padding: 2px 6px;
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 10px;
+            border-radius: 2px;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            height: var(--status-bar-height);
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 12px;
+            padding: 4px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .status-left {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .status-right {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .status-item {
+            cursor: pointer;
+        }
+        
+        .status-item:hover {
+            text-decoration: underline;
+        }
+        
+        /* Resize Handles */
+        .resize-handle {
+            position: absolute;
+            background: transparent;
+            z-index: 10;
+        }
+        
+        .resize-handle.vertical {
+            width: 4px;
+            height: 100%;
+            cursor: col-resize;
+            right: -2px;
+            top: 0;
+        }
+        
+        .resize-handle.horizontal {
+            height: 4px;
+            width: 100%;
+            cursor: row-resize;
+            bottom: -2px;
+            left: 0;
+        }
+        
+        /* Loading */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 16px;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .hidden { display: none; }
+        
+        /* Context Menu */
+        .context-menu {
+            position: absolute;
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            z-index: 10000;
+            min-width: 150px;
+            display: none;
+        }
+        
+        .context-menu.visible {
+            display: block;
+        }
+        
+        .context-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .context-menu-item:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .context-menu-separator {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="workspace">
+            <!-- Sidebar -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <button class="sidebar-tab active" data-panel="file-explorer">Files</button>
+                    <button class="sidebar-tab" data-panel="source-control">Git</button>
+                    <button class="sidebar-tab" data-panel="extensions">Extensions</button>
+                </div>
+                
+                <div class="sidebar-content">
+                    <!-- File Explorer -->
+                    <div class="file-explorer active" id="file-explorer">
+                        <div class="file-tree" id="fileTree">
+                            <div class="file-item" data-path=".">
+                                <span class="file-icon">📁</span>
+                                <span class="file-name">Project Root</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Source Control -->
+                    <div class="source-control" id="source-control">
+                        <div class="git-status">
+                            <div class="git-branch" id="gitBranch">main</div>
+                            <div class="git-files" id="gitFiles">
+                                <div class="git-file" data-file="modified.js">
+                                    <div class="git-file-icon git-file-modified"></div>
+                                    <span>modified.js</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Extensions -->
+                    <div class="extensions" id="extensions">
+                        <div style="font-size: 12px; color: #888;">
+                            Extensions coming soon...
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="resize-handle vertical" data-resize="sidebar"></div>
+            </div>
+            
+            <!-- Main Editor Area -->
+            <div class="editor-area">
+                <div class="editor-tabs" id="editorTabs">
+                    <button class="editor-tab active" data-tab="welcome">
+                        <span>Welcome</span>
+                        <span class="tab-close" onclick="closeTab('welcome')">×</span>
+                    </button>
+                </div>
+                
+                <div class="editor-container">
+                    <div id="loading" class="loading">
+                        <div>Loading Enhanced Monaco Editor...</div>
+                    </div>
+                    
+                    <div id="editor" style="width: 100%; height: 100%;"></div>
+                    
+                    <div class="resize-handle horizontal" data-resize="terminal"></div>
+                </div>
+            </div>
+            
+            <!-- Terminal Panel -->
+            <div class="terminal-panel" id="terminalPanel">
+                <div class="terminal-header">
+                    <div class="terminal-tabs">
+                        <button class="terminal-tab active">Terminal 1</button>
+                    </div>
+                </div>
+                <div class="terminal-content">
+                    <textarea id="terminal" placeholder="Terminal ready. Type commands here..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="language">Plain Text</span>
+                <span id="encoding">UTF-8</span>
+                <span id="eol">LF</span>
+                <span id="gitStatus" class="status-item" onclick="showGitPanel()">📁 main</span>
+            </div>
+            <div class="status-right">
+                <span id="position">Line 1, Col 1</span>
+                <span id="selection">Sel: 0</span>
+                <span id="mode">INSERT</span>
+                <span class="status-item" onclick="toggleTerminal()">Terminal</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="createFile()">New File</div>
+        <div class="context-menu-item" onclick="createFolder()">New Folder</div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" onclick="renameFile()">Rename</div>
+        <div class="context-menu-item" onclick="deleteFile()">Delete</div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" onclick="showInExplorer()">Show in Explorer</div>
+    </div>
+    
+    <!-- AI Suggestion -->
+    <div class="ai-suggestion" id="aiSuggestion">
+        <div class="suggestion-text" id="suggestionText">AI is analyzing your code...</div>
+        <div class="suggestion-actions">
+            <button class="ai-btn" onclick="acceptSuggestion()">Accept</button>
+            <button class="ai-btn" onclick="dismissSuggestion()">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- Monaco Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.min.js"></script>
+    
+    <script>
+        // Global state
+        let editor = null;
+        let terminal = null;
+        let fitAddon = null;
+        let currentFile = null;
+        let openTabs = new Map();
+        let isDirty = false;
+        let currentGitBranch = 'main';
+        let fileSystem = new Map();
+        let aiEnabled = true;
+        let resizeState = {
+            sidebarWidth: 250,
+            terminalHeight: 200
+        };
+        
+        // Plugin system
+        window.TUIPlugins = {
+            extensions: new Map(),
+            registerExtension(extension) {
+                this.extensions.set(extension.name, extension);
+                this.loadExtensionUI(extension);
+            },
+            loadExtensionUI(extension) {
+                if (extension.ui && extension.ui.sidebar) {
+                    // Add to sidebar
+                    const sidebar = document.querySelector('.sidebar-content');
+                    const panel = document.createElement('div');
+                    panel.className = `extension-panel ${extension.name}`;
+                    panel.innerHTML = extension.ui.sidebar;
+                    sidebar.appendChild(panel);
+                }
+            },
+            executeCommand(command, args) {
+                for (let [name, ext] of this.extensions) {
+                    if (ext.commands && ext.commands[command]) {
+                        return ext.commands[command](args);
+                    }
+                }
+                return null;
+            }
+        };
+        
+        // Initialize Enhanced Monaco Editor
+        require.config({ 
+            paths: { 
+                'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' 
+            } 
+        });
+        
+        require(['vs/editor/editor.main'], function () {
+            initializeEnhancedEditor();
+        });
+        
+        function initializeEnhancedEditor() {
+            // Create editor with enhanced configuration
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                value: getWelcomeContent(),
+                language: 'markdown',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                fontSize: 14,
+                fontFamily: 'Consolas, Monaco, Courier New, monospace',
+                fontLigatures: true,
+                lineNumbers: 'on',
+                minimap: { enabled: true },
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                tabSize: 4,
+                insertSpaces: true,
+                folding: true,
+                foldingHighlight: true,
+                bracketPairColorization: { enabled: true },
+                guides: {
+                    bracketPairs: true,
+                    indentation: true
+                },
+                suggestOnTriggerCharacters: true,
+                acceptSuggestionOnEnter: 'on',
+                quickSuggestions: true,
+                parameterHints: { enabled: true },
+                hover: { enabled: true },
+                lightbulb: { enabled: true },
+                renderWhitespace: 'selection',
+                renderControlCharacters: false
+            });
+            
+            // Initialize terminal
+            initializeTerminal();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Setup file system
+            initializeFileSystem();
+            
+            // Setup Git integration
+            initializeGitIntegration();
+            
+            // Setup AI assistant
+            initializeAIAssistant();
+            
+            // Setup plugin system
+            setupPluginSystem();
+            
+            // Update UI
+            updateStatusBar();
+            
+            // Hide loading
+            document.getElementById('loading').classList.add('hidden');
+            
+            // Focus editor
+            editor.focus();
+        }
+        
+        function getWelcomeContent() {
+            return `# Welcome to T-UI Enhanced Monaco Editor
+
+## 🚀 Phase 2 Features
+
+### 📁 File Explorer
+- Browse project files in the left sidebar
+- Right-click for context menu operations
+- Git status indicators on files
+
+### 🌿 Git Integration
+- Branch information in status bar
+- Modified files highlighted in explorer
+- Git status panel with staging area
+
+### 🤖 AI Assistant
+- Intelligent code completion
+- Ghost text suggestions
+- Code explanation and refactoring
+
+### 💻 Integrated Terminal
+- Full terminal emulation
+- Command execution and output
+- Terminal resizing support
+
+### 🔌 Plugin System
+- Extensible architecture
+- Custom commands and UI
+- Community extensions ready
+
+## 🎯 Quick Start
+
+1. **Open a file**: Use the File Explorer or File menu
+2. **Terminal**: Press Ctrl+\` or click Terminal in status bar
+3. **AI Help**: Type code and wait for suggestions
+4. **Git**: Check Git panel for version control status
+
+## ⌨️ Keyboard Shortcuts
+
+- \`Ctrl+S\`: Save file
+- \`Ctrl+F\`: Find in file
+- \`Ctrl+\`\`: Toggle terminal
+- \`Ctrl+B\`: Toggle sidebar
+- \`Ctrl+Shift+P\`: Command palette
+- \`F12\`: Go to definition
+
+---
+
+**Ready to code? Start by creating a new file or opening an existing one!**
+`;
+        }
+        
+        function initializeTerminal() {
+            terminal = new Terminal({
+                cursorBlink: true,
+                fontSize: 12,
+                fontFamily: 'Consolas, Monaco, Courier New, monospace',
+                theme: {
+                    background: '#000000'
+                },
+                cols: 80,
+                rows: 24
+            });
+            
+            fitAddon = new FitAddon();
+            terminal.loadAddon(fitAddon);
+            
+            terminal.open(document.getElementById('terminal'));
+            fitAddon.fit();
+            
+            // Terminal input handling
+            let currentLine = '';
+            terminal.onData((data) => {
+                const code = data.charCodeAt(0);
+                
+                // Enter key
+                if (code === 13) {
+                    terminal.write('\r\n');
+                    executeTerminalCommand(currentLine);
+                    currentLine = '';
+                }
+                // Backspace
+                else if (code === 127) {
+                    if (currentLine.length > 0) {
+                        currentLine = currentLine.slice(0, -1);
+                        terminal.write('\b \b');
+                    }
+                }
+                // Printable characters
+                else if (code >= 32) {
+                    currentLine += data;
+                    terminal.write(data);
+                }
+            });
+            
+            // Welcome message
+            terminal.writeln('\x1b[32mT-UI Terminal Ready\x1b[0m');
+            terminal.write('$ ');
+        }
+        
+        function executeTerminalCommand(command) {
+            if (window.Android && window.Android.onTerminalCommand) {
+                window.Android.onTerminalCommand(command);
+            } else {
+                // Mock terminal response
+                setTimeout(() => {
+                    if (command.trim()) {
+                        terminal.writeln(`\x1b[33m$ ${command}\x1b[0m`);
+                        terminal.writeln('Command executed successfully');
+                    }
+                    terminal.write('$ ');
+                }, 100);
+            }
+        }
+        
+        function setupEventListeners() {
+            // Editor content change
+            editor.onDidChangeModelContent(() => {
+                const newContent = editor.getValue();
+                if (newContent !== openTabs.get(currentFile)?.content) {
+                    isDirty = true;
+                    markTabDirty(currentFile, true);
+                    
+                    // Notify Android
+                    if (window.Android && window.Android.onContentChanged) {
+                        window.Android.onContentChanged(newContent);
+                    }
+                }
+                updateStatusBar();
+                
+                // AI suggestions
+                if (aiEnabled) {
+                    triggerAISuggestion();
+                }
+            });
+            
+            // Cursor and selection changes
+            editor.onDidChangeCursorPosition(updateStatusBar);
+            editor.onDidChangeCursorSelection(updateStatusBar);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+            
+            // Sidebar tabs
+            document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchSidebarTab(tab.dataset.panel));
+            });
+            
+            // Resize handles
+            document.querySelectorAll('.resize-handle').forEach(handle => {
+                setupResizeHandle(handle);
+            });
+            
+            // Context menu
+            document.addEventListener('click', hideContextMenu);
+            document.getElementById('fileTree').addEventListener('contextmenu', showFileContextMenu);
+            
+            // File explorer interactions
+            document.getElementById('fileTree').addEventListener('click', handleFileClick);
+        }
+        
+        function handleKeyboardShortcuts(e) {
+            const { ctrlKey, metaKey, key } = e;
+            const cmdKey = ctrlKey || metaKey;
+            
+            if (cmdKey && key === 's') {
+                e.preventDefault();
+                saveCurrentFile();
+            } else if (cmdKey && key === 'f') {
+                e.preventDefault();
+                toggleFindWidget();
+            } else if (cmdKey && key === '`') {
+                e.preventDefault();
+                toggleTerminal();
+            } else if (cmdKey && key === 'b') {
+                e.preventDefault();
+                toggleSidebar();
+            } else if (cmdKey && key === 'p' && e.shiftKey) {
+                e.preventDefault();
+                showCommandPalette();
+            } else if (key === 'F12') {
+                e.preventDefault();
+                goToDefinition();
+            }
+        }
+        
+        function initializeFileSystem() {
+            // Initialize with some sample files
+            fileSystem.set('welcome.md', {
+                content: getWelcomeContent(),
+                type: 'file',
+                language: 'markdown',
+                modified: false
+            });
+            
+            fileSystem.set('example.js', {
+                content: `// Example JavaScript file
+function greetUser(name) {
+    return \`Hello, \${name}! Welcome to T-UI Monaco Editor.\`;
+}
+
+console.log(greetUser('Developer'));
+`,
+                type: 'file',
+                language: 'javascript',
+                modified: false
+            });
+            
+            // Render file tree
+            renderFileTree();
+        }
+        
+        function renderFileTree() {
+            const treeContainer = document.getElementById('fileTree');
+            treeContainer.innerHTML = '';
+            
+            for (let [path, file] of fileSystem) {
+                const fileElement = createFileTreeElement(path, file);
+                treeContainer.appendChild(fileElement);
+            }
+        }
+        
+        function createFileTreeElement(path, file) {
+            const element = document.createElement('div');
+            element.className = `file-item ${file.modified ? 'dirty' : ''} ${file.gitStatus || ''}`;
+            element.dataset.path = path;
+            
+            element.innerHTML = `
+                <span class="file-icon">${file.type === 'folder' ? '📁' : getFileIcon(file.language)}</span>
+                <span class="file-name">${path}</span>
+            `;
+            
+            return element;
+        }
+        
+        function getFileIcon(language) {
+            const icons = {
+                'javascript': '🟨',
+                'typescript': '🔷',
+                'python': '🐍',
+                'java': '☕',
+                'cpp': '⚡',
+                'c': '⚡',
+                'html': '🌐',
+                'css': '🎨',
+                'json': '📋',
+                'markdown': '📝',
+                'xml': '📄',
+                'yaml': '⚙️',
+                'shell': '💻',
+                'default': '📄'
+            };
+            return icons[language] || icons.default;
+        }
+        
+        function initializeGitIntegration() {
+            // Simulate git status for demo
+            updateGitStatus('main', [
+                { file: 'example.js', status: 'modified' },
+                { file: 'new-feature.py', status: 'added' }
+            ]);
+        }
+        
+        function updateGitStatus(branch, changes) {
+            currentGitBranch = branch;
+            document.getElementById('gitBranch').textContent = branch;
+            
+            const gitFilesContainer = document.getElementById('gitFiles');
+            gitFilesContainer.innerHTML = '';
+            
+            changes.forEach(change => {
+                const fileElement = document.createElement('div');
+                fileElement.className = 'git-file';
+                fileElement.innerHTML = `
+                    <div class="git-file-icon git-file-${change.status}"></div>
+                    <span>${change.file}</span>
+                `;
+                gitFilesContainer.appendChild(fileElement);
+            });
+        }
+        
+        function initializeAIAssistant() {
+            // Mock AI suggestions
+            window.showAISuggestion = function(suggestion, position) {
+                const suggestionElement = document.getElementById('aiSuggestion');
+                const textElement = document.getElementById('suggestionText');
+                
+                textElement.textContent = suggestion;
+                suggestionElement.style.left = position.x + 'px';
+                suggestionElement.style.top = position.y + 'px';
+                suggestionElement.classList.add('visible');
+                
+                setTimeout(() => {
+                    suggestionElement.classList.remove('visible');
+                }, 5000);
+            };
+        }
+        
+        function triggerAISuggestion() {
+            if (!aiEnabled) return;
+            
+            const position = editor.getPosition();
+            const lineContent = editor.getModel().getLineContent(position.lineNumber);
+            
+            // Mock AI suggestions based on context
+            const suggestions = {
+                'function': 'Consider adding JSDoc comments for better documentation.',
+                'if': 'Add error handling for edge cases.',
+                'for': 'Consider using Array methods for better readability.',
+                'console.log': 'Remove console.log statements before production.',
+                'default': 'AI is analyzing your code patterns...'
+            };
+            
+            let suggestion = 'default';
+            for (let key in suggestions) {
+                if (lineContent.includes(key)) {
+                    suggestion = key;
+                    break;
+                }
+            }
+            
+            const suggestionText = suggestions[suggestion];
+            const editorDom = editor.getDomNode();
+            const rect = editorDom.getBoundingClientRect();
+            const suggestionPos = {
+                x: rect.left + 200,
+                y: rect.top + 50
+            };
+            
+            setTimeout(() => {
+                window.showAISuggestion(suggestionText, suggestionPos);
+            }, 1000);
+        }
+        
+        function setupPluginSystem() {
+            // Load sample plugins
+            window.TUIPlugins.registerExtension({
+                name: 'sample-plugin',
+                version: '1.0.0',
+                commands: {
+                    'sample:hello': () => 'Hello from sample plugin!'
+                },
+                ui: {
+                    sidebar: '<div style="font-size: 12px; padding: 8px;">Sample Plugin Active</div>'
+                }
+            });
+        }
+        
+        // UI Control Functions
+        function switchSidebarTab(panelName) {
+            // Update tab states
+            document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.panel === panelName);
+            });
+            
+            // Update panel visibility
+            document.querySelectorAll('.sidebar-content > div').forEach(panel => {
+                panel.classList.toggle('active', panel.id === panelName);
+            });
+        }
+        
+        function toggleTerminal() {
+            const terminalPanel = document.getElementById('terminalPanel');
+            terminalPanel.classList.toggle('visible');
+            
+            if (terminalPanel.classList.contains('visible')) {
+                setTimeout(() => {
+                    if (fitAddon) fitAddon.fit();
+                    terminal.focus();
+                }, 100);
+            }
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+        
+        function showCommandPalette() {
+            const command = prompt('Command palette:');
+            if (command) {
+                executeCommand(command);
+            }
+        }
+        
+        function executeCommand(command) {
+            // Built-in commands
+            const commands = {
+                'view:toggle-sidebar': toggleSidebar,
+                'view:toggle-terminal': toggleTerminal,
+                'file:new': createFile,
+                'file:save': saveCurrentFile,
+                'git:status': () => switchSidebarTab('source-control'),
+                'ai:toggle': () => {
+                    aiEnabled = !aiEnabled;
+                    alert(`AI Assistant: ${aiEnabled ? 'Enabled' : 'Disabled'}`);
+                }
+            };
+            
+            // Plugin commands
+            const pluginResult = window.TUIPlugins.executeCommand(command, {});
+            if (pluginResult !== null) {
+                alert(pluginResult);
+                return;
+            }
+            
+            // Built-in command execution
+            if (commands[command]) {
+                commands[command]();
+            } else {
+                alert(`Command not found: ${command}`);
+            }
+        }
+        
+        // File operations
+        function handleFileClick(e) {
+            const fileItem = e.target.closest('.file-item');
+            if (fileItem) {
+                const path = fileItem.dataset.path;
+                openFile(path);
+            }
+        }
+        
+        function openFile(path) {
+            const file = fileSystem.get(path);
+            if (!file) return;
+            
+            // Create or switch to tab
+            if (!openTabs.has(path)) {
+                createTab(path, file);
+            }
+            
+            switchToTab(path);
+            currentFile = path;
+        }
+        
+        function createTab(path, file) {
+            const tabElement = document.createElement('button');
+            tabElement.className = 'editor-tab';
+            tabElement.dataset.tab = path;
+            tabElement.innerHTML = `
+                <span>${path}</span>
+                <span class="tab-close" onclick="closeTab('${path}')">×</span>
+            `;
+            
+            document.getElementById('editorTabs').appendChild(tabElement);
+            
+            openTabs.set(path, {
+                content: file.content,
+                language: file.language,
+                modified: file.modified
+            });
+        }
+        
+        function switchToTab(path) {
+            // Update tab states
+            document.querySelectorAll('.editor-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === path);
+            });
+            
+            // Switch editor model
+            const fileData = openTabs.get(path);
+            if (fileData) {
+                const model = monaco.editor.createModel(fileData.content, fileData.language);
+                editor.setModel(model);
+            }
+        }
+        
+        function closeTab(path) {
+            if (openTabs.get(path)?.modified) {
+                if (!confirm('File has unsaved changes. Close anyway?')) {
+                    return;
+                }
+            }
+            
+            // Remove tab
+            const tabElement = document.querySelector(`[data-tab="${path}"]`);
+            if (tabElement) {
+                tabElement.remove();
+            }
+            
+            openTabs.delete(path);
+            
+            // Switch to another tab if available
+            if (path === currentFile) {
+                const remainingTabs = Array.from(openTabs.keys());
+                if (remainingTabs.length > 0) {
+                    switchToTab(remainingTabs[0]);
+                    currentFile = remainingTabs[0];
+                } else {
+                    // Show welcome tab
+                    editor.setValue(getWelcomeContent());
+                    currentFile = null;
+                }
+            }
+        }
+        
+        function markTabDirty(path, isDirty) {
+            const tabElement = document.querySelector(`[data-tab="${path}"]`);
+            if (tabElement) {
+                tabElement.classList.toggle('dirty', isDirty);
+            }
+        }
+        
+        function saveCurrentFile() {
+            if (!currentFile) return;
+            
+            const content = editor.getValue();
+            const fileData = openTabs.get(currentFile);
+            if (fileData) {
+                fileData.content = content;
+                fileData.modified = false;
+                markTabDirty(currentFile, false);
+                isDirty = false;
+                
+                // Update file system
+                const file = fileSystem.get(currentFile);
+                if (file) {
+                    file.content = content;
+                    file.modified = false;
+                }
+                
+                // Notify Android
+                if (window.Android && window.Android.onSaveRequested) {
+                    window.Android.onSaveRequested();
+                }
+                
+                // Show save feedback
+                showStatusMessage('File saved');
+            }
+        }
+        
+        // Utility functions
+        function updateStatusBar() {
+            if (!editor) return;
+            
+            const position = editor.getPosition();
+            const selection = editor.getSelection();
+            const model = editor.getModel();
+            
+            document.getElementById('language').textContent = model.getLanguageId();
+            document.getElementById('position').textContent = 
+                `Line ${position.lineNumber}, Col ${position.column}`;
+            
+            if (selection && !selection.isEmpty()) {
+                const selectedText = model.getValueInRange(selection);
+                document.getElementById('selection').textContent = 
+                    `Sel: ${selectedText.length}`;
+            } else {
+                document.getElementById('selection').textContent = 'Sel: 0';
+            }
+            
+            document.getElementById('gitStatus').textContent = `📁 ${currentGitBranch}`;
+        }
+        
+        function showStatusMessage(message) {
+            const statusBar = document.querySelector('.status-bar');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageElement.style.position = 'absolute';
+            messageElement.style.left = '50%';
+            messageElement.style.transform = 'translateX(-50%)';
+            messageElement.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            messageElement.style.padding = '4px 8px';
+            messageElement.style.borderRadius = '4px';
+            messageElement.style.fontSize = '11px';
+            messageElement.style.zIndex = '10001';
+            
+            statusBar.appendChild(messageElement);
+            
+            setTimeout(() => {
+                messageElement.remove();
+            }, 2000);
+        }
+        
+        function toggleFindWidget() {
+            if (editor) {
+                editor.getAction('actions.find').run();
+            }
+        }
+        
+        function goToDefinition() {
+            if (editor) {
+                editor.getAction('editor.action.revealDefinition').run();
+            }
+        }
+        
+        // Context menu functions
+        function showFileContextMenu(e) {
+            e.preventDefault();
+            const menu = document.getElementById('contextMenu');
+            menu.style.left = e.pageX + 'px';
+            menu.style.top = e.pageY + 'px';
+            menu.classList.add('visible');
+        }
+        
+        function hideContextMenu() {
+            document.getElementById('contextMenu').classList.remove('visible');
+        }
+        
+        function createFile() {
+            const name = prompt('Enter file name:');
+            if (name) {
+                fileSystem.set(name, {
+                    content: '',
+                    type: 'file',
+                    language: getLanguageFromExtension(name),
+                    modified: true
+                });
+                renderFileTree();
+                showStatusMessage(`File ${name} created`);
+            }
+        }
+        
+        function createFolder() {
+            const name = prompt('Enter folder name:');
+            if (name) {
+                fileSystem.set(name + '/', {
+                    content: '',
+                    type: 'folder',
+                    modified: false
+                });
+                renderFileTree();
+                showStatusMessage(`Folder ${name} created`);
+            }
+        }
+        
+        function renameFile() {
+            const newName = prompt('Enter new name:');
+            if (newName) {
+                showStatusMessage(`File renamed to ${newName}`);
+            }
+        }
+        
+        function deleteFile() {
+            if (confirm('Are you sure you want to delete this file?')) {
+                showStatusMessage('File deleted');
+            }
+        }
+        
+        function showInExplorer() {
+            if (window.Android && window.Android.onShowInExplorer) {
+                window.Android.onShowInExplorer();
+            }
+        }
+        
+        function getLanguageFromExtension(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const languages = {
+                'js': 'javascript',
+                'ts': 'typescript',
+                'py': 'python',
+                'java': 'java',
+                'cpp': 'cpp',
+                'c': 'c',
+                'html': 'html',
+                'css': 'css',
+                'json': 'json',
+                'md': 'markdown',
+                'xml': 'xml',
+                'yaml': 'yaml',
+                'yml': 'yaml',
+                'sh': 'shell'
+            };
+            return languages[ext] || 'plaintext';
+        }
+        
+        // Resize functionality
+        function setupResizeHandle(handle) {
+            let isResizing = false;
+            let startX, startY, startWidth, startHeight;
+            
+            handle.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startWidth = resizeState.sidebarWidth;
+                startHeight = resizeState.terminalHeight;
+                
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+            
+            function handleMouseMove(e) {
+                if (!isResizing) return;
+                
+                const resizeType = handle.dataset.resize;
+                if (resizeType === 'sidebar') {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    if (newWidth >= 150 && newWidth <= 500) {
+                        resizeState.sidebarWidth = newWidth;
+                        document.documentElement.style.setProperty('--sidebar-width', newWidth + 'px');
+                    }
+                } else if (resizeType === 'terminal') {
+                    const newHeight = startHeight - (e.clientY - startY);
+                    if (newHeight >= 100 && newHeight <= 400) {
+                        resizeState.terminalHeight = newHeight;
+                        document.documentElement.style.setProperty('--terminal-height', newHeight + 'px');
+                        if (fitAddon) fitAddon.fit();
+                    }
+                }
+            }
+            
+            function handleMouseUp() {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
+        }
+        
+        // Public API for Android
+        window.getEditorContent = function() {
+            return editor ? editor.getValue() : '';
+        };
+        
+        window.setTheme = function(theme) {
+            if (editor) {
+                monaco.editor.setTheme(theme);
+            }
+        };
+        
+        window.openFile = function(filePath) {
+            if (fileSystem.has(filePath)) {
+                openFile(filePath);
+            }
+        };
+        
+        window.executeGitCommand = function(command) {
+            // Git command execution
+            if (window.Android && window.Android.onGitCommand) {
+                window.Android.onGitCommand(command);
+            }
+        };
+        
+        window.executeTerminalCommand = function(command) {
+            if (terminal) {
+                terminal.writeln(`\x1b[33m$ ${command}\x1b[0m`);
+                executeTerminalCommand(command);
+            }
+        };
+        
+        window.showGitPanel = function() {
+            switchSidebarTab('source-control');
+        };
+        
+        // Error handling
+        window.onerror = function(msg, url, line, col, error) {
+            console.error('Enhanced Monaco Editor Error:', msg, 'at', url, ':', line);
+            return false;
+        };
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Monaco loading is handled by the require callback
+            console.log('T-UI Enhanced Monaco Editor initialized');
+        });
+    </script>
+</body>
+</html>

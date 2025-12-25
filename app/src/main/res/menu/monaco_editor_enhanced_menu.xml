@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- File Operations -->
+    <item
+        android:id="@+id/action_new_file"
+        android:title="New File"
+        android:icon="@android:drawable/ic_menu_add"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_open_project"
+        android:title="Open Project"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_save"
+        android:title="Save"
+        android:icon="@android:drawable/ic_menu_save"
+        app:showAsAction="ifRoom" />
+
+    <!-- Edit Operations -->
+    <item
+        android:id="@+id/action_find"
+        android:title="Find"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="ifRoom" />
+
+    <!-- Git Integration -->
+    <item
+        android:id="@+id/action_git_status"
+        android:title="Git Status"
+        android:icon="@android:drawable/ic_menu_info_details"
+        app:showAsAction="never" />
+
+    <!-- Terminal Integration -->
+    <item
+        android:id="@+id/action_terminal"
+        android:title="Toggle Terminal"
+        android:icon="@android:drawable/ic_menu_compass"
+        app:showAsAction="never" />
+
+    <!-- AI Assistant -->
+    <item
+        android:id="@+id/action_ai_toggle"
+        android:title="AI Assistant"
+        android:icon="@android:drawable/ic_menu_help"
+        app:showAsAction="never" />
+
+    <!-- Settings -->
+    <item
+        android:id="@+id/action_settings"
+        android:title="Settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        app:showAsAction="never" />
+
+</menu>

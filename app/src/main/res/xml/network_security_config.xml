@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Base configuration: Disallow cleartext traffic -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    
+    <!-- Debug configuration: Allow debug certificates for development -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+    
+    <!-- Domain-specific configuration for external services -->
+    <domain-config cleartextTrafficPermitted="false">
+        <!-- LSP (Language Server Protocol) endpoints -->
+        <domain includeSubdomains="true">lsp.example.com</domain>
+        <domain includeSubdomains="true">api.example.com</domain>
+        
+        <!-- Certificate pinning for high-security connections -->
+        <!-- Replace with actual certificate hash for production -->
+        <pin-set expiration="2026-12-31">
+            <!-- Example pin - replace with actual certificate SHA-256 hash -->
+            <pin digest="SHA-256">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</pin>
+            <!-- Backup pin for certificate rotation -->
+            <pin digest="SHA-256">BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB=</pin>
+        </pin-set>
+    </domain-config>
+    
+    <!-- Content delivery networks for Monaco Editor assets -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">cdn.jsdelivr.net</domain>
+        <domain includeSubdomains="true">unpkg.com</domain>
+        <domain includeSubdomains="true">cdnjs.cloudflare.com</domain>
+        
+        <!-- Trust anchors for CDN connections -->
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

@@ -1,0 +1,2667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>T-UI Monaco Editor - Phase 3 Enhanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --sidebar-width: 250px;
+            --terminal-height: 200px;
+            --status-bar-height: 24px;
+            --keyboard-toolbar-height: 48px;
+            --primary-bg: #1e1e1e;
+            --secondary-bg: #2d2d30;
+            --border-color: #3c3c3c;
+            --text-color: #d4d4d4;
+            --accent-color: #007acc;
+            --git-added: #28a745;
+            --git-modified: #d0990b;
+            --git-deleted: #cb2431;
+            --panel-bg: #252526;
+            --hover-bg: #ffffff10;
+            --touch-target-size: 48px;
+        }
+        
+        /* Phase 3 Mobile-First Responsive Design */
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 0px; /* Hidden by default on mobile */
+                --keyboard-toolbar-height: 56px;
+                --touch-target-size: 56px;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                top: 0;
+                height: 100vh;
+                z-index: 1001;
+                transition: left 0.3s ease;
+            }
+            
+            .sidebar.mobile-open {
+                left: 0;
+            }
+            
+            .mobile-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 1000;
+                display: none;
+            }
+            
+            .mobile-overlay.visible {
+                display: block;
+            }
+        }
+        
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        /* Phase 3 Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            height: 56px;
+            background-color: var(--accent-color);
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            color: white;
+            font-size: 14px;
+            z-index: 999;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: flex;
+            }
+        }
+        
+        .mobile-nav button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            padding: 8px;
+            border-radius: 4px;
+            min-height: var(--touch-target-size);
+            min-width: var(--touch-target-size);
+        }
+        
+        .mobile-nav button:active {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .workspace {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--status-bar-height) - var(--keyboard-toolbar-height));
+        }
+        
+        /* Phase 3 Enhanced Sidebar with Virtualization */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--secondary-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: width 0.2s ease;
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed {
+            width: 0;
+        }
+        
+        .sidebar-header {
+            height: 35px;
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            gap: 4px;
+        }
+        
+        .sidebar-tab {
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            border-radius: 4px;
+            transition: background-color 0.15s;
+            min-height: var(--touch-target-size);
+        }
+        
+        .sidebar-tab:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .sidebar-tab.active {
+            background-color: var(--accent-color);
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Phase 3 Virtualized File Tree */
+        .file-explorer {
+            display: none;
+            height: 100%;
+        }
+        
+        .file-explorer.active {
+            display: block;
+        }
+        
+        .file-tree-container {
+            height: 100%;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+        
+        .file-tree {
+            font-size: 12px;
+            line-height: 1.4;
+            padding: 8px 0;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            position: relative;
+            min-height: var(--touch-target-size);
+            transition: background-color 0.15s;
+        }
+        
+        .file-item:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .file-item.selected {
+            background-color: var(--accent-color);
+        }
+        
+        .file-item.dirty::after {
+            content: '•';
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-left: 4px;
+        }
+        
+        .file-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+        
+        .file-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .git-modified .file-name {
+            color: var(--git-modified);
+        }
+        
+        .git-added .file-name {
+            color: var(--git-added);
+        }
+        
+        .git-deleted .file-name {
+            color: var(--git-deleted);
+            text-decoration: line-through;
+        }
+        
+        .indent {
+            margin-left: 16px;
+        }
+        
+        /* Phase 3 Cloud Integration Panel */
+        .cloud-panel {
+            display: none;
+        }
+        
+        .cloud-panel.active {
+            display: block;
+        }
+        
+        .cloud-status {
+            padding: 16px;
+            text-align: center;
+            font-size: 12px;
+        }
+        
+        .cloud-status .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .cloud-status .connected {
+            background-color: var(--git-added);
+        }
+        
+        .cloud-status .disconnected {
+            background-color: var(--git-deleted);
+        }
+        
+        .cloud-actions {
+            padding: 8px 16px;
+        }
+        
+        .cloud-action-btn {
+            width: 100%;
+            padding: 12px;
+            margin: 4px 0;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            min-height: var(--touch-target-size);
+            cursor: pointer;
+        }
+        
+        .cloud-action-btn:hover {
+            background-color: #005a9e;
+        }
+        
+        .cloud-action-btn:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        
+        /* Phase 3 LSP Panel Styles */
+        .lsp-panel {
+            display: none;
+        }
+        
+        .lsp-panel.active {
+            display: block;
+        }
+        
+        .lsp-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .lsp-action-btn {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            min-height: var(--touch-target-size);
+            transition: background-color 0.15s;
+        }
+        
+        .lsp-action-btn:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .lsp-action-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        /* Phase 3 Debug Panel Styles */
+        .debug-panel {
+            display: none;
+        }
+        
+        .debug-panel.active {
+            display: block;
+        }
+        
+        .debug-toolbar {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        
+        .debug-toolbar .kb-btn {
+            flex: 1;
+            min-width: 60px;
+            padding: 6px 8px;
+            font-size: 10px;
+        }
+        
+        .breakpoint-indicator {
+            position: absolute;
+            left: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #cb2431;
+            z-index: 10;
+        }
+        
+        .debug-line-highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+            border-left: 3px solid #ffff00;
+        }
+        
+        .variable-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-radius: 2px;
+            margin-bottom: 2px;
+        }
+        
+        .variable-item:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .variable-name {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .variable-value {
+            color: var(--text-color);
+            font-family: monospace;
+        }
+        
+        /* Source Control - Enhanced */
+        .source-control {
+            display: none;
+        }
+        
+        .source-control.active {
+            display: block;
+        }
+        
+        .git-status {
+            font-size: 12px;
+            padding: 4px 0;
+        }
+        
+        .git-branch {
+            font-weight: bold;
+            color: var(--accent-color);
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 8px;
+            min-height: var(--touch-target-size);
+            display: flex;
+            align-items: center;
+        }
+        
+        .git-file {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            min-height: var(--touch-target-size);
+        }
+        
+        .git-file:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .git-file-icon {
+            width: 12px;
+            height: 12px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
+        .git-file-added {
+            background-color: var(--git-added);
+        }
+        
+        .git-file-modified {
+            background-color: var(--git-modified);
+        }
+        
+        .git-file-deleted {
+            background-color: var(--git-deleted);
+        }
+        
+        /* Main Editor Area - Enhanced */
+        .editor-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .editor-tabs {
+            height: 35px;
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            overflow-x: auto;
+            overscroll-behavior: contain;
+        }
+        
+        .editor-tab {
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            border-right: 1px solid var(--border-color);
+            min-width: 120px;
+            justify-content: space-between;
+            min-height: var(--touch-target-size);
+        }
+        
+        .editor-tab:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .editor-tab.active {
+            background-color: var(--primary-bg);
+            color: var(--accent-color);
+        }
+        
+        .tab-close {
+            margin-left: 8px;
+            padding: 4px;
+            border-radius: 4px;
+            opacity: 0.6;
+            min-height: var(--touch-target-size);
+            min-width: var(--touch-target-size);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tab-close:hover {
+            opacity: 1;
+            background-color: var(--hover-bg);
+        }
+        
+        .editor-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        /* Phase 3 Visual Diff View */
+        .diff-container {
+            display: none;
+            height: 100%;
+            flex-direction: row;
+        }
+        
+        .diff-container.visible {
+            display: flex;
+        }
+        
+        .diff-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border-color);
+        }
+        
+        .diff-panel:last-child {
+            border-right: none;
+        }
+        
+        .diff-header {
+            height: 35px;
+            background-color: var(--panel-bg);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .diff-content {
+            flex: 1;
+            position: relative;
+        }
+        
+        /* Phase 3 Mobile Keyboard Toolbar */
+        .keyboard-toolbar {
+            height: var(--keyboard-toolbar-height);
+            background-color: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            display: none;
+            align-items: center;
+            padding: 8px;
+            gap: 4px;
+            overflow-x: auto;
+            overscroll-behavior: contain;
+        }
+        
+        .keyboard-toolbar.visible {
+            display: flex;
+        }
+        
+        .kb-btn {
+            padding: 8px 12px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-family: monospace;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            min-height: var(--touch-target-size);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .kb-btn:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        .kb-btn:active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .kb-group {
+            display: flex;
+            gap: 4px;
+            margin-right: 8px;
+            border-right: 1px solid var(--border-color);
+            padding-right: 8px;
+        }
+        
+        .kb-group:last-child {
+            border-right: none;
+            margin-right: 0;
+        }
+        
+        /* Terminal Panel - Enhanced */
+        .terminal-panel {
+            height: var(--terminal-height);
+            background-color: var(--panel-bg);
+            border-top: 1px solid var(--border-color);
+            display: none;
+            flex-direction: column;
+        }
+        
+        .terminal-panel.visible {
+            display: flex;
+        }
+        
+        .terminal-header {
+            height: 30px;
+            background-color: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 12px;
+        }
+        
+        .terminal-tabs {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .terminal-tab {
+            padding: 4px 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 11px;
+            border-radius: 4px;
+            min-height: var(--touch-target-size);
+        }
+        
+        .terminal-tab.active {
+            background-color: var(--accent-color);
+        }
+        
+        .terminal-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #terminal {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #00ff00;
+            font-family: 'Consolas, Monaco, Courier New', monospace;
+            font-size: 12px;
+            border: none;
+            outline: none;
+            resize: none;
+        }
+        
+        /* AI Assistant - Enhanced */
+        .ai-suggestion {
+            position: absolute;
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .ai-suggestion.visible {
+            display: block;
+        }
+        
+        .ai-suggestion .suggestion-text {
+            color: #888;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        
+        .ai-suggestion .suggestion-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .ai-btn {
+            padding: 6px 12px;
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 10px;
+            border-radius: 4px;
+            min-height: 32px;
+        }
+        
+        /* Status Bar - Enhanced */
+        .status-bar {
+            height: var(--status-bar-height);
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 12px;
+            padding: 4px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .status-left {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .status-right {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .status-item {
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            min-height: var(--touch-target-size);
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-item:hover {
+            text-decoration: underline;
+        }
+        
+        /* Phase 3 Collaborative Indicators */
+        .collaborator-cursor {
+            position: absolute;
+            width: 2px;
+            height: 18px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        .collaborator-selection {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        
+        /* Resize Handles - Enhanced for Touch */
+        .resize-handle {
+            position: absolute;
+            background: transparent;
+            z-index: 10;
+        }
+        
+        .resize-handle.vertical {
+            width: 8px;
+            height: 100%;
+            cursor: col-resize;
+            right: -4px;
+            top: 0;
+        }
+        
+        .resize-handle.horizontal {
+            height: 8px;
+            width: 100%;
+            cursor: row-resize;
+            bottom: -4px;
+            left: 0;
+        }
+        
+        /* Loading & Performance */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 16px;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .hidden { display: none; }
+        
+        /* Phase 3 Performance Optimizations */
+        .virtual-item {
+            height: var(--touch-target-size);
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Haptic Feedback Simulation */
+        .haptic-feedback {
+            animation: haptic 0.1s ease-in-out;
+        }
+        
+        @keyframes haptic {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Dark/Light Theme Support */
+        .theme-light {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f8f8f8;
+            --border-color: #e0e0e0;
+            --text-color: #333333;
+            --panel-bg: #f0f0f0;
+            --hover-bg: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Phase 3 Mobile Navigation -->
+    <div class="mobile-nav">
+        <button onclick="toggleMobileSidebar()" title="Toggle Sidebar">☰</button>
+        <span>T-UI Monaco Editor Phase 3</span>
+        <button onclick="toggleMobileKeyboard()" title="Keyboard Toolbar">⌨️</button>
+    </div>
+    
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileSidebar()"></div>
+    
+    <div class="main-container">
+        <div class="workspace">
+            <!-- Enhanced Sidebar with Cloud Integration -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <button class="sidebar-tab active" data-panel="file-explorer">Files</button>
+                    <button class="sidebar-tab" data-panel="source-control">Git</button>
+                    <button class="sidebar-tab" data-panel="cloud-panel">Cloud</button>
+                    <button class="sidebar-tab" data-panel="lsp-panel">LSP</button>
+                    <button class="sidebar-tab" data-panel="debug-panel">Debug</button>
+                    <button class="sidebar-tab" data-panel="extensions">Extensions</button>
+                </div>
+                
+                <div class="sidebar-content">
+                    <!-- Virtualized File Explorer -->
+                    <div class="file-explorer active" id="file-explorer">
+                        <div class="file-tree-container">
+                            <div class="file-tree" id="fileTree">
+                                <!-- Virtualized content will be injected here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase 3 Cloud Integration Panel -->
+                    <div class="cloud-panel" id="cloud-panel">
+                        <div class="cloud-status">
+                            <div id="cloudStatus">
+                                <span class="status-indicator disconnected"></span>
+                                <span id="cloudStatusText">Disconnected</span>
+                            </div>
+                        </div>
+                        <div class="cloud-actions">
+                            <button class="cloud-action-btn" onclick="connectToGitHub()">Connect GitHub</button>
+                            <button class="cloud-action-btn" onclick="syncProject()" disabled>Sync Project</button>
+                            <button class="cloud-action-btn" onclick="createGist()" disabled>Create Gist</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Source Control -->
+                    <div class="source-control" id="source-control">
+                        <div class="git-status">
+                            <div class="git-branch" id="gitBranch">main</div>
+                            <div id="gitFiles">
+                                <!-- Git files will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase 3 LSP (Language Server Protocol) Panel -->
+                    <div class="lsp-panel" id="lsp-panel">
+                        <div style="font-size: 12px; padding: 16px;">
+                            <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 12px;">Language Server Protocol</div>
+                            <div id="lspStatus" style="margin-bottom: 16px;">
+                                <span class="status-indicator disconnected"></span>
+                                <span id="lspStatusText">Disconnected</span>
+                            </div>
+                            <div class="lsp-actions">
+                                <button class="cloud-action-btn" onclick="initializeLSP()">Initialize LSP</button>
+                                <button class="cloud-action-btn" onclick="restartLSP()">Restart Server</button>
+                                <button class="cloud-action-btn" onclick="toggleDiagnostics()">Toggle Diagnostics</button>
+                            </div>
+                            <div id="lspDiagnostics" style="margin-top: 16px; max-height: 200px; overflow-y: auto;">
+                                <div style="font-weight: bold; margin-bottom: 8px;">Diagnostics</div>
+                                <div id="diagnosticsList" style="color: #888;">No diagnostics available</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phase 3 Debug Panel -->
+                    <div class="debug-panel" id="debug-panel">
+                        <div style="font-size: 12px; padding: 16px;">
+                            <div style="font-weight: bold; color: var(--accent-color); margin-bottom: 12px;">Debug Console</div>
+                            <div id="debugStatus" style="margin-bottom: 16px;">
+                                <span class="status-indicator disconnected"></span>
+                                <span id="debugStatusText">Not Debugging</span>
+                            </div>
+                            <div class="debug-toolbar" style="display: flex; gap: 4px; margin-bottom: 16px;">
+                                <button class="kb-btn" onclick="debugCommand('start')">Start</button>
+                                <button class="kb-btn" onclick="debugCommand('continue')">Continue</button>
+                                <button class="kb-btn" onclick="debugCommand('stepOver')">Step Over</button>
+                                <button class="kb-btn" onclick="debugCommand('stop')">Stop</button>
+                            </div>
+                            <div class="breakpoints-section" style="margin-bottom: 16px;">
+                                <div style="font-weight: bold; margin-bottom: 8px;">Breakpoints</div>
+                                <div id="breakpointsList" style="color: #888;">No breakpoints set</div>
+                            </div>
+                            <div class="variables-section">
+                                <div style="font-weight: bold; margin-bottom: 8px;">Variables</div>
+                                <div id="variablesList" style="color: #888;">No variables in scope</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Extensions -->
+                    <div class="extensions" id="extensions">
+                        <div style="font-size: 12px; color: #888; padding: 16px;">
+                            <div>Phase 3 Extensions Marketplace</div>
+                            <div style="margin-top: 8px;">Coming soon...</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="resize-handle vertical" data-resize="sidebar"></div>
+            </div>
+            
+            <!-- Main Editor Area -->
+            <div class="editor-area">
+                <div class="editor-tabs" id="editorTabs">
+                    <button class="editor-tab active" data-tab="welcome">
+                        <span>Welcome</span>
+                        <span class="tab-close" onclick="closeTab('welcome')">×</span>
+                    </button>
+                </div>
+                
+                <div class="editor-container">
+                    <div id="loading" class="loading">
+                        <div>Loading T-UI Monaco Editor Phase 3...</div>
+                    </div>
+                    
+                    <!-- Phase 3 Visual Diff Container -->
+                    <div class="diff-container" id="diffContainer">
+                        <div class="diff-panel">
+                            <div class="diff-header">Original</div>
+                            <div class="diff-content" id="diffOriginal"></div>
+                        </div>
+                        <div class="diff-panel">
+                            <div class="diff-header">Modified</div>
+                            <div class="diff-content" id="diffModified"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="editor" style="width: 100%; height: 100%;"></div>
+                    
+                    <div class="resize-handle horizontal" data-resize="terminal"></div>
+                </div>
+            </div>
+            
+            <!-- Terminal Panel -->
+            <div class="terminal-panel" id="terminalPanel">
+                <div class="terminal-header">
+                    <div class="terminal-tabs">
+                        <button class="terminal-tab active">Terminal 1</button>
+                    </div>
+                </div>
+                <div class="terminal-content">
+                    <textarea id="terminal" placeholder="Terminal ready. Type commands here..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Phase 3 Mobile Keyboard Toolbar -->
+        <div class="keyboard-toolbar" id="keyboardToolbar">
+            <div class="kb-group">
+                <button class="kb-btn" onclick="insertText('{')">{</button>
+                <button class="kb-btn" onclick="insertText('}')">}</button>
+                <button class="kb-btn" onclick="insertText('(')">(</button>
+                <button class="kb-btn" onclick="insertText(')')">)</button>
+                <button class="kb-btn" onclick="insertText('[')">[</button>
+                <button class="kb-btn" onclick="insertText(']')">]</button>
+            </div>
+            <div class="kb-group">
+                <button class="kb-btn" onclick="insertText(';')">;</button>
+                <button class="kb-btn" onclick="insertText(':')">:</button>
+                <button class="kb-btn" onclick="insertText('\"')">"</button>
+                <button class="kb-btn" onclick="insertText('\'')">'</button>
+                <button class="kb-btn" onclick="insertText('`')">`</button>
+            </div>
+            <div class="kb-group">
+                <button class="kb-btn" onclick="insertText('=')">=</button>
+                <button class="kb-btn" onclick="insertText('+')">+</button>
+                <button class="kb-btn" onclick="insertText('-')">-</button>
+                <button class="kb-btn" onclick="insertText('*')">*</button>
+                <button class="kb-btn" onclick="insertText('/')">/</button>
+            </div>
+            <div class="kb-group">
+                <button class="kb-btn" onclick="executeCommand('Ctrl+S')">Save</button>
+                <button class="kb-btn" onclick="executeCommand('Ctrl+F')">Find</button>
+                <button class="kb-btn" onclick="executeCommand('Ctrl+Z')">Undo</button>
+            </div>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="language">Plain Text</span>
+                <span id="encoding">UTF-8</span>
+                <span id="eol">LF</span>
+                <span id="gitStatus" class="status-item" onclick="showGitPanel()">📁 main</span>
+                <span id="cloudStatusMini" class="status-item" onclick="showCloudPanel()">☁️ Offline</span>
+                <span id="lspStatusMini" class="status-item" onclick="showLSPPanel()">🔌 LSP</span>
+                <span id="debugStatusMini" class="status-item" onclick="showDebugPanel()">🐛 Debug</span>
+            </div>
+            <div class="status-right">
+                <span id="position">Line 1, Col 1</span>
+                <span id="selection">Sel: 0</span>
+                <span id="mode">INSERT</span>
+                <span class="status-item" onclick="toggleTerminal()">Terminal</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Suggestion -->
+    <div class="ai-suggestion" id="aiSuggestion">
+        <div class="suggestion-text" id="suggestionText">AI is analyzing your code...</div>
+        <div class="suggestion-actions">
+            <button class="ai-btn" onclick="acceptSuggestion()">Accept</button>
+            <button class="ai-btn" onclick="dismissSuggestion()">Dismiss</button>
+        </div>
+    </div>
+
+    <!-- Monaco Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/yjs@13.6.8/dist/yjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/y-websocket@1.5.4/dist/y-websocket.min.js"></script>
+    
+    <script>
+        // Phase 3 Global State
+        let editor = null;
+        let terminal = null;
+        let fitAddon = null;
+        let currentFile = null;
+        let openTabs = new Map();
+        let isDirty = false;
+        let currentGitBranch = 'main';
+        let fileSystem = new Map();
+        let aiEnabled = true;
+        let isMobile = window.innerWidth <= 768;
+        let keyboardToolbarVisible = false;
+        
+        // Phase 3 Performance State
+        let virtualizationEnabled = true;
+        let fileTreeVirtualItems = [];
+        let fileTreeVisibleRange = { start: 0, end: 0 };
+        
+        // Phase 3 Cloud State
+        let cloudConnected = false;
+        let githubToken = null;
+        let websocketConnection = null;
+        
+        // Phase 3 Collaborative State
+        let collaborativeMode = false;
+        let ydoc = null;
+        let provider = null;
+        let awareness = null;
+        
+        // Phase 3 Plugin System Enhanced
+        window.TUIPlugins = {
+            extensions: new Map(),
+            registerExtension(extension) {
+                this.extensions.set(extension.name, extension);
+                this.loadExtensionUI(extension);
+            },
+            loadExtensionUI(extension) {
+                if (extension.ui && extension.ui.sidebar) {
+                    const sidebar = document.querySelector('.sidebar-content');
+                    const panel = document.createElement('div');
+                    panel.className = `extension-panel ${extension.name}`;
+                    panel.innerHTML = extension.ui.sidebar;
+                    sidebar.appendChild(panel);
+                }
+            },
+            executeCommand(command, args) {
+                for (let [name, ext] of this.extensions) {
+                    if (ext.commands && ext.commands[command]) {
+                        return ext.commands[command](args);
+                    }
+                }
+                return null;
+            }
+        };
+        
+        // Phase 3 Web Worker for Performance
+        const performanceWorker = new Worker(URL.createObjectURL(new Blob([`
+            // Performance optimization worker
+            self.onmessage = function(e) {
+                const { type, data } = e.data;
+                
+                switch (type) {
+                    case 'VIRTUALIZE_FILE_TREE':
+                        // Virtualize large file trees for performance
+                        const { files, visibleRange } = data;
+                        const virtualItems = [];
+                        
+                        for (let i = visibleRange.start; i <= visibleRange.end; i++) {
+                            if (files[i]) {
+                                virtualItems.push(files[i]);
+                            }
+                        }
+                        
+                        self.postMessage({
+                            type: 'VIRTUALIZE_RESULT',
+                            data: { virtualItems }
+                        });
+                        break;
+                        
+                    case 'SYNTAX_HIGHLIGHT':
+                        // Offload syntax highlighting to worker
+                        const { code, language } = data;
+                        // Simplified highlighting - in real implementation would use actual syntax highlighting
+                        const highlighted = code.replace(/\\b(function|const|let|var|if|else|for|while)\\b/g, '<span class="keyword">$1</span>');
+                        
+                        self.postMessage({
+                            type: 'HIGHLIGHT_RESULT',
+                            data: { highlighted }
+                        });
+                        break;
+                }
+            };
+        `], { type: 'application/javascript' })));
+        
+        performanceWorker.onmessage = function(e) {
+            const { type, data } = e.data;
+            
+            switch (type) {
+                case 'VIRTUALIZE_RESULT':
+                    renderVirtualizedFileTree(data.virtualItems);
+                    break;
+                case 'HIGHLIGHT_RESULT':
+                    // Handle highlighted code if needed
+                    break;
+            }
+        };
+        
+        // Initialize Phase 3 Monaco Editor
+        require.config({ 
+            paths: { 
+                'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' 
+            } 
+        });
+        
+        require(['vs/editor/editor.main'], function () {
+            initializePhase3Editor();
+        });
+        
+        function initializePhase3Editor() {
+            // Create editor with Phase 3 enhancements
+            editor = monaco.editor.create(document.getElementById('editor'), {
+                value: getWelcomeContent(),
+                language: 'markdown',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                fontSize: 14,
+                fontFamily: 'Consolas, Monaco, Courier New, monospace',
+                fontLigatures: true,
+                lineNumbers: 'on',
+                minimap: { enabled: !isMobile }, // Disable minimap on mobile for performance
+                scrollBeyondLastLine: false,
+                wordWrap: isMobile ? 'on' : 'off', // Auto-wrap on mobile
+                tabSize: 4,
+                insertSpaces: true,
+                folding: true,
+                foldingHighlight: true,
+                bracketPairColorization: { enabled: true },
+                guides: {
+                    bracketPairs: true,
+                    indentation: true
+                },
+                suggestOnTriggerCharacters: true,
+                acceptSuggestionOnEnter: 'on',
+                quickSuggestions: true,
+                parameterHints: { enabled: true },
+                hover: { enabled: true },
+                lightbulb: { enabled: true },
+                renderWhitespace: isMobile ? 'selection' : 'boundary',
+                renderControlCharacters: false,
+                cursorBlinking: 'smooth',
+                smoothScrolling: !isMobile // Disable smooth scrolling on mobile
+            });
+            
+            // Initialize Phase 3 Terminal with enhanced features
+            initializePhase3Terminal();
+            
+            // Setup Phase 3 event listeners
+            setupPhase3EventListeners();
+            
+            // Initialize Phase 3 file system with virtualization
+            initializePhase3FileSystem();
+            
+            // Setup Phase 3 cloud integration
+            initializeCloudIntegration();
+            
+            // Setup Phase 3 collaborative features
+            initializeCollaborativeEditing();
+            
+            // Update UI
+            updateStatusBar();
+            
+            // Hide loading
+            document.getElementById('loading').classList.add('hidden');
+            
+            // Focus editor
+            editor.focus();
+        }
+        
+        function getWelcomeContent() {
+            return `# Welcome to T-UI Monaco Editor Phase 3
+
+## 🚀 Phase 3 New Features
+
+### ☁️ Cloud Integration
+- GitHub/GitLab synchronization
+- Gist creation and sharing
+- Real-time collaboration
+- OAuth authentication
+
+### 📱 Mobile-First Design
+- Touch-optimized interface
+- Adaptive keyboard toolbar
+- Responsive layout
+- Performance optimizations
+
+### 🔄 Real-Time Collaboration
+- Multi-user editing
+- Live cursor tracking
+- Conflict resolution
+- Session management
+
+### 🔍 Advanced Debugging
+- Breakpoint management
+- Variable inspection
+- Debug toolbar
+- Step-by-step execution
+
+### ⚡ Performance Optimizations
+- Virtualized file tree
+- Web Workers for heavy tasks
+- Memory management
+- 60fps scrolling
+
+### 🎨 Visual Enhancements
+- Diff viewer
+- Enhanced themes
+- Better mobile UX
+- Haptic feedback simulation
+
+## 🎯 Quick Start
+
+1. **Mobile Mode**: Use the adaptive keyboard toolbar
+2. **Cloud Sync**: Connect to GitHub in the Cloud panel
+3. **Collaboration**: Share session codes with team members
+4. **Performance**: Virtualized views handle large projects smoothly
+
+---
+
+**Ready to experience the future of mobile code editing!**
+`;
+        }
+        
+        function initializePhase3Terminal() {
+            terminal = new Terminal({
+                cursorBlink: true,
+                fontSize: 12,
+                fontFamily: 'Consolas, Monaco, Courier New, monospace',
+                theme: {
+                    background: '#000000'
+                },
+                cols: 80,
+                rows: 24
+            });
+            
+            fitAddon = new FitAddon();
+            terminal.loadAddon(fitAddon);
+            
+            terminal.open(document.getElementById('terminal'));
+            fitAddon.fit();
+            
+            // Enhanced terminal input handling
+            let currentLine = '';
+            terminal.onData((data) => {
+                const code = data.charCodeAt(0);
+                
+                if (code === 13) {
+                    terminal.write('\r\n');
+                    executeTerminalCommand(currentLine);
+                    currentLine = '';
+                } else if (code === 127) {
+                    if (currentLine.length > 0) {
+                        currentLine = currentLine.slice(0, -1);
+                        terminal.write('\b \b');
+                    }
+                } else if (code >= 32) {
+                    currentLine += data;
+                    terminal.write(data);
+                }
+            });
+            
+            terminal.writeln('\x1b[32mT-UI Terminal Phase 3 Ready\x1b[0m');
+            terminal.write('$ ');
+        }
+        
+        function setupPhase3EventListeners() {
+            // Enhanced editor content change with performance optimization
+            editor.onDidChangeModelContent(() => {
+                const newContent = editor.getValue();
+                if (newContent !== openTabs.get(currentFile)?.content) {
+                    isDirty = true;
+                    markTabDirty(currentFile, true);
+                    
+                    // Notify Android
+                    if (window.Android && window.Android.onContentChanged) {
+                        window.Android.onContentChanged(newContent);
+                    }
+                    
+                    // Trigger collaborative sync if enabled
+                    if (collaborativeMode && ydoc) {
+                        syncCollaborativeContent(newContent);
+                    }
+                }
+                updateStatusBar();
+                
+                // AI suggestions with debouncing
+                if (aiEnabled) {
+                    triggerAISuggestionDebounced();
+                }
+            });
+            
+            // Cursor and selection changes
+            editor.onDidChangeCursorPosition(updateStatusBar);
+            editor.onDidChangeCursorSelection(updateStatusBar);
+            
+            // Enhanced keyboard shortcuts for mobile
+            document.addEventListener('keydown', handlePhase3KeyboardShortcuts);
+            
+            // Touch gestures for mobile
+            setupTouchGestures();
+            
+            // Virtual scrolling for file tree
+            setupVirtualScrolling();
+            
+            // Phase 3 sidebar tabs
+            document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchSidebarTab(tab.dataset.panel));
+            });
+            
+            // Enhanced resize handles
+            document.querySelectorAll('.resize-handle').forEach(handle => {
+                setupResizeHandle(handle);
+            });
+            
+            // Phase 3: Setup breakpoint handling
+            setupBreakpointHandling();
+        }
+        
+        function handlePhase3KeyboardShortcuts(e) {
+            const { ctrlKey, metaKey, key } = e;
+            const cmdKey = ctrlKey || metaKey;
+            
+            if (cmdKey && key === 's') {
+                e.preventDefault();
+                hapticFeedback();
+                saveCurrentFile();
+            } else if (cmdKey && key === 'f') {
+                e.preventDefault();
+                hapticFeedback();
+                toggleFindWidget();
+            } else if (cmdKey && key === '`') {
+                e.preventDefault();
+                hapticFeedback();
+                toggleTerminal();
+            } else if (cmdKey && key === 'b') {
+                e.preventDefault();
+                hapticFeedback();
+                if (isMobile) {
+                    toggleMobileSidebar();
+                } else {
+                    toggleSidebar();
+                }
+            } else if (cmdKey && key === 'p' && e.shiftKey) {
+                e.preventDefault();
+                hapticFeedback();
+                showCommandPalette();
+            } else if (key === 'F12') {
+                e.preventDefault();
+                hapticFeedback();
+                goToDefinition();
+            } else if (isMobile && key === ' ') {
+                // Show keyboard toolbar on mobile space bar
+                e.preventDefault();
+                toggleMobileKeyboard();
+            }
+        }
+        
+        function setupTouchGestures() {
+            if (!isMobile) return;
+            
+            let touchStartX = 0;
+            let touchStartY = 0;
+            
+            document.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
+            
+            document.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                
+                // Two-finger tap for undo
+                if (e.touches.length === 2) {
+                    e.preventDefault();
+                    editor.trigger('keyboard', 'undo', null);
+                    hapticFeedback();
+                }
+                
+                // Three-finger tap for redo
+                else if (e.touches.length === 3) {
+                    e.preventDefault();
+                    editor.trigger('keyboard', 'redo', null);
+                    hapticFeedback();
+                }
+                
+                // Swipe gestures for sidebar
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                    if (deltaX > 0 && touchStartX < 50) {
+                        // Swipe right from edge - open sidebar
+                        toggleMobileSidebar();
+                    }
+                }
+            });
+        }
+        
+        function setupBreakpointHandling() {
+            if (!editor) return;
+            
+            // Add click handler to editor gutter for breakpoint toggling
+            editor.onMouseDown(function(e) {
+                if (e.target.type === monaco.editor.MouseTargetType.GUTTER_GLYPH_MARGIN) {
+                    const lineNumber = e.target.position.lineNumber;
+                    toggleBreakpoint(lineNumber);
+                    hapticFeedback();
+                }
+            });
+        }
+        
+        function toggleBreakpoint(lineNumber) {
+            const filePath = currentFile || 'untitled';
+            
+            // Check if breakpoint already exists
+            const existingDecorations = editor.getLineDecorations(lineNumber);
+            const hasBreakpoint = existingDecorations && existingDecorations.some(dec => 
+                dec.options.className === 'breakpoint-indicator'
+            );
+            
+            if (hasBreakpoint) {
+                // Remove breakpoint
+                removeBreakpoint(lineNumber);
+                if (window.Android && window.Android.onBreakpointToggle) {
+                    window.Android.onBreakpointToggle(filePath, lineNumber, false);
+                }
+                showStatusMessage('Breakpoint removed at line ' + lineNumber);
+            } else {
+                // Add breakpoint
+                addBreakpoint(lineNumber);
+                if (window.Android && window.Android.onBreakpointToggle) {
+                    window.Android.onBreakpointToggle(filePath, lineNumber, true);
+                }
+                showStatusMessage('Breakpoint set at line ' + lineNumber);
+            }
+            
+            updateBreakpointsList();
+        }
+        
+        function addBreakpoint(lineNumber) {
+            const decorationOptions = {
+                isWholeLine: false,
+                linesDecorationsClassName: 'breakpoint-indicator',
+                glyphMarginClassName: 'breakpoint-indicator',
+                glyphMarginHoverMessage: { value: 'Breakpoint - Click to remove' }
+            };
+            
+            const range = new monaco.Range(lineNumber, 1, lineNumber, 1);
+            editor.deltaDecorations([], [{
+                range: range,
+                options: decorationOptions
+            }]);
+        }
+        
+        function removeBreakpoint(lineNumber) {
+            const decorations = editor.getLineDecorations(lineNumber);
+            if (decorations) {
+                editor.deltaDecorations(decorations, []);
+            }
+        }
+        
+        function updateBreakpointsList() {
+            const breakpointsList = document.getElementById('breakpointsList');
+            if (!breakpointsList || !editor) return;
+            
+            // This is a simplified implementation - in a real app you'd maintain
+            // a proper list of breakpoints across all files
+            const allDecorations = [];
+            for (let i = 1; i <= editor.getModel().getLineCount(); i++) {
+                const decorations = editor.getLineDecorations(i);
+                if (decorations && decorations.some(dec => 
+                    dec.options.className === 'breakpoint-indicator')) {
+                    allDecorations.push(i);
+                }
+            }
+            
+            if (allDecorations.length === 0) {
+                breakpointsList.textContent = 'No breakpoints set';
+            } else {
+                breakpointsList.innerHTML = allDecorations.map(line => 
+                    `<div style="color: #cb2431; cursor: pointer;" onclick="toggleBreakpoint(${line})">
+                        Line ${line}
+                    </div>`
+                ).join('');
+            }
+        }
+        
+        function setupVirtualScrolling() {
+            const fileTreeContainer = document.querySelector('.file-tree-container');
+            if (!fileTreeContainer) return;
+            
+            fileTreeContainer.addEventListener('scroll', () => {
+                if (!virtualizationEnabled) return;
+                
+                const scrollTop = fileTreeContainer.scrollTop;
+                const containerHeight = fileTreeContainer.clientHeight;
+                const itemHeight = 48; // Height of each file item
+                
+                const startIndex = Math.floor(scrollTop / itemHeight);
+                const endIndex = Math.min(
+                    startIndex + Math.ceil(containerHeight / itemHeight) + 5,
+                    fileTreeVirtualItems.length - 1
+                );
+                
+                fileTreeVisibleRange = { start: startIndex, end: endIndex };
+                
+                // Request virtualization from worker
+                performanceWorker.postMessage({
+                    type: 'VIRTUALIZE_FILE_TREE',
+                    data: {
+                        files: fileTreeVirtualItems,
+                        visibleRange: fileTreeVisibleRange
+                    }
+                });
+            });
+        }
+        
+        function renderVirtualizedFileTree(virtualItems) {
+            const fileTree = document.getElementById('fileTree');
+            fileTree.innerHTML = '';
+            
+            virtualItems.forEach(item => {
+                const fileElement = createFileTreeElement(item.path, item);
+                fileTree.appendChild(fileElement);
+            });
+        }
+        
+        function initializePhase3FileSystem() {
+            // Initialize with performance-optimized sample files
+            const sampleFiles = [
+                { path: 'src/', type: 'folder', language: 'folder' },
+                { path: 'src/main.js', type: 'file', language: 'javascript', content: '// Main application file\nfunction main() {\n    console.log("Hello, T-UI Phase 3!");\n}' },
+                { path: 'src/utils.js', type: 'file', language: 'javascript', content: '// Utility functions\nconst utils = {\n    formatDate: (date) => date.toISOString(),\n    clamp: (value, min, max) => Math.min(Math.max(value, min), max)\n};' },
+                { path: 'src/components/', type: 'folder', language: 'folder' },
+                { path: 'src/components/Button.js', type: 'file', language: 'javascript', content: '// Button component\nclass Button {\n    constructor(text) {\n        this.text = text;\n    }\n    \n    render() {\n        return `<button>${this.text}</button>`;\n    }\n}' },
+                { path: 'src/components/Input.js', type: 'file', language: 'javascript', content: '// Input component\nclass Input {\n    constructor(type = "text") {\n        this.type = type;\n        this.value = "";\n    }\n    \n    render() {\n        return `<input type="${this.type}" value="${this.value}">`;\n    }\n}' },
+                { path: 'src/styles/', type: 'folder', language: 'folder' },
+                { path: 'src/styles/main.css', type: 'file', language: 'css', content: '/* Main styles */\nbody {\n    font-family: -apple-system, BlinkMacSystemFont, sans-serif;\n    margin: 0;\n    padding: 0;\n}\n\n.container {\n    max-width: 1200px;\n    margin: 0 auto;\n    padding: 20px;\n}' },
+                { path: 'package.json', type: 'file', language: 'json', content: '{\n  "name": "tui-monaco-phase3",\n  "version": "1.0.0",\n  "description": "T-UI Monaco Editor Phase 3",\n  "main": "src/main.js",\n  "scripts": {\n    "start": "node src/main.js",\n    "dev": "nodemon src/main.js"\n  },\n  "dependencies": {\n    "express": "^4.18.0"\n  }\n}' },
+                { path: 'README.md', type: 'file', language: 'markdown', content: '# T-UI Monaco Editor Phase 3\n\nEnhanced mobile-first code editor with collaboration features.\n\n## Features\n\n- ☁️ Cloud Integration\n- 📱 Mobile-First Design  \n- 🔄 Real-Time Collaboration\n- ⚡ Performance Optimizations\n\n## Usage\n\n1. Connect to GitHub for cloud sync\n2. Use mobile keyboard toolbar for better typing\n3. Share collaboration sessions with team members' }
+            ];
+            
+            // Populate file system
+            sampleFiles.forEach(file => {
+                fileSystem.set(file.path, {
+                    content: file.content || '',
+                    type: file.type,
+                    language: file.language,
+                    modified: false,
+                    gitStatus: null,
+                    lastModified: Date.now()
+                });
+            });
+            
+            // Prepare for virtualization
+            fileTreeVirtualItems = Array.from(fileSystem.keys());
+            
+            // Render initial file tree
+            renderFileTree();
+        }
+        
+        function initializeCloudIntegration() {
+            // Initialize cloud status
+            updateCloudStatus(false);
+            
+            // Check for stored GitHub token
+            const storedToken = localStorage.getItem('github_token');
+            if (storedToken) {
+                githubToken = storedToken;
+                connectToGitHub();
+            }
+        }
+        
+        function initializeCollaborativeEditing() {
+            // Initialize Yjs for collaborative editing
+            ydoc = new Y.Doc();
+            
+            // Setup awareness for cursor tracking
+            awareness = new yjs.awarenessProtocol.Awareness(ydoc);
+            
+            // Setup WebSocket provider (would connect to actual server in production)
+            // provider = new ywebsocket.WebsocketProvider('wss://localhost:1234', 'room-name', ydoc);
+        }
+        
+        // Phase 3 Mobile Functions
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('visible');
+            hapticFeedback();
+        }
+        
+        function toggleMobileKeyboard() {
+            const keyboard = document.getElementById('keyboardToolbar');
+            keyboardToolbarVisible = !keyboardToolbarVisible;
+            keyboard.classList.toggle('visible');
+            hapticFeedback();
+        }
+        
+        function hapticFeedback() {
+            // Simulate haptic feedback
+            document.body.classList.add('haptic-feedback');
+            setTimeout(() => {
+                document.body.classList.remove('haptic-feedback');
+            }, 100);
+        }
+        
+        function insertText(text) {
+            if (editor) {
+                const selection = editor.getSelection();
+                editor.executeEdits('', [{
+                    range: selection,
+                    text: text
+                }]);
+                editor.focus();
+                hapticFeedback();
+            }
+        }
+        
+        function executeCommand(command) {
+            switch (command) {
+                case 'Ctrl+S':
+                    saveCurrentFile();
+                    break;
+                case 'Ctrl+F':
+                    toggleFindWidget();
+                    break;
+                case 'Ctrl+Z':
+                    editor.trigger('keyboard', 'undo', null);
+                    break;
+                case 'Ctrl+Y':
+                    editor.trigger('keyboard', 'redo', null);
+                    break;
+            }
+        }
+        
+        // Phase 3 Cloud Integration Functions
+        function connectToGitHub() {
+            // In a real implementation, this would open OAuth flow
+            // For demo purposes, we'll simulate connection
+            setTimeout(() => {
+                githubToken = 'demo_token_' + Date.now();
+                localStorage.setItem('github_token', githubToken);
+                cloudConnected = true;
+                updateCloudStatus(true);
+                enableCloudActions();
+                showStatusMessage('Connected to GitHub');
+                hapticFeedback();
+            }, 1000);
+        }
+        
+        function updateCloudStatus(connected) {
+            const statusIndicator = document.querySelector('.status-indicator');
+            const statusText = document.getElementById('cloudStatusText');
+            const cloudStatusMini = document.getElementById('cloudStatusMini');
+            
+            if (connected) {
+                statusIndicator.className = 'status-indicator connected';
+                statusText.textContent = 'Connected';
+                cloudStatusMini.textContent = '☁️ Online';
+                cloudStatusMini.style.color = '#28a745';
+            } else {
+                statusIndicator.className = 'status-indicator disconnected';
+                statusText.textContent = 'Disconnected';
+                cloudStatusMini.textContent = '☁️ Offline';
+                cloudStatusMini.style.color = '#cb2431';
+            }
+        }
+        
+        function enableCloudActions() {
+            const syncBtn = document.querySelector('button[onclick="syncProject()"]');
+            const gistBtn = document.querySelector('button[onclick="createGist()"]');
+            
+            if (syncBtn) syncBtn.disabled = false;
+            if (gistBtn) gistBtn.disabled = false;
+        }
+        
+        function syncProject() {
+            showStatusMessage('Syncing project to GitHub...');
+            setTimeout(() => {
+                showStatusMessage('Project synced successfully');
+                hapticFeedback();
+            }, 2000);
+        }
+        
+        function createGist() {
+            const content = editor.getValue();
+            showStatusMessage('Creating Gist...');
+            setTimeout(() => {
+                showStatusMessage('Gist created and shared');
+                hapticFeedback();
+            }, 1500);
+        }
+        
+        function showCloudPanel() {
+            switchSidebarTab('cloud-panel');
+            if (isMobile) {
+                toggleMobileSidebar();
+            }
+        }
+        
+        // Phase 3 LSP Functions
+        function showLSPPanel() {
+            switchSidebarTab('lsp-panel');
+            if (isMobile) {
+                toggleMobileSidebar();
+            }
+        }
+        
+        function showDebugPanel() {
+            switchSidebarTab('debug-panel');
+            if (isMobile) {
+                toggleMobileSidebar();
+            }
+        }
+        
+        function initializeLSP() {
+            if (window.Android && window.Android.onLSPRequest) {
+                const params = {
+                    rootUri: 'file:///path/to/project',
+                    capabilities: {
+                        textDocument: {
+                            completion: { completionItem: { snippetSupport: true } },
+                            definition: true,
+                            hover: true,
+                            references: true
+                        }
+                    }
+                };
+                window.Android.onLSPRequest('initialize', JSON.stringify(params));
+                updateLSPStatus('connected');
+                showStatusMessage('LSP Server initialized');
+                hapticFeedback();
+            }
+        }
+        
+        function restartLSP() {
+            if (window.Android && window.Android.onLSPRequest) {
+                window.Android.onLSPRequest('shutdown', '{}');
+                setTimeout(() => {
+                    initializeLSP();
+                }, 1000);
+            }
+        }
+        
+        function toggleDiagnostics() {
+            if (window.Android && window.Android.onDiagnosticsRequest) {
+                const documentUri = 'file://' + (currentFile || 'untitled');
+                window.Android.onDiagnosticsRequest(documentUri);
+            }
+        }
+        
+        function updateLSPStatus(status) {
+            const statusIndicator = document.querySelector('#lsp-panel .status-indicator');
+            const statusText = document.getElementById('lspStatusText');
+            
+            if (status === 'connected') {
+                statusIndicator.className = 'status-indicator connected';
+                statusText.textContent = 'Connected';
+            } else {
+                statusIndicator.className = 'status-indicator disconnected';
+                statusText.textContent = 'Disconnected';
+            }
+        }
+        
+        // Phase 3 Debug Functions
+        function debugCommand(command, args = '') {
+            if (window.Android && window.Android.onDebugCommand) {
+                window.Android.onDebugCommand(command, args);
+                
+                switch (command) {
+                    case 'start':
+                        updateDebugStatus('running');
+                        showStatusMessage('Debug session started');
+                        break;
+                    case 'continue':
+                        showStatusMessage('Continuing execution');
+                        break;
+                    case 'stepOver':
+                        showStatusMessage('Stepping over');
+                        break;
+                    case 'stop':
+                        updateDebugStatus('stopped');
+                        showStatusMessage('Debug session stopped');
+                        break;
+                }
+                hapticFeedback();
+            }
+        }
+        
+        function updateDebugStatus(status) {
+            const statusIndicator = document.querySelector('#debug-panel .status-indicator');
+            const statusText = document.getElementById('debugStatusText');
+            
+            if (status === 'running') {
+                statusIndicator.className = 'status-indicator connected';
+                statusText.textContent = 'Debugging';
+            } else {
+                statusIndicator.className = 'status-indicator disconnected';
+                statusText.textContent = 'Not Debugging';
+            }
+        }
+        
+        // LSP Response Handlers (called from Android)
+        window.onLSPCompletionResponse = function(data) {
+            try {
+                const response = JSON.parse(data);
+                if (response.items && editor) {
+                    // Register completion items with Monaco
+                    const provider = {
+                        provideCompletionItems: function(model, position) {
+                            return {
+                                suggestions: response.items.map(item => ({
+                                    label: item.label,
+                                    kind: item.kind,
+                                    insertText: item.insertText,
+                                    insertTextFormat: item.insertTextFormat
+                                }))
+                            };
+                        }
+                    };
+                    monaco.languages.registerCompletionItemProvider('javascript', provider);
+                }
+            } catch (e) {
+                console.error('Error handling LSP completion response:', e);
+            }
+        };
+        
+        window.onLSPDefinitionResponse = function(data) {
+            try {
+                const response = JSON.parse(data);
+                if (response && editor) {
+                    // Handle definition response
+                    if (response.length > 0) {
+                        const definition = response[0];
+                        const range = definition.range;
+                        const position = new monaco.Position(
+                            range.start.line + 1,
+                            range.start.character + 1
+                        );
+                        editor.revealPositionInCenter(position);
+                    }
+                }
+            } catch (e) {
+                console.error('Error handling LSP definition response:', e);
+            }
+        };
+        
+        window.onLSPHoverResponse = function(data) {
+            try {
+                const response = JSON.parse(data);
+                if (response && editor) {
+                    // Show hover tooltip
+                    const position = editor.getPosition();
+                    editor.trigger('mouse', 'editor.action.showHover', {
+                        hover: response.contents,
+                        range: response.range
+                    });
+                }
+            } catch (e) {
+                console.error('Error handling LSP hover response:', e);
+            }
+        };
+        
+        window.onLSPDiagnosticsResponse = function(data) {
+            try {
+                const diagnostics = JSON.parse(data);
+                const diagnosticsList = document.getElementById('diagnosticsList');
+                
+                if (diagnostics.length === 0) {
+                    diagnosticsList.textContent = 'No diagnostics available';
+                } else {
+                    diagnosticsList.innerHTML = diagnostics.map(diag => 
+                        `<div style="color: ${diag.severity === 1 ? '#cb2431' : '#d0990b'}; margin-bottom: 4px;">
+                            Line ${diag.range.start.line + 1}: ${diag.message}
+                        </div>`
+                    ).join('');
+                }
+            } catch (e) {
+                console.error('Error handling LSP diagnostics response:', e);
+            }
+        };
+        
+        // Debug Response Handlers (called from Android)
+        window.onDebugStatusChanged = function(data) {
+            try {
+                const response = JSON.parse(data);
+                updateDebugStatus(response.status);
+            } catch (e) {
+                console.error('Error handling debug status response:', e);
+            }
+        };
+        
+        window.onDebugStep = function(data) {
+            try {
+                const response = JSON.parse(data);
+                // Highlight the current execution line
+                if (response.line !== undefined && editor) {
+                    highlightDebugLine(response.line);
+                }
+            } catch (e) {
+                console.error('Error handling debug step response:', e);
+            }
+        };
+        
+        window.onVariableWatchUpdate = function(data) {
+            try {
+                const watch = JSON.parse(data);
+                const variablesList = document.getElementById('variablesList');
+                
+                if (variablesList) {
+                    variablesList.innerHTML = `
+                        <div class="variable-item">
+                            <span class="variable-name">${watch.variableName}</span>
+                            <span class="variable-value">${watch.value}</span>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                console.error('Error handling variable watch update:', e);
+            }
+        };
+        
+        function highlightDebugLine(lineNumber) {
+            if (!editor) return;
+            
+            // Remove previous debug highlights
+            const decorations = editor.getLineDecorations(lineNumber);
+            if (decorations) {
+                editor.deltaDecorations(decorations, []);
+            }
+            
+            // Add debug line highlight
+            const decorationOptions = {
+                isWholeLine: true,
+                className: 'debug-line-highlight'
+            };
+            
+            const range = new monaco.Range(lineNumber, 1, lineNumber, 1);
+            editor.deltaDecorations([], [{
+                range: range,
+                options: decorationOptions
+            }]);
+        }
+        
+        // Phase 3 Collaborative Functions
+        function startCollaboration() {
+            collaborativeMode = !collaborativeMode;
+            if (collaborativeMode) {
+                // In real implementation, would create/join room
+                showStatusMessage('Collaboration mode enabled');
+            } else {
+                showStatusMessage('Collaboration mode disabled');
+            }
+            hapticFeedback();
+        }
+        
+        function syncCollaborativeContent(content) {
+            // Sync content to all connected clients
+            if (ydoc && awareness) {
+                // Update shared text document
+                // This would sync through the WebSocket provider
+            }
+        }
+        
+        // Enhanced UI Functions
+        function switchSidebarTab(panelName) {
+            // Update tab states
+            document.querySelectorAll('.sidebar-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.panel === panelName);
+            });
+            
+            // Update panel visibility
+            document.querySelectorAll('.sidebar-content > div').forEach(panel => {
+                panel.classList.toggle('active', panel.id === panelName);
+            });
+        }
+        
+        function showDiffView(originalContent, modifiedContent) {
+            const diffContainer = document.getElementById('diffContainer');
+            const diffOriginal = document.getElementById('diffOriginal');
+            const diffModified = document.getElementById('diffModified');
+            
+            // Hide main editor
+            document.getElementById('editor').style.display = 'none';
+            
+            // Show diff view
+            diffContainer.classList.add('visible');
+            
+            // Create diff editors
+            const originalEditor = monaco.editor.create(diffOriginal, {
+                value: originalContent,
+                readOnly: true,
+                theme: 'vs-dark'
+            });
+            
+            const modifiedEditor = monaco.editor.create(diffModified, {
+                value: modifiedContent,
+                readOnly: true,
+                theme: 'vs-dark'
+            });
+        }
+        
+        function closeDiffView() {
+            const diffContainer = document.getElementById('diffContainer');
+            diffContainer.classList.remove('visible');
+            document.getElementById('editor').style.display = 'block';
+        }
+        
+        // Continue with remaining functions...
+        function toggleTerminal() {
+            const terminalPanel = document.getElementById('terminalPanel');
+            terminalPanel.classList.toggle('visible');
+            
+            if (terminalPanel.classList.contains('visible')) {
+                setTimeout(() => {
+                    if (fitAddon) fitAddon.fit();
+                    terminal.focus();
+                }, 100);
+            }
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+        
+        function showCommandPalette() {
+            const command = prompt('Command palette:');
+            if (command) {
+                executeCommand(command);
+            }
+        }
+        
+        function executeCommand(command) {
+            // Built-in commands
+            const commands = {
+                'view:toggle-sidebar': toggleSidebar,
+                'view:toggle-terminal': toggleTerminal,
+                'file:new': createFile,
+                'file:save': saveCurrentFile,
+                'git:status': () => switchSidebarTab('source-control'),
+                'cloud:connect': connectToGitHub,
+                'collab:toggle': startCollaboration,
+                'ai:toggle': () => {
+                    aiEnabled = !aiEnabled;
+                    alert(`AI Assistant: ${aiEnabled ? 'Enabled' : 'Disabled'}`);
+                },
+                'diff:show': () => {
+                    const content = editor.getValue();
+                    showDiffView(content, content + '\n// Added comment');
+                }
+            };
+            
+            // Plugin commands
+            const pluginResult = window.TUIPlugins.executeCommand(command, {});
+            if (pluginResult !== null) {
+                alert(pluginResult);
+                return;
+            }
+            
+            // Built-in command execution
+            if (commands[command]) {
+                commands[command]();
+            } else {
+                alert(`Command not found: ${command}`);
+            }
+        }
+        
+        // File operations (enhanced)
+        function handleFileClick(e) {
+            const fileItem = e.target.closest('.file-item');
+            if (fileItem) {
+                const path = fileItem.dataset.path;
+                openFile(path);
+            }
+        }
+        
+        function openFile(path) {
+            const file = fileSystem.get(path);
+            if (!file) return;
+            
+            if (file.type === 'folder') {
+                // Handle folder expansion/collapse
+                toggleFolder(path);
+            } else {
+                // Create or switch to tab
+                if (!openTabs.has(path)) {
+                    createTab(path, file);
+                }
+                
+                switchToTab(path);
+                currentFile = path;
+            }
+        }
+        
+        function createTab(path, file) {
+            const tabElement = document.createElement('button');
+            tabElement.className = 'editor-tab';
+            tabElement.dataset.tab = path;
+            tabElement.innerHTML = `
+                <span>${path}</span>
+                <span class="tab-close" onclick="closeTab('${path}')">×</span>
+            `;
+            
+            document.getElementById('editorTabs').appendChild(tabElement);
+            
+            openTabs.set(path, {
+                content: file.content,
+                language: file.language,
+                modified: file.modified
+            });
+        }
+        
+        function switchToTab(path) {
+            // Update tab states
+            document.querySelectorAll('.editor-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.tab === path);
+            });
+            
+            // Switch editor model
+            const fileData = openTabs.get(path);
+            if (fileData) {
+                const model = monaco.editor.createModel(fileData.content, fileData.language);
+                editor.setModel(model);
+            }
+        }
+        
+        function closeTab(path) {
+            if (openTabs.get(path)?.modified) {
+                if (!confirm('File has unsaved changes. Close anyway?')) {
+                    return;
+                }
+            }
+            
+            // Remove tab
+            const tabElement = document.querySelector(`[data-tab="${path}"]`);
+            if (tabElement) {
+                tabElement.remove();
+            }
+            
+            openTabs.delete(path);
+            
+            // Switch to another tab if available
+            if (path === currentFile) {
+                const remainingTabs = Array.from(openTabs.keys());
+                if (remainingTabs.length > 0) {
+                    switchToTab(remainingTabs[0]);
+                    currentFile = remainingTabs[0];
+                } else {
+                    // Show welcome tab
+                    editor.setValue(getWelcomeContent());
+                    currentFile = null;
+                }
+            }
+        }
+        
+        function markTabDirty(path, isDirty) {
+            const tabElement = document.querySelector(`[data-tab="${path}"]`);
+            if (tabElement) {
+                tabElement.classList.toggle('dirty', isDirty);
+            }
+        }
+        
+        function saveCurrentFile() {
+            if (!currentFile) return;
+            
+            const content = editor.getValue();
+            const fileData = openTabs.get(currentFile);
+            if (fileData) {
+                fileData.content = content;
+                fileData.modified = false;
+                markTabDirty(currentFile, false);
+                isDirty = false;
+                
+                // Update file system
+                const file = fileSystem.get(currentFile);
+                if (file) {
+                    file.content = content;
+                    file.modified = false;
+                }
+                
+                // Notify Android
+                if (window.Android && window.Android.onSaveRequested) {
+                    window.Android.onSaveRequested();
+                }
+                
+                // Show save feedback
+                showStatusMessage('File saved');
+                hapticFeedback();
+            }
+        }
+        
+        // Utility functions (enhanced)
+        function updateStatusBar() {
+            if (!editor) return;
+            
+            const position = editor.getPosition();
+            const selection = editor.getSelection();
+            const model = editor.getModel();
+            
+            document.getElementById('language').textContent = model.getLanguageId();
+            document.getElementById('position').textContent = 
+                `Line ${position.lineNumber}, Col ${position.column}`;
+            
+            if (selection && !selection.isEmpty()) {
+                const selectedText = model.getValueInRange(selection);
+                document.getElementById('selection').textContent = 
+                    `Sel: ${selectedText.length}`;
+            } else {
+                document.getElementById('selection').textContent = 'Sel: 0';
+            }
+            
+            document.getElementById('gitStatus').textContent = `📁 ${currentGitBranch}`;
+            document.getElementById('cloudStatusMini').textContent = cloudConnected ? '☁️ Online' : '☁️ Offline';
+            // Phase 3: LSP and Debug status (would be updated by actual status)
+            document.getElementById('lspStatusMini').textContent = '🔌 LSP';
+            document.getElementById('debugStatusMini').textContent = '🐛 Debug';
+        }
+        
+        function showStatusMessage(message) {
+            const statusBar = document.querySelector('.status-bar');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageElement.style.position = 'absolute';
+            messageElement.style.left = '50%';
+            messageElement.style.transform = 'translateX(-50%)';
+            messageElement.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            messageElement.style.padding = '4px 8px';
+            messageElement.style.borderRadius = '4px';
+            messageElement.style.fontSize = '11px';
+            messageElement.style.zIndex = '10001';
+            messageElement.style.color = 'white';
+            
+            statusBar.appendChild(messageElement);
+            
+            setTimeout(() => {
+                messageElement.remove();
+            }, 2000);
+        }
+        
+        function toggleFindWidget() {
+            if (editor) {
+                editor.getAction('actions.find').run();
+            }
+        }
+        
+        function goToDefinition() {
+            if (editor) {
+                editor.getAction('editor.action.revealDefinition').run();
+            }
+        }
+        
+        // AI Assistant (enhanced)
+        let aiSuggestionTimeout;
+        function triggerAISuggestionDebounced() {
+            clearTimeout(aiSuggestionTimeout);
+            aiSuggestionTimeout = setTimeout(() => {
+                triggerAISuggestion();
+            }, 800); // Debounced for performance
+        }
+        
+        function triggerAISuggestion() {
+            if (!aiEnabled) return;
+            
+            const position = editor.getPosition();
+            const lineContent = editor.getModel().getLineContent(position.lineNumber);
+            
+            // Enhanced AI suggestions
+            const suggestions = {
+                'function': 'Consider adding JSDoc comments for better documentation and type hints.',
+                'if': 'Add error handling for edge cases and null/undefined checks.',
+                'for': 'Consider using Array methods (map, filter, reduce) for better readability and performance.',
+                'console.log': 'Remove console.log statements before production deployment.',
+                'const ': 'Good choice! Using const for immutable references.',
+                'let ': 'Consider if this variable actually needs to be reassignable.',
+                'import ': 'Verify all imports are actually used to reduce bundle size.',
+                'async ': 'Don\'t forget to handle potential errors with try-catch or .catch().',
+                'default': 'AI is analyzing your code patterns and suggesting optimizations...'
+            };
+            
+            let suggestion = 'default';
+            for (let key in suggestions) {
+                if (lineContent.includes(key)) {
+                    suggestion = key;
+                    break;
+                }
+            }
+            
+            const suggestionText = suggestions[suggestion];
+            const editorDom = editor.getDomNode();
+            const rect = editorDom.getBoundingClientRect();
+            const suggestionPos = {
+                x: rect.left + 200,
+                y: rect.top + 50
+            };
+            
+            setTimeout(() => {
+                window.showAISuggestion(suggestionText, suggestionPos);
+            }, 1000);
+        }
+        
+        function showAISuggestion(suggestion, position) {
+            const suggestionElement = document.getElementById('aiSuggestion');
+            const textElement = document.getElementById('suggestionText');
+            
+            textElement.textContent = suggestion;
+            suggestionElement.style.left = position.x + 'px';
+            suggestionElement.style.top = position.y + 'px';
+            suggestionElement.classList.add('visible');
+            
+            setTimeout(() => {
+                suggestionElement.classList.remove('visible');
+            }, 5000);
+        }
+        
+        function acceptSuggestion() {
+            // In real implementation, would insert suggested text
+            showStatusMessage('AI suggestion accepted');
+            document.getElementById('aiSuggestion').classList.remove('visible');
+            hapticFeedback();
+        }
+        
+        function dismissSuggestion() {
+            document.getElementById('aiSuggestion').classList.remove('visible');
+            hapticFeedback();
+        }
+        
+        // File tree functions (enhanced)
+        function renderFileTree() {
+            if (virtualizationEnabled) {
+                // Use virtual rendering for performance
+                fileTreeVirtualItems = Array.from(fileSystem.keys());
+                setupVirtualScrolling();
+            } else {
+                // Traditional rendering
+                const treeContainer = document.getElementById('fileTree');
+                treeContainer.innerHTML = '';
+                
+                for (let [path, file] of fileSystem) {
+                    const fileElement = createFileTreeElement(path, file);
+                    treeContainer.appendChild(fileElement);
+                }
+            }
+        }
+        
+        function createFileTreeElement(path, file) {
+            const element = document.createElement('div');
+            element.className = `file-item ${file.modified ? 'dirty' : ''} ${file.gitStatus || ''}`;
+            element.dataset.path = path;
+            
+            element.innerHTML = `
+                <span class="file-icon">${file.type === 'folder' ? '📁' : getFileIcon(file.language)}</span>
+                <span class="file-name">${path}</span>
+            `;
+            
+            return element;
+        }
+        
+        function getFileIcon(language) {
+            const icons = {
+                'javascript': '🟨',
+                'typescript': '🔷',
+                'python': '🐍',
+                'java': '☕',
+                'cpp': '⚡',
+                'c': '⚡',
+                'html': '🌐',
+                'css': '🎨',
+                'json': '📋',
+                'markdown': '📝',
+                'xml': '📄',
+                'yaml': '⚙️',
+                'shell': '💻',
+                'folder': '📁',
+                'default': '📄'
+            };
+            return icons[language] || icons.default;
+        }
+        
+        // File operations
+        function createFile() {
+            const name = prompt('Enter file name:');
+            if (name) {
+                const language = getLanguageFromExtension(name);
+                fileSystem.set(name, {
+                    content: '',
+                    type: 'file',
+                    language: language,
+                    modified: true
+                });
+                renderFileTree();
+                showStatusMessage(`File ${name} created`);
+                hapticFeedback();
+            }
+        }
+        
+        function getLanguageFromExtension(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const languages = {
+                'js': 'javascript',
+                'ts': 'typescript',
+                'py': 'python',
+                'java': 'java',
+                'cpp': 'cpp',
+                'c': 'c',
+                'html': 'html',
+                'css': 'css',
+                'json': 'json',
+                'md': 'markdown',
+                'xml': 'xml',
+                'yaml': 'yaml',
+                'yml': 'yaml',
+                'sh': 'shell'
+            };
+            return languages[ext] || 'plaintext';
+        }
+        
+        function showGitPanel() {
+            switchSidebarTab('source-control');
+            if (isMobile) {
+                toggleMobileSidebar();
+            }
+        }
+        
+        // Resize functionality (enhanced for touch)
+        function setupResizeHandle(handle) {
+            let isResizing = false;
+            let startX, startY, startWidth, startHeight;
+            
+            handle.addEventListener('mousedown', startResize);
+            handle.addEventListener('touchstart', startResize, { passive: false });
+            
+            function startResize(e) {
+                e.preventDefault();
+                isResizing = true;
+                startX = e.clientX || e.touches[0].clientX;
+                startY = e.clientY || e.touches[0].clientY;
+                startWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width'));
+                startHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--terminal-height'));
+                
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+                document.addEventListener('touchmove', handleMouseMove, { passive: false });
+                document.addEventListener('touchend', handleMouseUp);
+            }
+            
+            function handleMouseMove(e) {
+                if (!isResizing) return;
+                
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+                const resizeType = handle.dataset.resize;
+                
+                if (resizeType === 'sidebar') {
+                    const newWidth = startWidth + (clientX - startX);
+                    if (newWidth >= 150 && newWidth <= 500) {
+                        document.documentElement.style.setProperty('--sidebar-width', newWidth + 'px');
+                    }
+                } else if (resizeType === 'terminal') {
+                    const newHeight = startHeight - (clientY - startY);
+                    if (newHeight >= 100 && newHeight <= 400) {
+                        document.documentElement.style.setProperty('--terminal-height', newHeight + 'px');
+                        if (fitAddon) fitAddon.fit();
+                    }
+                }
+            }
+            
+            function handleMouseUp() {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+                document.removeEventListener('touchmove', handleMouseMove);
+                document.removeEventListener('touchend', handleMouseUp);
+            }
+        }
+        
+        // Public API for Android (enhanced)
+        window.getEditorContent = function() {
+            return editor ? editor.getValue() : '';
+        };
+        
+        window.setTheme = function(theme) {
+            if (editor) {
+                monaco.editor.setTheme(theme);
+            }
+        };
+        
+        window.openFile = function(filePath) {
+            if (fileSystem.has(filePath)) {
+                openFile(filePath);
+            }
+        };
+        
+        window.executeGitCommand = function(command) {
+            if (window.Android && window.Android.onGitCommand) {
+                window.Android.onGitCommand(command);
+            }
+        };
+        
+        window.executeTerminalCommand = function(command) {
+            if (terminal) {
+                terminal.writeln(`\x1b[33m$ ${command}\x1b[0m`);
+                // Execute command logic here
+            }
+        };
+        
+        window.showGitPanel = function() {
+            switchSidebarTab('source-control');
+        };
+        
+        // Phase 3 Plugin System Sample
+        window.TUIPlugins.registerExtension({
+            name: 'phase3-demo',
+            version: '1.0.0',
+            commands: {
+                'demo:hello': () => 'Hello from Phase 3 plugin system!',
+                'demo:performance': () => 'Performance optimization active!',
+                'demo:mobile': () => 'Mobile-first features enabled!'
+            },
+            ui: {
+                sidebar: '<div style="font-size: 12px; padding: 8px; color: #28a745;">Phase 3 Demo Active</div>'
+            }
+        });
+        
+        // Error handling (enhanced)
+        window.onerror = function(msg, url, line, col, error) {
+            console.error('Phase 3 Monaco Editor Error:', msg, 'at', url, ':', line);
+            showStatusMessage('Editor error: ' + msg);
+            return false;
+        };
+        
+        // Initialize Phase 3 when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('T-UI Monaco Editor Phase 3 initialized');
+            
+            // Setup mobile-specific features
+            if (isMobile) {
+                document.body.classList.add('mobile-device');
+                // Adjust editor settings for mobile
+                if (editor) {
+                    editor.updateOptions({
+                        fontSize: 16,
+                        minimap: { enabled: false },
+                        smoothScrolling: false,
+                        renderWhitespace: 'selection'
+                    });
+                }
+            }
+        });
+        
+        // Performance monitoring
+        setInterval(() => {
+            if (performance.memory) {
+                const used = Math.round(performance.memory.usedJSHeapSize / 1048576);
+                const total = Math.round(performance.memory.totalJSHeapSize / 1048576);
+                if (used > 100) { // Alert if memory usage is high
+                    console.warn('High memory usage detected:', used + 'MB / ' + total + 'MB');
+                    // Trigger garbage collection in development
+                    if (window.gc) {
+                        window.gc();
+                    }
+                }
+            }
+        }, 30000); // Check every 30 seconds
+    </script>
+</body>
+</html>
