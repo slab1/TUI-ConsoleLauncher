@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +15,11 @@ import java.util.Set;
  * Implements thread-safe immutable pattern for settings data
  */
 public class EditorSettings {
+
+    // ======= Module Identity =======
+    public static final String MODULE_ID = "editor";
+    public static final String MODULE_NAME = "Monaco Editor";
+    public static final String MODULE_CATEGORY = "Editor";
 
     // ======= Editor Preferences =======
     private final int fontSize;
@@ -88,6 +94,9 @@ public class EditorSettings {
     // ======= Security Settings =======
     private final boolean allowInsecureConnections;
     private final boolean saveSensitiveDataEncrypted;
+
+    // Settings version for migration
+    public static final String SETTINGS_VERSION = "1.0.0";
 
     // ======= Sensitive Keys (for secure storage) =======
     public static final Set<String> SENSITIVE_KEYS = java.util.Set.of(
