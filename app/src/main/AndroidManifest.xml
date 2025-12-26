@@ -79,10 +79,11 @@
         android:label="@string/app_name"
         android:theme="@style/Custom.Solid">
 
-        <providerandroid:name=".tuils.GenericFileProvider"
-        android:authorities="${applicationId}.FILE_PROVIDER"
-        android:exported="false"
-        android:grantUriPermissions="true">
+        <provider
+            android:name=".tuils.GenericFileProvider"
+            android:authorities="${applicationId}.FILE_PROVIDER"
+            android:exported="false"
+            android:grantUriPermissions="true">
         <meta-data
             android:name="android.support.FILE_PROVIDER_PATHS"
             android:resource="@xml/provider_paths" />
@@ -91,7 +92,8 @@
     <activity
         android:name=".LauncherActivity"
         android:clearTaskOnLaunch="true"
-        android:configChanges="keyboardHidden|orientation|screenSize|keyboard|navigation"android:enabled="true"
+        android:configChanges="keyboardHidden|orientation|screenSize|keyboard|navigation"
+        android:enabled="true"
         android:excludeFromRecents="true"
         android:exported="true"
         android:launchMode="singleTask"
@@ -183,7 +185,8 @@
                 android:scheme="file" />
             <data
                 android:host="*"
-                android:pathPattern=".*\\.ini"android:scheme="file" />
+                android:pathPattern=".*\\.ini"
+                android:scheme="file" />
             <data
                 android:host="*"
                 android:pathPattern=".*\\.sh"
@@ -199,23 +202,27 @@
             <data
                 android:host="*"
                 android:pathPattern=".*\\.conf"
-                android:scheme="file" /><data
-            android:host="*"
-            android:pathPattern=".*\\.cfg"
-            android:scheme="file" />
+                android:scheme="file" />
+
+            <data
+                android:host="*"
+                android:pathPattern=".*\\.cfg"
+                android:scheme="file" />
             <data
                 android:host="*"
                 android:pathPattern=".*\\.txt"
                 android:scheme="file" />
-            <dataandroid:host="*"
-            android:pathPattern=".*\\.xml"
-            android:scheme="file" />
+            <data
+                android:host="*"
+                android:pathPattern=".*\\.xml"
+                android:scheme="file" />
         </intent-filter>
     </activity>
 
     <service
         android:name=".managers.notifications.NotificationService"
-        android:exported="true"android:label="@string/notification_reader"
+        android:exported="true"
+        android:label="@string/notification_reader"
         android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
         <intent-filter>
             <action android:name="android.service.notification.NotificationListenerService" />
@@ -226,12 +233,15 @@
         android:name=".tuils.stuff.FakeLauncherActivity"
         android:enabled="false"
         android:exported="true">
-        <intent-filter><action android:name="android.intent.action.MAIN" />
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
             <category android:name="android.intent.category.HOME" />
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
-    </activity><!-- Monaco Editor Activity -->
+    </activity>
+
+    <!-- Monaco Editor Activity -->
     <activity
         android:name=".commands.smartlauncher.developer.MonacoEditorActivity"
         android:excludeFromRecents="true"
@@ -246,4 +256,4 @@
     </activity>
 </application>
 
-    </manifest>
+</manifest>
