@@ -441,5 +441,8 @@
 
     <!-- Smart IDE Launcher - Monaco Editor -->
     <string name="monaco_editor_title">Monaco Editor</string>
+    
+    <!-- Voice Input -->
+    <string name="voice_input">Voice Input</string>
 
 </resources>

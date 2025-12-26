@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Voice Input View Attributes -->
+    <declare-styleable name="VoiceInputView">
+        <attr name="viv_idleColor" format="color" />
+        <attr name="viv_listeningColor" format="color" />
+        <attr name="viv_errorColor" format="color" />
+    </declare-styleable>
+</resources>

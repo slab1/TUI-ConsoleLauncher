@@ -588,6 +588,17 @@ public class MainManager {
         }
     }
 
+    // Smart IDE Launcher - Command Manager integration for AI commands
+    private CommandManager commandManager;
+    
+    public void setCommandManager(CommandManager commandManager) {
+        this.commandManager = commandManager;
+    }
+    
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
     public interface Group {
         List<? extends Object> members();
         boolean use(MainPack mainPack, String input);

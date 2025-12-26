@@ -6,6 +6,8 @@ import android.util.Log;
 import ohi.andre.consolelauncher.settings.legacy.AliasSettingsAdapter;
 import ohi.andre.consolelauncher.settings.legacy.ThemeSettingsAdapter;
 import ohi.andre.consolelauncher.settings.modules.AISettingsModule;
+import ohi.andre.consolelauncher.settings.modules.GeneralSettingsModule;
+import ohi.andre.consolelauncher.settings.modules.TerminalSettingsModule;
 import ohi.andre.consolelauncher.settings.modules.VoiceSettingsModule;
 
 /**
@@ -83,6 +85,16 @@ public class SettingsInitializer {
      * Registers core settings modules.
      */
     private static void registerCoreModules(Context context, GlobalSettingsManager manager) {
+        // General settings module
+        GeneralSettingsModule generalSettings = new GeneralSettingsModule(context);
+        manager.registerModule(generalSettings);
+        Log.d(TAG, "Registered GeneralSettingsModule");
+        
+        // Terminal settings module
+        TerminalSettingsModule terminalSettings = new TerminalSettingsModule(context);
+        manager.registerModule(terminalSettings);
+        Log.d(TAG, "Registered TerminalSettingsModule");
+        
         // Voice settings module
         VoiceSettingsModule voiceSettings = new VoiceSettingsModule(context);
         manager.registerModule(voiceSettings);
