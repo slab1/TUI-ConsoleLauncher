@@ -1,136 +1,125 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
-    compileSdkVersion 34
+    namespace 'ohi.andre.consolelauncher'
+    compileSdk 34
     buildToolsVersion '34.0.0'
-    
+
     defaultConfig {
         applicationId "ohi.andre.consolelauncher"
-
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
+        // Flavor dimensions must be defined if you use productFlavors
         flavorDimensions "default"
 
         versionName "v6.16"
         versionCode 206
-        
+
         // Enable multidex for large projects
         multiDexEnabled true
     }
-    
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' zipAlignEnabled true
         }
         debug {
             minifyEnabled false
             debuggable true
         }
     }
-    
+
+    // FIXED: productFlavors is now correctly inside the android block
     productFlavors {
         fdroid {
-            // F-Droid flavor - no proprietary dependencies
+            dimension "default"// F-Droid flavor - no proprietary dependencies
         }
         playstore {
+            dimension "default"
             // Play Store flavor - includes all features
         }
     }
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    
-    lintOptions {
+
+    // Updated from 'lintOptions' to 'lint' for newer Gradle
+    lint {
         checkReleaseBuilds true
         abortOnError false
         warningsAsErrors false
         disable 'MissingTranslation'
     }
-    
+
     testOptions {
-        unitTests {
-            includeAndroidResources = true
-            returnDefaultValues = true
+        unitTests
+                {
+                    includeAndroidResources = true
+                    returnDefaultValues = true
+                }
+    }
+
+    // Updated APK renaming script for modern Gradle
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def formattedDate = new Date().format('yyyy.MM.dd_HH.mm')
+            // outputFileName is the correct property to set
+            outputFileName = "${variant.applicationId}_${variant.flavorName}_${variant.versionName}_${formattedDate}.apk"
         }
     }
-    
-    android.applicationVariants.all { variant ->
-        def formattedDate = new Date().format('yyyy.MM.dd_HH.mm')
-        
-        variant.outputs.all {
-            outputFileName = "./${variant.versionName}/${variant.applicationId}_${variant.flavorName}_${variant.versionCode}_${formattedDate}.apk"
-        }
-    }
-    
+
+    // Use 'packagingOptions' for compatibility
     packagingOptions {
-        // Exclude files that may cause conflicts
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
+        resources {
+            excludes += [
+                    'META-INF/DEPENDENCIES',
+                    'META-INF/LICENSE',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/NOTICE',
+                    'META-INF/NOTICE.txt'
+            ]
+        }
     }
 }
 
 dependencies {
     // =====================================================
-    // AndroidX Core Libraries (Migration from old Support)
+    // AndroidX Core Libraries
     // =====================================================
-    
-    // AndroidX AppCompat for Activity and Fragment support
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    
-    // AndroidX Core utilities
     implementation 'androidx.core:core:1.12.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    
-    // AndroidX Security - Encrypted SharedPreferences (OWASP M2 Compliance)
-    // Critical for secure storage of API keys and credentials
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-    
+
     // =====================================================
     // Networking Libraries
-    // =====================================================
-    
-    // OkHttp - HTTP client for AI API communication
-    // Provides connection pooling, caching, and interceptors
+    //=====================================================
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
-    
-    // Gson - JSON serialization/deserialization for API communication
     implementation 'com.google.code.gson:gson:2.10.1'
-    
+
     // =====================================================
-    // Existing Dependencies (Maintained for backward compatibility)
+    // Existing Dependencies
     // =====================================================
-    
-    // HTML Cleaner - Sanitizes HTML content
     implementation 'net.sourceforge.htmlcleaner:htmlcleaner:2.29'
-    
-    // JSON Path - Query JSON data structures
     implementation 'com.jayway.jsonpath:json-path:2.9.0'
-    
-    // jsoup - HTML parsing and manipulation
     implementation 'org.jsoup:jsoup:1.17.2'
-    
-    // CompareString2 - String comparison utilities
+
+    // Note: Ensure JitPack is in your settings.gradle for this library
     implementation 'it.andreuzzi:CompareString2:1.0.9'
-    
+
     // =====================================================
     // Testing Dependencies
     // =====================================================
-    
-    // Unit testing
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.8.0'
     testImplementation 'org.robolectric:robolectric:4.11.1'
-    
-    // Android testing
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
