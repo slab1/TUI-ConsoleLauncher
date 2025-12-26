@@ -28,13 +28,13 @@ T-UI Smart Launcher extends T-UI ConsoleLauncher with intelligent AI-powered com
 
 Before you begin, ensure you have:
 
-| Software | Version | Purpose |
-|----------|---------|---------|
-| **Java JDK** | 17+ | Android development |
+| Software           | Version             | Purpose             |
+|--------------------|---------------------|---------------------|
+| **Java JDK**       | 17+                 | Android development |
 | **Android Studio** | Hedgehog (2023.1.1) | IDE and build tools |
-| **Git** | 2.0+ | Version control |
-| **Gradle** | 8.0+ | Build automation |
-| **Android SDK** | 34 | Target platform |
+| **Git**            | 2.0+                | Version control     |
+| **Gradle**         | 8.0+                | Build automation    |
+| **Android SDK**    | 34                  | Target platform     |
 
 ### Verify Your Setup
 
@@ -389,43 +389,43 @@ network publicip
 
 ### Original T-UI Commands
 
-| Command | Description |
-|---------|-------------|
-| `help` | Show T-UI help |
-| `clear` | Clear terminal |
-| `apps` | List applications |
-| `calculator` | Open calculator |
-| `contacts` | Show contacts |
-| `settings` | Open settings |
-| `restart` | Restart launcher |
+| Command      | Description       |
+|--------------|-------------------|
+| `help`       | Show T-UI help    |
+| `clear`      | Clear terminal    |
+| `apps`       | List applications |
+| `calculator` | Open calculator   |
+| `contacts`   | Show contacts     |
+| `settings`   | Open settings     |
+| `restart`    | Restart launcher  |
 
 ### Smart Launcher Commands
 
-| Category | Command | Description |
-|----------|---------|-------------|
-| **System** | `system` | System information |
-| **Files** | `file ls` | List directory |
-| **Files** | `file cd <dir>` | Change directory |
-| **Files** | `file cat <file>` | View file |
-| **Git** | `git status` | Repository status |
-| **Git** | `git commit -m "<msg>"` | Commit changes |
-| **Calculator** | `calc <expr>` | Calculate expression |
-| **Notes** | `note create "Title" content` | Create note |
-| **Network** | `network ping <host>` | Ping host |
-| **AI** | `?? <question>` | Ask AI anything |
-| **Automation** | `auto task <name>` | Run Tasker task |
+| Category       | Command                       | Description          |
+|----------------|-------------------------------|----------------------|
+| **System**     | `system`                      | System information   |
+| **Files**      | `file ls`                     | List directory       |
+| **Files**      | `file cd <dir>`               | Change directory     |
+| **Files**      | `file cat <file>`             | View file            |
+| **Git**        | `git status`                  | Repository status    |
+| **Git**        | `git commit -m "<msg>"`       | Commit changes       |
+| **Calculator** | `calc <expr>`                 | Calculate expression |
+| **Notes**      | `note create "Title" content` | Create note          |
+| **Network**    | `network ping <host>`         | Ping host            |
+| **AI**         | `?? <question>`               | Ask AI anything      |
+| **Automation** | `auto task <name>`            | Run Tasker task      |
 
 ### Aliases
 
 | Alias | Expands To |
 |-------|------------|
-| `ls` | `file ls` |
-| `cd` | `file cd` |
+| `ls`  | `file ls`  |
+| `cd`  | `file cd`  |
 | `pwd` | `file pwd` |
 | `cat` | `file cat` |
-| `git` | `git` |
-| `=` | `calc` |
-| `sys` | `system` |
+| `git` | `git`      |
+| `=`   | `calc`     |
+| `sys` | `system`   |
 
 ---
 

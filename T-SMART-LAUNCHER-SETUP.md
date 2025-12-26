@@ -22,13 +22,13 @@ Before you begin, ensure you have the following installed on your computer:
 
 ### Required Software
 
-| Software | Minimum Version | Purpose |
-|----------|-----------------|---------|
-| **Java JDK** | 17 or higher | Android development |
+| Software           | Minimum Version     | Purpose             |
+|--------------------|---------------------|---------------------|
+| **Java JDK**       | 17 or higher        | Android development |
 | **Android Studio** | Hedgehog (2023.1.1) | IDE and build tools |
-| **Gradle** | 8.0+ | Build automation |
-| **Android SDK** | 34 (API Level) | Target platform |
-| **Git** | 2.0+ | Version control |
+| **Gradle**         | 8.0+                | Build automation    |
+| **Android SDK**    | 34 (API Level)      | Target platform     |
+| **Git**            | 2.0+                | Version control     |
 
 ### Verify Your Setup
 
@@ -560,40 +560,40 @@ network localip
 
 ### Core Commands
 
-| Command | Description |
-|---------|-------------|
-| `help` | Show help information |
-| `clear` | Clear terminal screen |
-| `launch <app>` | Launch applications |
+| Command        | Description           |
+|----------------|-----------------------|
+| `help`         | Show help information |
+| `clear`        | Clear terminal screen |
+| `launch <app>` | Launch applications   |
 
 ### Developer Commands
 
-| Command | Description |
-|---------|-------------|
-| `file ls` | List directory contents |
-| `file cd <dir>` | Change directory |
-| `file cat <file>` | Display file contents |
-| `file mkdir <name>` | Create directory |
-| `file rm <path>` | Delete file |
-| `git status` | Show git status |
-| `git commit -m "<msg>"` | Commit changes |
-| `git push` | Push to remote |
+| Command                 | Description             |
+|-------------------------|-------------------------|
+| `file ls`               | List directory contents |
+| `file cd <dir>`         | Change directory        |
+| `file cat <file>`       | Display file contents   |
+| `file mkdir <name>`     | Create directory        |
+| `file rm <path>`        | Delete file             |
+| `git status`            | Show git status         |
+| `git commit -m "<msg>"` | Commit changes          |
+| `git push`              | Push to remote          |
 
 ### Productivity Commands
 
-| Command | Description |
-|---------|-------------|
-| `calc <expr>` | Calculate expression |
-| `system` | Show system info |
-| `note create "Title" content` | Create note |
-| `network ping <host>` | Ping host |
-| `network localip` | Show local IP |
+| Command                       | Description          |
+|-------------------------------|----------------------|
+| `calc <expr>`                 | Calculate expression |
+| `system`                      | Show system info     |
+| `note create "Title" content` | Create note          |
+| `network ping <host>`         | Ping host            |
+| `network localip`             | Show local IP        |
 
 ### Automation Commands
 
-| Command | Description |
-|---------|-------------|
-| `auto task <name>` | Run Tasker task |
+| Command             | Description        |
+|---------------------|--------------------|
+| `auto task <name>`  | Run Tasker task    |
 | `auto termux <cmd>` | Run Termux command |
 
 ### AI Commands

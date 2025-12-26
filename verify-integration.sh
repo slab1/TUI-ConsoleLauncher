@@ -32,9 +32,9 @@ command_files=(
 all_commands_exist=true
 for file in "${command_files[@]}"; do
     if [ -f "$file" ]; then
-        echo "  ✅ $(basename $file)"
+        echo "  ✅ $(basename "$file")"
     else
-        echo "  ❌ $(basename $file) (missing)"
+        echo "  ❌ $(basename "$file") (missing)"
         all_commands_exist=false
     fi
 done
