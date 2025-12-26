@@ -1,0 +1,128 @@
+PS C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher> gradle assembleDebug
+> Task :app:checkFdroidDebugDuplicateClasses FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:checkFdroidDebugDuplicateClasses'.
+> Could not resolve all files for configuration ':app:fdroidDebugRuntimeClasspath'.
+   > Failed to transform logging-interceptor-4.12.0.jar (com.squareup.okhttp3:logging-interceptor:4.12.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.dependency.bundling=external, org.gradle.jvm.environment=standard-jvm, org.gradle.jvm.version=8, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime, org.jetbrains.kotlin.platform.type=jvm}.
+      > Could not download logging-interceptor-4.12.0.jar (com.squareup.okhttp3:logging-interceptor:4.12.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/com/squareup/okhttp3/logging-interceptor/4.12.0/logging-interceptor-4.12.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/com/squareup/okhttp3/logging-interceptor/4.12.0/logging-interceptor-4.12.0.jar'.
+               > repo.maven.apache.org
+   > Failed to transform okhttp-4.12.0.jar (com.squareup.okhttp3:okhttp:4.12.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.dependency.bundling=external, org.gradle.jvm.environment=standard-jvm, org.gradle.jvm.version=8, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime, org.jetbrains.kotlin.platform.type=jvm}.   
+      > Could not download okhttp-4.12.0.jar (com.squareup.okhttp3:okhttp:4.12.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar'.
+               > repo.maven.apache.org
+   > Failed to transform tink-android-1.8.0.jar (com.google.crypto.tink:tink-android:1.8.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download tink-android-1.8.0.jar (com.google.crypto.tink:tink-android:1.8.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/com/google/crypto/tink/tink-android/1.8.0/tink-android-1.8.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/com/google/crypto/tink/tink-android/1.8.0/tink-android-1.8.0.jar'.
+               > This is usually a temporary error during hostname resolution and means that the local server did not receive a response from an authoritative server (repo.maven.apache.org)
+   > Failed to transform htmlcleaner-2.29.jar (net.sourceforge.htmlcleaner:htmlcleaner:2.29) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download htmlcleaner-2.29.jar (net.sourceforge.htmlcleaner:htmlcleaner:2.29)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/net/sourceforge/htmlcleaner/htmlcleaner/2.29/htmlcleaner-2.29.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/net/sourceforge/htmlcleaner/htmlcleaner/2.29/htmlcleaner-2.29.jar'.
+               > repo.maven.apache.org
+   > Failed to transform json-path-2.9.0.jar (com.jayway.jsonpath:json-path:2.9.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.dependency.bundling=external, org.gradle.jvm.version=8, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download json-path-2.9.0.jar (com.jayway.jsonpath:json-path:2.9.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/com/jayway/jsonpath/json-path/2.9.0/json-path-2.9.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/com/jayway/jsonpath/json-path/2.9.0/json-path-2.9.0.jar'.
+               > repo.maven.apache.org
+   > Failed to transform jsoup-1.17.2.jar (org.jsoup:jsoup:1.17.2) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download jsoup-1.17.2.jar (org.jsoup:jsoup:1.17.2)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jsoup/jsoup/1.17.2/jsoup-1.17.2.jar'.
+            > Could not HEAD 'https://repo.maven.apache.org/maven2/org/jsoup/jsoup/1.17.2/jsoup-1.17.2.jar'.
+               > repo.maven.apache.org
+   > Failed to transform CompareString2-1.0.9.jar (it.andreuzzi:CompareString2:1.0.9) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download CompareString2-1.0.9.jar (it.andreuzzi:CompareString2:1.0.9)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/it/andreuzzi/CompareString2/1.0.9/CompareString2-1.0.9.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/it/andreuzzi/CompareString2/1.0.9/CompareString2-1.0.9.jar'.
+               > repo.maven.apache.org
+   > Failed to transform okio-jvm-3.6.0.jar (com.squareup.okio:okio-jvm:3.6.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime, org.jetbrains.kotlin.platform.type=jvm}.
+      > Could not download okio-jvm-3.6.0.jar (com.squareup.okio:okio-jvm:3.6.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/com/squareup/okio/okio-jvm/3.6.0/okio-jvm-3.6.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/com/squareup/okio/okio-jvm/3.6.0/okio-jvm-3.6.0.jar'.
+               > repo.maven.apache.org
+   > Failed to transform kotlinx-coroutines-core-jvm-1.6.1.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime, org.jetbrains.kotlin.platform.type=jvm}.
+      > Could not download kotlinx-coroutines-core-jvm-1.6.1.jar (org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.1)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.6.1/kotlinx-coroutines-core-jvm-1.6.1.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.6.1/kotlinx-coroutines-core-jvm-1.6.1.jar'.
+               > repo.maven.apache.org
+   > Failed to transform kotlinx-coroutines-android-1.6.1.jar (org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.dependency.bundling=external, org.gradle.jvm.version=8, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime, org.jetbrains.kotlin.platform.type=jvm}.     
+      > Could not download kotlinx-coroutines-android-1.6.1.jar (org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-android/1.6.1/kotlinx-coroutines-android-1.6.1.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlinx/kotlinx-coroutines-android/1.6.1/kotlinx-coroutines-android-1.6.1.jar'.
+               > repo.maven.apache.org
+   > Failed to transform kotlin-stdlib-jdk8-1.9.10.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download kotlin-stdlib-jdk8-1.9.10.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.10)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar'.
+               > repo.maven.apache.org
+   > Failed to transform kotlin-stdlib-jdk7-1.9.10.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download kotlin-stdlib-jdk7-1.9.10.jar (org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar'.
+               > repo.maven.apache.org
+   > Failed to transform kotlin-stdlib-1.9.10.jar (org.jetbrains.kotlin:kotlin-stdlib:1.9.10) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download kotlin-stdlib-1.9.10.jar (org.jetbrains.kotlin:kotlin-stdlib:1.9.10)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.10/kotlin-stdlib-1.9.10.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/1.9.10/kotlin-stdlib-1.9.10.jar'.
+               > repo.maven.apache.org
+   > Failed to transform jdom2-2.0.6.1.jar (org.jdom:jdom2:2.0.6.1) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download jdom2-2.0.6.1.jar (org.jdom:jdom2:2.0.6.1)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jdom/jdom2/2.0.6.1/jdom2-2.0.6.1.jar'.
+            > Could not HEAD 'https://repo.maven.apache.org/maven2/org/jdom/jdom2/2.0.6.1/jdom2-2.0.6.1.jar'.
+               > repo.maven.apache.org
+   > Failed to transform json-smart-2.5.0.jar (net.minidev:json-smart:2.5.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download json-smart-2.5.0.jar (net.minidev:json-smart:2.5.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/net/minidev/json-smart/2.5.0/json-smart-2.5.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/net/minidev/json-smart/2.5.0/json-smart-2.5.0.jar'.
+               > repo.maven.apache.org
+   > Failed to transform slf4j-api-2.0.11.jar (org.slf4j:slf4j-api:2.0.11) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download slf4j-api-2.0.11.jar (org.slf4j:slf4j-api:2.0.11)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.11/slf4j-api-2.0.11.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.11/slf4j-api-2.0.11.jar'.
+               > repo.maven.apache.org
+   > Failed to transform kotlin-stdlib-common-1.9.10.jar (org.jetbrains.kotlin:kotlin-stdlib-common:1.9.10) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download kotlin-stdlib-common-1.9.10.jar (org.jetbrains.kotlin:kotlin-stdlib-common:1.9.10)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar'.
+               > repo.maven.apache.org
+   > Failed to transform annotations-13.0.jar (org.jetbrains:annotations:13.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download annotations-13.0.jar (org.jetbrains:annotations:13.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/jetbrains/annotations/13.0/annotations-13.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/jetbrains/annotations/13.0/annotations-13.0.jar'.
+               > repo.maven.apache.org
+   > Failed to transform listenablefuture-1.0.jar (com.google.guava:listenablefuture:1.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download listenablefuture-1.0.jar (com.google.guava:listenablefuture:1.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/com/google/guava/listenablefuture/1.0/listenablefuture-1.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/com/google/guava/listenablefuture/1.0/listenablefuture-1.0.jar'.
+               > repo.maven.apache.org
+   > Failed to transform accessors-smart-2.5.0.jar (net.minidev:accessors-smart:2.5.0) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download accessors-smart-2.5.0.jar (net.minidev:accessors-smart:2.5.0)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/net/minidev/accessors-smart/2.5.0/accessors-smart-2.5.0.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/net/minidev/accessors-smart/2.5.0/accessors-smart-2.5.0.jar'.
+               > repo.maven.apache.org
+   > Failed to transform asm-9.3.jar (org.ow2.asm:asm:9.3) to match attributes {artifactType=enumerated-runtime-classes, org.gradle.category=library, org.gradle.libraryelements=jar, org.gradle.status=release, org.gradle.usage=java-runtime}.
+      > Could not download asm-9.3.jar (org.ow2.asm:asm:9.3)
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/ow2/asm/asm/9.3/asm-9.3.jar'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/ow2/asm/asm/9.3/asm-9.3.jar'.
+               > repo.maven.apache.org
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.9/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 1m 19s
+17 actionable tasks: 8 executed, 9 up-to-date
