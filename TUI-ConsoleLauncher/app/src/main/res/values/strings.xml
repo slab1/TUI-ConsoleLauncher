@@ -444,5 +444,6 @@
     
     <!-- Voice Input -->
     <string name="voice_input">Voice Input</string>
+    <string name="voice_input_description">Tap to speak a command</string>
 
 </resources>
