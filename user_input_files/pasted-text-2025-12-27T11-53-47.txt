@@ -1,0 +1,499 @@
+PS C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher> gradle clean assembleDebug --no-daemon
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+
+> Task :app:compilePlaystoreDebugJavaWithJavac
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:6: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:40: error: cannot find symbol
+    private final MiniMaxService aiService;
+                  ^
+  symbol:   class MiniMaxService
+  location: class AICommand
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:44: error: package MiniMaxService does not exist
+    private final List<MiniMaxService.Message> conversationHistory;
+                                     ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ContactManager.java:24: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\AliasManager.java:23: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ThemeManager.java:16: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:38: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\MainManager.java:592: error: cannot find symbol
+    private CommandManager commandManager;
+            ^
+  symbol:   class CommandManager
+  location: class MainManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\MainManager.java:594: error: cannot find symbol
+    public void setCommandManager(CommandManager commandManager) {
+                                  ^
+  symbol:   class CommandManager
+  location: class MainManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\MainManager.java:598: error: cannot find symbol
+    public CommandManager getCommandManager() {
+           ^
+  symbol:   class CommandManager
+  location: class MainManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\CommandManager.java:11: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:17: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PublicIOReceiver.java:10: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:40: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\MiniMaxService.java:164: error: cannot find symbol
+    public CompletableFuture<AIResponse> sendMessage(String message, List<Message> conversationHistory) {
+                             ^
+  symbol:   class AIResponse
+  location: class MiniMaxService
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\devutils.java:8: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\location.java:6: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\tui.java:12: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:36: error: cannot find symbol
+    private Map<String, FileInfo> fileSystem = new HashMap<>();
+                        ^
+  symbol:   class FileInfo
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:50: error: cannot find symbol
+    private final EditorSettingsManager settingsManager;
+                  ^
+  symbol:   class EditorSettingsManager
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:94: error: cannot find symbol
+    private void onEditorSettingsChanged(EditorSettings settings, String key) {
+                                         ^
+  symbol:   class EditorSettings
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:142: error: cannot find symbol
+    public EditorSettingsManager getSettingsManager() {
+           ^
+  symbol:   class EditorSettingsManager
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:149: error: cannot find symbol
+    public EditorSettings getEditorSettings() {
+           ^
+  symbol:   class EditorSettings
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:156: error: package MonacoSettingsBridge does not exist
+    public void initializeSettingsBridge(MonacoSettingsBridge.SettingsChangeCallback callback) {
+                                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:203: error: cannot find symbol
+    public void applyEditorSettings(EditorSettings settings) {
+                                    ^
+  symbol:   class EditorSettings
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:762: error: cannot find symbol
+        public void scanDirectory(File dir, String relativePath, Map<String, FileInfo> fileSystem) {
+                                                                             ^
+  symbol:   class FileInfo
+  location: class FileSystemManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:489: error: cannot find symbol
+        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
+                                                             ^
+  symbol:   class SettingsModuleListener
+  location: class SecuritySettings
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:512: error: cannot find symbol
+        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
+                                                             ^
+  symbol:   class SettingsModuleListener
+  location: class ValidatorSettings
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:535: error: cannot find symbol
+        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
+                                                             ^
+  symbol:   class SettingsModuleListener
+  location: class LspSettings
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:558: error: cannot find symbol
+        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
+                                                             ^
+  symbol:   class SettingsModuleListener
+  location: class DebugSettings
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\test\SmartLauncherTestSuite.java:4: error: package android.test.mock does not exist
+import android.test.mock.MockContext;
+                        ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ChangelogManager.java:12: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\notifications\KeeperService.java:19: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\notifications\reply\ReplyManager.java:30: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\TuiLocationManager.java:24: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\GenericFileProvider.java:5: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\Tuils.java:93: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:49: error: cannot find symbol
+        this.aiService = new MiniMaxService(context);
+                             ^
+  symbol:   class MiniMaxService
+  location: class AICommand
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:58: error: incompatible types: Object[] cannot be converted to String[]
+        String[] args = pack.args;
+                            ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:238: error: cannot find symbol
+            pack.apply("Thinking...");
+                ^
+  symbol:   method apply(String)
+  location: variable pack of type ExecutePack
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:261: error: package MiniMaxService does not exist
+        MiniMaxService.StreamingCallback callback = new MiniMaxService.StreamingCallback() {
+                      ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:261: error: package MiniMaxService does not exist
+        MiniMaxService.StreamingCallback callback = new MiniMaxService.StreamingCallback() {
+                                                                      ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:262: error: method does not override or implement a method from a supertype
+            @Override
+            ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:268: error: method does not override or implement a method from a supertype
+            @Override
+            ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:274: error: method does not override or implement a method from a supertype
+            @Override
+            ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:282: error: package MiniMaxService does not exist
+        conversationHistory.add(new MiniMaxService.Message("user", message));
+                                                  ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:321: error: package MiniMaxService does not exist
+        conversationHistory.add(new MiniMaxService.Message("assistant", response));
+                                                  ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:341: error: package MiniMaxService does not exist
+        conversationHistory.add(new MiniMaxService.Message("user", message));
+                                                  ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:350: error: package MiniMaxService does not exist
+            conversationHistory.add(new MiniMaxService.Message("assistant", content));
+                                                      ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\MainManager.java:70: error: cannot find symbol
+    public static String ACTION_EXEC = BuildConfig.APPLICATION_ID + ".main_exec";
+                                       ^
+  symbol:   variable BuildConfig
+  location: class MainManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:37: error: cannot find symbol
+    public static final String TEXT = BuildConfig.APPLICATION_ID + ".text";
+                                      ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:34: error: cannot find symbol
+    public static final String ACTION_INPUT = BuildConfig.APPLICATION_ID + ".action_input";
+                                              ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ContactManager.java:31: error: cannot find symbol
+    public static String ACTION_REFRESH = BuildConfig.APPLICATION_ID + ".refresh_contacts";
+                                          ^
+  symbol:   variable BuildConfig
+  location: class ContactManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\AliasManager.java:31: error: cannot find symbol
+    public static String ACTION_LS = BuildConfig.APPLICATION_ID + ".alias_ls";
+                                     ^
+  symbol:   variable BuildConfig
+  location: class AliasManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\AliasManager.java:32: error: cannot find symbol
+    public static String ACTION_ADD = BuildConfig.APPLICATION_ID + ".alias_add";
+                                      ^
+  symbol:   variable BuildConfig
+  location: class AliasManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\AliasManager.java:33: error: cannot find symbol
+    public static String ACTION_RM = BuildConfig.APPLICATION_ID + ".alias_rm";
+                                     ^
+  symbol:   variable BuildConfig
+  location: class AliasManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PublicIOReceiver.java:20: error: cannot find symbol
+    public static final String ACTION_CMD = BuildConfig.APPLICATION_ID + ".action_public_cmd";
+                                            ^
+  symbol:   variable BuildConfig
+  location: class PublicIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\LauncherActivity.java:228: error: CommandManager(Context) has private access in CommandManager
+        commandManager = new CommandManager(this);
+                         ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\LauncherActivity.java:229: error: cannot find symbol
+        commandManager.registerCommands();
+                      ^
+  symbol:   method registerCommands()
+  location: variable commandManager of type CommandManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:33: error: cannot find symbol
+    public static final String ACTION_OUTPUT = BuildConfig.APPLICATION_ID + ".action_output";
+                                               ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:35: error: cannot find symbol
+    public static final String ACTION_REPLY = BuildConfig.APPLICATION_ID + ".action_reply";
+                                              ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PublicIOReceiver.java:19: error: cannot find symbol
+    public static final String ACTION_OUTPUT = BuildConfig.APPLICATION_ID + ".action_public_output";
+                                               ^
+  symbol:   variable BuildConfig
+  location: class PublicIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\TuiLocationManager.java:32: error: cannot find symbol
+    public static final String ACTION_GOT_PERMISSION = BuildConfig.APPLICATION_ID + ".got_location_permission";
+                                                       ^
+  symbol:   variable BuildConfig
+  location: class TuiLocationManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ThemeManager.java:31: error: cannot find symbol
+    public static String ACTION_APPLY = BuildConfig.APPLICATION_ID + ".theme_apply";
+                                        ^
+  symbol:   variable BuildConfig
+  location: class ThemeManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ThemeManager.java:32: error: cannot find symbol
+    public static String ACTION_REVERT = BuildConfig.APPLICATION_ID + ".theme_revert";
+                                         ^
+  symbol:   variable BuildConfig
+  location: class ThemeManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ThemeManager.java:33: error: cannot find symbol
+    public static String ACTION_STANDARD = BuildConfig.APPLICATION_ID + ".theme_standard";
+                                           ^
+  symbol:   variable BuildConfig
+  location: class ThemeManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:59: error: cannot find symbol
+    public static String ACTION_ADD = BuildConfig.APPLICATION_ID + ".htmlextract_add";
+                                      ^
+  symbol:   variable BuildConfig
+  location: class HTMLExtractManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:60: error: cannot find symbol
+    public static String ACTION_RM = BuildConfig.APPLICATION_ID + ".htmlextract_rm";
+                                     ^
+  symbol:   variable BuildConfig
+  location: class HTMLExtractManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:61: error: cannot find symbol
+    public static String ACTION_EDIT = BuildConfig.APPLICATION_ID + ".htmlextract_edit";
+                                       ^
+  symbol:   variable BuildConfig
+  location: class HTMLExtractManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:62: error: cannot find symbol
+    public static String ACTION_LS = BuildConfig.APPLICATION_ID + ".htmlextract_ls";
+                                     ^
+  symbol:   variable BuildConfig
+  location: class HTMLExtractManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:64: error: cannot find symbol
+    public static String ACTION_QUERY = BuildConfig.APPLICATION_ID + ".htmlextract_query";
+                                        ^
+  symbol:   variable BuildConfig
+  location: class HTMLExtractManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:65: error: cannot find symbol
+    public static String ACTION_WEATHER = BuildConfig.APPLICATION_ID + ".htmlextract_weather";
+                                          ^
+  symbol:   variable BuildConfig
+  location: class HTMLExtractManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:88: error: cannot find symbol
+    public static String ACTION_UPDATE_SUGGESTIONS = BuildConfig.APPLICATION_ID + ".ui_update_suggestions";
+                                                     ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:89: error: cannot find symbol
+    public static String ACTION_UPDATE_HINT = BuildConfig.APPLICATION_ID + ".ui_update_hint";
+                                              ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:90: error: cannot find symbol
+    public static String ACTION_ROOT = BuildConfig.APPLICATION_ID + ".ui_root";
+                                       ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:91: error: cannot find symbol
+    public static String ACTION_NOROOT = BuildConfig.APPLICATION_ID + ".ui_noroot";
+                                         ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:92: error: cannot find symbol
+    public static String ACTION_LOGTOFILE = BuildConfig.APPLICATION_ID + ".ui_log";
+                                            ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:93: error: cannot find symbol
+    public static String ACTION_CLEAR = BuildConfig.APPLICATION_ID + "ui_clear";
+                                        ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:94: error: cannot find symbol
+    public static String ACTION_WEATHER = BuildConfig.APPLICATION_ID + "ui_weather";
+                                          ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:95: error: cannot find symbol
+    public static String ACTION_WEATHER_GOT_LOCATION = BuildConfig.APPLICATION_ID + "ui_weather_location";
+                                                       ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:96: error: cannot find symbol
+    public static String ACTION_WEATHER_DELAY = BuildConfig.APPLICATION_ID + "ui_weather_delay";
+                                                ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:97: error: cannot find symbol
+    public static String ACTION_WEATHER_MANUAL_UPDATE = BuildConfig.APPLICATION_ID + "ui_weather_update";
+                                                        ^
+  symbol:   variable BuildConfig
+  location: class UIManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:38: error: cannot find symbol
+    public static final String TYPE = BuildConfig.APPLICATION_ID + ".type";
+                                      ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:39: error: cannot find symbol
+    public static final String COLOR = BuildConfig.APPLICATION_ID + ".color";
+                                       ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:40: error: cannot find symbol
+    public static final String ACTION = BuildConfig.APPLICATION_ID + ".action";
+                                        ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:41: error: cannot find symbol
+    public static final String LONG_ACTION = BuildConfig.APPLICATION_ID + ".longaction";
+                                             ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:42: error: cannot find symbol
+    public static final String REMOTE_INPUTS = BuildConfig.APPLICATION_ID + ".remote_inputs";
+                                               ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:43: error: cannot find symbol
+    public static final String BUNDLE = BuildConfig.APPLICATION_ID + ".bundle";
+                                        ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:44: error: cannot find symbol
+    public static final String PENDING_INTENT = BuildConfig.APPLICATION_ID + ".pending_intent";
+                                                ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:45: error: cannot find symbol
+    public static final String ID = BuildConfig.APPLICATION_ID + ".id";
+                                    ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:46: error: cannot find symbol
+    public static final String CURRENT_ID = BuildConfig.APPLICATION_ID + ".current_id";
+                                            ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:47: error: cannot find symbol
+    public static final String INFO_AREA = BuildConfig.APPLICATION_ID + ".info_area";
+                                           ^
+  symbol:   variable BuildConfig
+  location: class PrivateIOReceiver
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:60: error: cannot find symbol
+    public static String ACTION_RM = BuildConfig.APPLICATION_ID + ".rm_note";
+                                     ^
+  symbol:   variable BuildConfig
+  location: class NotesManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:61: error: cannot find symbol
+    public static String ACTION_ADD = BuildConfig.APPLICATION_ID + ".add_note";
+                                      ^
+  symbol:   variable BuildConfig
+  location: class NotesManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:62: error: cannot find symbol
+    public static String ACTION_CLEAR = BuildConfig.APPLICATION_ID + ".clear_notes";
+                                        ^
+  symbol:   variable BuildConfig
+  location: class NotesManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:63: error: cannot find symbol
+    public static String ACTION_LS = BuildConfig.APPLICATION_ID + ".ls_notes";
+                                     ^
+  symbol:   variable BuildConfig
+  location: class NotesManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:64: error: cannot find symbol
+    public static String ACTION_LOCK = BuildConfig.APPLICATION_ID + ".lock_notes";
+                                       ^
+  symbol:   variable BuildConfig
+  location: class NotesManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:65: error: cannot find symbol
+    public static String ACTION_CP = BuildConfig.APPLICATION_ID + ".cp_notes";
+                                     ^
+  symbol:   variable BuildConfig
+  location: class NotesManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\MiniMaxService.java:47: error: cannot find symbol
+        this.settingsModule = GlobalSettingsManager.getInstance(context).getModule(AISettingsModule.class);
+                              ^
+  symbol:   variable GlobalSettingsManager
+  location: class MiniMaxService
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\MiniMaxService.java:165: error: cannot find symbol
+        CompletableFuture<AIResponse> future = new CompletableFuture<>();
+                          ^
+  symbol:   class AIResponse
+  location: class MiniMaxService
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+100 errors
+
+> Task :app:compilePlaystoreDebugJavaWithJavac FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compilePlaystoreDebugJavaWithJavac'.
+> Compilation failed; see the compiler error output for details.
+
+* Try:
+> Run with --info option to get more log output.
+> Run with --scan to get full insights.
+
+BUILD FAILED in 6m 8s
+55 actionable tasks: 54 executed, 1 up-to-date
+PS C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher> 
