@@ -486,13 +486,7 @@ public class GlobalSettingsManager {
         @Override public boolean isInitialized() { return true; }
         @Override public void initialize(Context context) {}
         @Override public void cleanup() {}
-        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
-        @Override public void removeListener(String listenerId) {}
     }
-
-    /**
-     * Validator settings module placeholder
-     */
     private static class ValidatorSettings implements ISettingsModule {
         ValidatorSettings() {}
         @Override public String getModuleId() { return "validator"; }
@@ -509,8 +503,6 @@ public class GlobalSettingsManager {
         @Override public boolean isInitialized() { return true; }
         @Override public void initialize(Context context) {}
         @Override public void cleanup() {}
-        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
-        @Override public void removeListener(String listenerId) {}
     }
 
     /**
@@ -532,8 +524,6 @@ public class GlobalSettingsManager {
         @Override public boolean isInitialized() { return true; }
         @Override public void initialize(Context context) {}
         @Override public void cleanup() {}
-        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
-        @Override public void removeListener(String listenerId) {}
     }
 
     /**
@@ -555,7 +545,5 @@ public class GlobalSettingsManager {
         @Override public boolean isInitialized() { return true; }
         @Override public void initialize(Context context) {}
         @Override public void cleanup() {}
-        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
-        @Override public void removeListener(String listenerId) {}
     }
 }
