@@ -149,11 +149,11 @@ public class NotesCommand implements CommandAbstraction {
      */
     private String createNote(Context context, ArrayList<String> args) {
         if (args.isEmpty()) {
-            return "Usage: note create <title> [content]\nUse 'note create \"My Title\" This is content' for inline creation String title = args.get(0);
-        String content =.";
+            return "Usage: note create <title> [content]\nUse 'note create \"My Title\" This is content' for inline creation";
         }
 
-        "";
+        String title = args.get(0);
+        String content = "";
         if (args.size() > 1) {
             StringBuilder contentBuilder = new StringBuilder();
             for (int i = 1; i < args.size(); i++) {
