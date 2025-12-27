@@ -1,36 +1,3 @@
-<<<<<<< HEAD
-
-*.class
-
-# Package Files #
-*.dex
-*.war
-*.ear
-*.apk
-bin/
-bin
-gen/
-release/
-release
-gen
-build/
-build
-.metadata/
-.metadata
-.gradle/
-.gradle
-.idea/
-.idea
-*.project
-.DS_Store
-target/
-
-*.iml
-*.properties
-app/app.iml
-
-*.md
-=======
 # ==============================================================================
 # COMPREHENSIVE .GITIGNORE TEMPLATE
 # ==============================================================================
@@ -939,4 +906,3 @@ app/app.iml
 # This allows outer git to track inner repo files while preserving inner git history
 **/.git_backup_by_agent
 **/.git_backup_by_agent/
->>>>>>> 74960d7 (Initial workspace commit)
