@@ -323,7 +323,18 @@ public abstract class BaseSettingsModule implements ISettingsModule {
                         editor.putFloat(entry.getKey(), entry.getFloatValue());
                         break;
                     case LONG:
-                        editor.putLong(entry.getKey(), entry.getLongValue());
+                        Object longVal = entry.getValue();
+                        if (longVal instanceof Long) {
+                            editor.putLong(entry.getKey(), (Long) longVal);
+                        } else if (longVal instanceof Integer) {
+                            editor.putLong(entry.getKey(), ((Integer) longVal).longValue());
+                        } else if (longVal instanceof String) {
+                            try {
+                                editor.putLong(entry.getKey(), Long.parseLong((String) longVal));
+                            } catch (NumberFormatException e) {
+                                editor.putString(entry.getKey(), (String) longVal);
+                            }
+                        }
                         break;
                     default:
                         editor.putString(entry.getKey(), entry.getStringValue());

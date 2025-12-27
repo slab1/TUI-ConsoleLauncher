@@ -470,52 +470,92 @@ public class GlobalSettingsManager {
     /**
      * Security settings module placeholder
      */
-    private static class SecuritySettings extends BaseSettingsModule {
-        SecuritySettings() {
-            super("security", "Security", "System");
-        }
+    private static class SecuritySettings implements ISettingsModule {
+        SecuritySettings() {}
+        @Override public String getModuleId() { return "security"; }
+        @Override public String getModuleName() { return "Security"; }
+        @Override public String getModuleCategory() { return "System"; }
         @Override public Map<String, Object> getDefaults() { return new HashMap<>(); }
         @Override public Set<String> getSensitiveKeys() { return new HashSet<>(); }
         @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+        @Override public void onImport(JSONObject data) {}
+        @Override public JSONObject onExport(boolean includeSensitive) { return new JSONObject(); }
         @Override public void onSettingChanged(String key, Object value) {}
+        @Override public void resetToDefaults() {}
+        @Override public Map<String, Object> getCurrentSettings() { return new HashMap<>(); }
+        @Override public boolean isInitialized() { return true; }
+        @Override public void initialize(Context context) {}
+        @Override public void cleanup() {}
+        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
+        @Override public void removeListener(String listenerId) {}
     }
 
     /**
      * Validator settings module placeholder
      */
-    private static class ValidatorSettings extends BaseSettingsModule {
-        ValidatorSettings() {
-            super("validator", "Input Validator", "Security");
-        }
+    private static class ValidatorSettings implements ISettingsModule {
+        ValidatorSettings() {}
+        @Override public String getModuleId() { return "validator"; }
+        @Override public String getModuleName() { return "Input Validator"; }
+        @Override public String getModuleCategory() { return "Security"; }
         @Override public Map<String, Object> getDefaults() { return new HashMap<>(); }
         @Override public Set<String> getSensitiveKeys() { return new HashSet<>(); }
         @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+        @Override public void onImport(JSONObject data) {}
+        @Override public JSONObject onExport(boolean includeSensitive) { return new JSONObject(); }
         @Override public void onSettingChanged(String key, Object value) {}
+        @Override public void resetToDefaults() {}
+        @Override public Map<String, Object> getCurrentSettings() { return new HashMap<>(); }
+        @Override public boolean isInitialized() { return true; }
+        @Override public void initialize(Context context) {}
+        @Override public void cleanup() {}
+        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
+        @Override public void removeListener(String listenerId) {}
     }
 
     /**
      * LSP settings module placeholder
      */
-    private static class LspSettings extends BaseSettingsModule {
-        LspSettings() {
-            super("lsp", "Language Server", "Development");
-        }
+    private static class LspSettings implements ISettingsModule {
+        LspSettings() {}
+        @Override public String getModuleId() { return "lsp"; }
+        @Override public String getModuleName() { return "Language Server"; }
+        @Override public String getModuleCategory() { return "Development"; }
         @Override public Map<String, Object> getDefaults() { return new HashMap<>(); }
         @Override public Set<String> getSensitiveKeys() { return new HashSet<>(); }
         @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+        @Override public void onImport(JSONObject data) {}
+        @Override public JSONObject onExport(boolean includeSensitive) { return new JSONObject(); }
         @Override public void onSettingChanged(String key, Object value) {}
+        @Override public void resetToDefaults() {}
+        @Override public Map<String, Object> getCurrentSettings() { return new HashMap<>(); }
+        @Override public boolean isInitialized() { return true; }
+        @Override public void initialize(Context context) {}
+        @Override public void cleanup() {}
+        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
+        @Override public void removeListener(String listenerId) {}
     }
 
     /**
      * Debug settings module placeholder
      */
-    private static class DebugSettings extends BaseSettingsModule {
-        DebugSettings() {
-            super("debugger", "Debugger", "Development");
-        }
+    private static class DebugSettings implements ISettingsModule {
+        DebugSettings() {}
+        @Override public String getModuleId() { return "debugger"; }
+        @Override public String getModuleName() { return "Debugger"; }
+        @Override public String getModuleCategory() { return "Development"; }
         @Override public Map<String, Object> getDefaults() { return new HashMap<>(); }
         @Override public Set<String> getSensitiveKeys() { return new HashSet<>(); }
         @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+        @Override public void onImport(JSONObject data) {}
+        @Override public JSONObject onExport(boolean includeSensitive) { return new JSONObject(); }
         @Override public void onSettingChanged(String key, Object value) {}
+        @Override public void resetToDefaults() {}
+        @Override public Map<String, Object> getCurrentSettings() { return new HashMap<>(); }
+        @Override public boolean isInitialized() { return true; }
+        @Override public void initialize(Context context) {}
+        @Override public void cleanup() {}
+        @Override public void addListener(String listenerId, SettingsModuleListener listener) {}
+        @Override public void removeListener(String listenerId) {}
     }
 }

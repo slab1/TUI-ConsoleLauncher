@@ -80,7 +80,7 @@ public class AICommand implements CommandAbstraction {
                 return getHelpText();
             default:
                 // Treat as direct message
-                return handleMessage(String.join(" ", args));
+                return handleMessage(pack, String.join(" ", args));
         }
     }
     
@@ -227,7 +227,7 @@ public class AICommand implements CommandAbstraction {
     /**
      * Handles direct message sending to the AI.
      */
-    private String handleMessage(String message) {
+    private String handleMessage(ExecutePack pack, String message) {
         if (!aiSettings.hasApiKey() || !aiSettings.hasGroupId()) {
             return "Error: AI not configured.\n" +
                    aiSettings.getStatusDescription() + "\n\n" +
@@ -240,7 +240,7 @@ public class AICommand implements CommandAbstraction {
         
         try {
             if (aiSettings.isStreamingEnabled()) {
-                return handleStreamingMessage(message);
+                return handleStreamingMessage(pack, message);
             } else {
                 return handleBlockingMessage(message);
             }
@@ -253,7 +253,7 @@ public class AICommand implements CommandAbstraction {
     /**
      * Handles message with streaming response.
      */
-    private String handleStreamingMessage(String message) throws InterruptedException {
+    private String handleStreamingMessage(ExecutePack pack, String message) throws InterruptedException {
         final StringBuilder fullResponse = new StringBuilder();
         final boolean[] errorOccurred = {false};
         final String[] errorMessage = {null};
@@ -282,14 +282,17 @@ public class AICommand implements CommandAbstraction {
         conversationHistory.add(new MiniMaxService.Message("user", message));
         
         // Start streaming request
-        currentThread = new StoppableThread(() -> {
-            try {
-                aiService.sendMessageStreaming(message, conversationHistory, callback);
-            } catch (Exception e) {
-                errorOccurred[0] = true;
-                errorMessage[0] = e.getMessage();
+        currentThread = new StoppableThread() {
+            @Override
+            public void run() {
+                try {
+                    aiService.sendMessageStreaming(message, conversationHistory, callback);
+                } catch (Exception e) {
+                    errorOccurred[0] = true;
+                    errorMessage[0] = e.getMessage();
+                }
             }
-        });
+        };
         
         currentThread.start();
         

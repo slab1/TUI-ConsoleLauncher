@@ -231,11 +231,6 @@ public class DebugManager {
         }
     }
     
-    public String stepOver() {
-        stepOver();
-        return "Stepped over to line " + currentLine;
-    }
-    
     public void handleCommand(String command, String params) {
         Log.d(TAG, "Handling debug command: " + command);
         

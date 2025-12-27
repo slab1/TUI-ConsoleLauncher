@@ -1,6 +1,7 @@
 package ohi.andre.consolelauncher.commands.smartlauncher.developer;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -9,9 +10,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.EditorSettings;
-import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.EditorSettingsManager;
-import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.MonacoSettingsBridge;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 /**
  * MonacoEditorController - Separates business logic from Activity
