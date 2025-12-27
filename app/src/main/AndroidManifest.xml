@@ -13,9 +13,11 @@
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <!-- Note: WRITE_INTERNAL_STORAGE is deprecated and effectively unused since Android 4.4 -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
@@ -85,7 +87,7 @@
             android:exported="false"
             android:grantUriPermissions="true">
         <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:name="androidx.FILE_PROVIDER_PATHS"
             android:resource="@xml/provider_paths" />
     </provider>
 
@@ -144,7 +146,7 @@
         android:theme="@style/Custom.Solid"
         android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
         <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
+            android:name="androidx.appcompat.app.AppCompat.PARENT_ACTIVITY"
             android:value=".LauncherActivity" />
 
         <intent-filter>
@@ -251,7 +253,7 @@
         android:theme="@style/Custom.Solid"
         android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
         <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
+            android:name="androidx.appcompat.app.AppCompat.PARENT_ACTIVITY"
             android:value=".LauncherActivity" />
     </activity>
 </application>
