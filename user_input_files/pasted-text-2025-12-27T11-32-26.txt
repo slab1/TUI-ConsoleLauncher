@@ -1,0 +1,445 @@
+PS C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher> gradle clean assembleDebug --no-daemon
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+
+> Task :app:compileFdroidDebugJavaWithJavac
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorActivityFixed.java:37: error: class MonacoEditorActivity is public, should be declared in a file named MonacoEditorActivity.java
+public class MonacoEditorActivity extends Activity {
+       ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:6: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:40: error: cannot find symbol
+    private final MiniMaxService aiService;
+                  ^
+  symbol:   class MiniMaxService
+  location: class AICommand
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:44: error: package MiniMaxService does not exist
+    private final List<MiniMaxService.Message> conversationHistory;
+                                     ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\AppsManager.java:22: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\MainManager.java:9: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ContactManager.java:16: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ContactManager.java:24: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\AliasManager.java:8: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\AliasManager.java:23: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\RssManager.java:8: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\LauncherActivity.java:16: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ThemeManager.java:8: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ThemeManager.java:16: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:9: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:17: error: package net.minidev.json does not exist
+import net.minidev.json.JSONArray;
+                       ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\HTMLExtractManager.java:38: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\MainManager.java:592: error: cannot find symbol
+    private CommandManager commandManager;
+            ^
+  symbol:   class CommandManager
+  location: class MainManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\MainManager.java:594: error: cannot find symbol
+    public void setCommandManager(CommandManager commandManager) {
+                                  ^
+  symbol:   class CommandManager
+  location: class MainManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\MainManager.java:598: error: cannot find symbol
+    public CommandManager getCommandManager() {
+           ^
+  symbol:   class CommandManager
+  location: class MainManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\UIManager.java:25: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\CommandManager.java:11: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:13: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PrivateIOReceiver.java:17: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PublicIOReceiver.java:8: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\PublicIOReceiver.java:10: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:16: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\NotesManager.java:40: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\MiniMaxService.java:164: error: cannot find symbol
+    public CompletableFuture<AIResponse> sendMessage(String message, List<Message> conversationHistory) {
+                             ^
+  symbol:   class AIResponse
+  location: class MiniMaxService
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\clear.java:4: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\ctrlc.java:4: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\devutils.java:8: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\htmlextract.java:4: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\location.java:6: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\notes.java:4: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\reply.java:5: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\theme.java:4: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\tui.java:8: error: package androidx.localbroadcastmanager.content does not exist  
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\tui.java:12: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\main\raw\tuiweather.java:4: error: package androidx.localbroadcastmanager.content does not exist       
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\DebugManager.java:234: error: method stepOver() is already defined in class DebugManager
+    public String stepOver() {
+                  ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:25: error: cannot find symbol
+    private final ExecutorService executor;
+                  ^
+  symbol:   class ExecutorService
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:28: error: cannot find symbol
+    private Map<String, FileInfo> fileSystem = new HashMap<>();
+            ^
+  symbol:   class Map
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:28: error: cannot find symbol
+    private Map<String, FileInfo> fileSystem = new HashMap<>();
+                        ^
+  symbol:   class FileInfo
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:29: error: cannot find symbol
+    private List<String> openTabs = new ArrayList<>();
+            ^
+  symbol:   class List
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:44: error: cannot find symbol 
+    public MonacoEditorController(Activity activity, WebView webView, ExecutorService executor) {
+                                                                      ^
+  symbol:   class ExecutorService
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:547: error: cannot find symbol
+    private String readFile(File file) throws IOException {
+                            ^
+  symbol:   class File
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:547: error: cannot find symbol
+    private String readFile(File file) throws IOException {
+                                              ^
+  symbol:   class IOException
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:700: error: cannot find symbol
+    public Bundle saveState() {
+           ^
+  symbol:   class Bundle
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:723: error: cannot find symbol
+    public void restoreState(Bundle state) {
+                             ^
+  symbol:   class Bundle
+  location: class MonacoEditorController
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:754: error: cannot find symbol
+        public void scanDirectory(File dir, String relativePath, Map<String, FileInfo> fileSystem) {
+                                  ^
+  symbol:   class File
+  location: class FileSystemManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:754: error: cannot find symbol
+        public void scanDirectory(File dir, String relativePath, Map<String, FileInfo> fileSystem) {
+                                                                 ^
+  symbol:   class Map
+  location: class FileSystemManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:754: error: cannot find symbol
+        public void scanDirectory(File dir, String relativePath, Map<String, FileInfo> fileSystem) {
+                                                                             ^
+  symbol:   class FileInfo
+  location: class FileSystemManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:778: error: cannot find symbol
+        private static String readFile(File file) throws IOException {
+                                       ^
+  symbol:   class File
+  location: class FileSystemManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\MonacoEditorController.java:778: error: cannot find symbol
+        private static String readFile(File file) throws IOException {
+                                                         ^
+  symbol:   class IOException
+  location: class FileSystemManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:473: error: cannot find symbol
+    private static class SecuritySettings extends BaseSettingsModule {
+                                                  ^
+  symbol:   class BaseSettingsModule
+  location: class GlobalSettingsManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:479: error: cannot find symbol
+        @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+                         ^
+  symbol:   class ValidationResult
+  location: class SecuritySettings
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:486: error: cannot find symbol
+    private static class ValidatorSettings extends BaseSettingsModule {
+                                                   ^
+  symbol:   class BaseSettingsModule
+  location: class GlobalSettingsManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:492: error: cannot find symbol
+        @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+                         ^
+  symbol:   class ValidationResult
+  location: class ValidatorSettings
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:499: error: cannot find symbol
+    private static class LspSettings extends BaseSettingsModule {
+                                             ^
+  symbol:   class BaseSettingsModule
+  location: class GlobalSettingsManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:505: error: cannot find symbol
+        @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+                         ^
+  symbol:   class ValidationResult
+  location: class LspSettings
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:512: error: cannot find symbol
+    private static class DebugSettings extends BaseSettingsModule {
+                                               ^
+  symbol:   class BaseSettingsModule
+  location: class GlobalSettingsManager
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\developer\settings\GlobalSettingsManager.java:518: error: cannot find symbol
+        @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+                         ^
+  symbol:   class ValidationResult
+  location: class DebugSettings
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\commands\smartlauncher\test\SmartLauncherTestSuite.java:4: error: package android.test.mock does not exist      
+import android.test.mock.MockContext;
+                        ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\ChangelogManager.java:12: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\flashlight\Flashlight1.java:8: error: package androidx.localbroadcastmanager.content does not exist    
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\flashlight\Flashlight2.java:27: error: package androidx.localbroadcastmanager.content does not exist   
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\notifications\KeeperService.java:19: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\notifications\reply\ReplyManager.java:15: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\notifications\reply\ReplyManager.java:30: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\TuiLocationManager.java:19: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\TuiLocationManager.java:24: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\GenericFileProvider.java:5: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\LongClickableSpan.java:9: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\Tuils.java:34: error: package androidx.localbroadcastmanager.content does not exist
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+                                             ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\tuils\Tuils.java:93: error: cannot find symbol
+import ohi.andre.consolelauncher.BuildConfig;
+                                ^
+  symbol:   class BuildConfig
+  location: package ohi.andre.consolelauncher
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\fdroid\java\ohi\andre\consolelauncher\commands\main\raw\sms.java:6: error: cannot find symbol
+import android.support.v4.app.ActivityCompat;
+                             ^
+  symbol:   class ActivityCompat
+  location: package android.support.v4.app
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\fdroid\java\ohi\andre\consolelauncher\commands\main\raw\sms.java:7: error: package android.support.v4.content does not exist
+import android.support.v4.content.ContextCompat;
+                                 ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:49: error: cannot find symbol
+        this.aiService = new MiniMaxService(context);
+                             ^
+  symbol:   class MiniMaxService
+  location: class AICommand
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:58: error: incompatible types: Object[] cannot be converted to String[]
+        String[] args = pack.args;
+                            ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:238: error: cannot find symbol
+            pack.apply("Thinking...");
+            ^
+  symbol:   variable pack
+  location: class AICommand
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:261: error: package MiniMaxService does not exist
+        MiniMaxService.StreamingCallback callback = new MiniMaxService.StreamingCallback() {
+                      ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:261: error: package MiniMaxService does not exist
+        MiniMaxService.StreamingCallback callback = new MiniMaxService.StreamingCallback() {
+                                                                      ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:262: error: method does not override or implement a method from a supertype
+            @Override
+            ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:268: error: method does not override or implement a method from a supertype
+            @Override
+            ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:274: error: method does not override or implement a method from a supertype
+            @Override
+            ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:282: error: package MiniMaxService does not exist
+        conversationHistory.add(new MiniMaxService.Message("user", message));
+                                                  ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:285: error: constructor StoppableThread in class StoppableThread cannot be applied to given types;
+        currentThread = new StoppableThread(() -> {
+                        ^
+  required: no arguments
+  found:    ()->{ try [...]; } }
+  reason: actual and formal argument lists differ in length
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:318: error: package MiniMaxService does not exist
+        conversationHistory.add(new MiniMaxService.Message("assistant", response));
+                                                  ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:338: error: package MiniMaxService does not exist
+        conversationHistory.add(new MiniMaxService.Message("user", message));
+                                                  ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:347: error: package MiniMaxService does not exist
+            conversationHistory.add(new MiniMaxService.Message("assistant", content));
+                                                      ^
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\ai\AICommand.java:433: error: cannot find symbol
+        return new int[]{CommandAbstraction.OPTIONAL};
+                                           ^
+  symbol:   variable OPTIONAL
+  location: interface CommandAbstraction
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\settings\BaseSettingsModule.java:326: error: cannot find symbol     
+                        editor.putLong(entry.getKey(), entry.getLongValue());
+                                                            ^
+  symbol:   method getLongValue()
+  location: variable entry of type SettingEntry
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\settings\modules\AISettingsModule.java:73: error: cannot find symbol
+        Log.d(TAG, "AI Settings loaded - API Key present: " + hasApiKey);
+              ^
+  symbol:   variable TAG
+  location: class AISettingsModule
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\settings\modules\AISettingsModule.java:73: error: cannot find symbol
+        Log.d(TAG, "AI Settings loaded - API Key present: " + hasApiKey);
+        ^
+  symbol:   variable Log
+  location: class AISettingsModule
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\settings\modules\AISettingsModule.java:80: error: cannot find symbol
+        Log.d(TAG, "AI Settings saved");
+              ^
+  symbol:   variable TAG
+  location: class AISettingsModule
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\settings\modules\AISettingsModule.java:80: error: cannot find symbol
+        Log.d(TAG, "AI Settings saved");
+        ^
+  symbol:   variable Log
+  location: class AISettingsModule
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\settings\modules\AISettingsModule.java:108: error: cannot find symbol
+        Log.d(TAG, "AI Settings reset to defaults");
+              ^
+  symbol:   variable TAG
+  location: class AISettingsModule
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\settings\modules\AISettingsModule.java:108: error: cannot find symbol
+        Log.d(TAG, "AI Settings reset to defaults");
+        ^
+  symbol:   variable Log
+  location: class AISettingsModule
+C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher\app\src\main\java\ohi\andre\consolelauncher\managers\AppsManager.java:162: error: cannot find symbol
+                LocalBroadcastManager.getInstance(context.getApplicationContext()).sendBroadcast(new Intent(UIManager.ACTION_UPDATE_SUGGESTIONS));
+                ^
+  symbol: variable LocalBroadcastManager
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+100 errors
+
+> Task :app:compileFdroidDebugJavaWithJavac FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFdroidDebugJavaWithJavac'.
+> Compilation failed; see the compiler error output for details.
+
+* Try:
+> Run with --info option to get more log output.
+> Run with --scan to get full insights.
+
+BUILD FAILED in 11m 41s
+55 actionable tasks: 54 executed, 1 up-to-date
+
+
+
