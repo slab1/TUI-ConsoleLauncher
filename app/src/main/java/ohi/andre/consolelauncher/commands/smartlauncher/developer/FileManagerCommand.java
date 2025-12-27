@@ -28,48 +28,54 @@ public class FileManagerCommand implements CommandAbstraction {
     public String exec(ExecutePack pack) throws Exception {
         Context context = pack.context;
         
-        if (pack.mArgs == null || pack.mArgs.length == 0) {
+        // Convert Object[] args to String[] for easier handling
+        String[] mArgs = new String[pack.args.length];
+        for (int i = 0; i < pack.args.length; i++) {
+            mArgs[i] = pack.args[i] != null ? pack.args[i].toString() : "";
+        }
+        
+        if (mArgs == null || mArgs.length == 0 || (mArgs.length == 1 && mArgs[0].isEmpty())) {
             return listFiles(context);
         }
         
-        String operation = pack.mArgs[0].toString().toLowerCase();
+        String operation = mArgs[0].toLowerCase();
         
         switch (operation) {
             case "ls":
             case "list":
                 return listFiles(context);
             case "cd":
-                if (pack.mArgs.length < 2) {
+                if (mArgs.length < 2) {
                     return "Usage: file cd <directory>";
                 }
-                return changeDirectory(context, pack.mArgs[1].toString());
+                return changeDirectory(context, mArgs[1]);
             case "pwd":
                 return printWorkingDirectory();
             case "cat":
-                if (pack.mArgs.length < 2) {
+                if (mArgs.length < 2) {
                     return "Usage: file cat <filename>";
                 }
-                return catFile(context, pack.mArgs[1].toString());
+                return catFile(context, mArgs[1]);
             case "mkdir":
-                if (pack.mArgs.length < 2) {
+                if (mArgs.length < 2) {
                     return "Usage: file mkdir <directory_name>";
                 }
-                return makeDirectory(context, pack.mArgs[1].toString());
+                return makeDirectory(context, mArgs[1]);
             case "touch":
-                if (pack.mArgs.length < 2) {
+                if (mArgs.length < 2) {
                     return "Usage: file touch <filename>";
                 }
-                return touchFile(context, pack.mArgs[1].toString());
+                return touchFile(context, mArgs[1]);
             case "rm":
-                if (pack.mArgs.length < 2) {
+                if (mArgs.length < 2) {
                     return "Usage: file rm <path>";
                 }
-                return removeFile(context, pack.mArgs[1].toString());
+                return removeFile(context, mArgs[1]);
             case "info":
-                if (pack.mArgs.length < 2) {
+                if (mArgs.length < 2) {
                     return "Usage: file info <path>";
                 }
-                return fileInfo(context, pack.mArgs[1].toString());
+                return fileInfo(context, mArgs[1]);
             default:
                 return "Unknown operation: " + operation + "\nAvailable: ls, cd, pwd, cat, mkdir, touch, rm, info";
         }

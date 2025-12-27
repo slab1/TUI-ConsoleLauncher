@@ -146,7 +146,6 @@ public class MonacoEditorActivity extends Activity {
         
         // SECURITY: Additional security settings
         settings.setGeolocationEnabled(false);
-        settings.setAllowContentUrlAccess(false);
         settings.setDatabaseEnabled(false);
         
         // PERFORMANCE: Enable hardware acceleration

@@ -141,7 +141,7 @@ public class AICommand implements CommandAbstraction {
         result.append("Thinking...\n");
 
         try {
-            MiniMaxService.MiniMaxResponse response = miniMaxService.sendChatRequest(message, null, 500, 0.7);
+            MiniMaxService.MiniMaxResponse response = miniMaxService.sendChatRequest(message, null, 500, 0.7f);
             
             if (response.success) {
                 result.append("\n");

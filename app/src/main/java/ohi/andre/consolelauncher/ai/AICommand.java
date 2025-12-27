@@ -19,7 +19,8 @@ public class AICommand implements CommandAbstraction {
     private Context context;
     private MiniMaxService aiService;
     
-    public AICommand() {
+    public AICommand(Context context) {
+        this.context = context.getApplicationContext();
     }
     
     @Override
@@ -165,7 +166,7 @@ public class AICommand implements CommandAbstraction {
         }
         
         try {
-            MiniMaxService.MiniMaxResponse response = aiService.sendChatRequest(message, null, 500, 0.7);
+            MiniMaxService.MiniMaxResponse response = aiService.sendChatRequest(message, null, 500, 0.7f);
             
             if (response.success) {
                 return response.message;

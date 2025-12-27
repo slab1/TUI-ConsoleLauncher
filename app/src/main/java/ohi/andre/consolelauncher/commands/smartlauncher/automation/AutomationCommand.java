@@ -446,9 +446,9 @@ public class AutomationCommand implements CommandAbstraction {
 
         switch (setting) {
             case "wifi":
-                return toggleWifi(context, args.subList(1, args.size()));
+                return toggleWifi(context, new ArrayList<>(args.subList(1, args.size())));
             case "bluetooth":
-                return toggleBluetooth(context, args.subList(1, args.size()));
+                return toggleBluetooth(context, new ArrayList<>(args.subList(1, args.size())));
             case "sync":
                 return toggleSync(context, action);
             case "airplane":

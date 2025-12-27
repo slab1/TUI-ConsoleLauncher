@@ -102,13 +102,6 @@ public class SpeechRecognizerHelper {
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, partialResults);
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
         
-        // Add extra phrase hints if available
-        List<String> hints = getCommandHints();
-        if (!hints.isEmpty()) {
-            intent.putStringArrayListExtra(RecognizerIntent.EXTRA_PROMPT_HINTS, 
-                new ArrayList<>(hints));
-        }
-        
         try {
             speechRecognizer.startListening(intent);
             isListening = true;
