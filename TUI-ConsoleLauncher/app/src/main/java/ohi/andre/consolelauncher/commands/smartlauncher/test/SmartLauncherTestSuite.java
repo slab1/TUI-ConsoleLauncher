@@ -1,7 +1,6 @@
 package ohi.andre.consolelauncher.commands.smartlauncher.test;
 
 import android.content.Context;
-import android.test.mock.MockContext;
 
 import java.util.ArrayList;
 
