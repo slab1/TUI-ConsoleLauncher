@@ -225,8 +225,8 @@ public class LauncherActivity extends AppCompatActivity implements Reloadable {
         }
 
         // Initialize CommandManager for command registration
-        commandManager = new CommandManager(this);
-        commandManager.registerCommands();
+        commandManager = CommandManager.getInstance(this);
+        commandManager.initialize();
 
         XMLPrefsManager.loadCommons(this);
         new RegexManager(LauncherActivity.this);

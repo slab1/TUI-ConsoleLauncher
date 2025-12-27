@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.EditorSettings;
+import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.EditorSettingsManager;
+import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.MonacoSettingsBridge;
+
 /**
  * MonacoEditorController - Separates business logic from Activity
  * Handles all Monaco Editor operations and communication
@@ -824,6 +828,25 @@ public class MonacoEditorController {
             } else {
                 return "plaintext";
             }
+        }
+    }
+    
+    // ======= FileInfo Inner Class =======
+    public static class FileInfo {
+        public String path;
+        public String content;
+        public String language;
+        public boolean modified;
+        public String gitStatus;
+        public long lastModified;
+        
+        public FileInfo(String path, String content, String language) {
+            this.path = path;
+            this.content = content;
+            this.language = language;
+            this.modified = false;
+            this.gitStatus = null;
+            this.lastModified = System.currentTimeMillis();
         }
     }
 }
