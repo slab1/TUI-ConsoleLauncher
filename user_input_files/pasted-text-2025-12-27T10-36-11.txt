@@ -1,0 +1,145 @@
+PS C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher> gradle clean assembleDebug --no-daemon
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+A problem occurred configuring root project 'TUI-ConsoleLauncher'.
+> Could not resolve all artifacts for configuration ':classpath'.
+   > Could not download gradle-8.3.2.jar (com.android.tools.build:gradle:8.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/8.3.2/gradle-8.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/8.3.2/gradle-8.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/172.217.18.206] failed: Read timed out
+   > Could not download builder-8.3.2.jar (com.android.tools.build:builder:8.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/builder/8.3.2/builder-8.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/builder/8.3.2/builder-8.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.215.46] failed: Read timed out
+   > Could not download bundletool-1.15.6.jar (com.android.tools.build:bundletool:1.15.6)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/bundletool/1.15.6/bundletool-1.15.6.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/bundletool/1.15.6/bundletool-1.15.6.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/172.217.18.206] failed: Read timed out
+   > Could not download baseLibrary-8.3.2.jar (com.android.databinding:baseLibrary:8.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/databinding/baseLibrary/8.3.2/baseLibrary-8.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/databinding/baseLibrary/8.3.2/baseLibrary-8.3.2.jar'.
+            > Got socket exception during request. It might be caused by SSL misconfiguration
+               > Connection reset
+   > Could not download layoutlib-api-31.3.2.jar (com.android.tools.layoutlib:layoutlib-api:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/layoutlib/layoutlib-api/31.3.2/layoutlib-api-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/layoutlib/layoutlib-api/31.3.2/layoutlib-api-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.214.78] failed: Read timed out
+   > Could not download android-device-provider-ddmlib-proto-31.3.2.jar (com.android.tools.utp:android-device-provider-ddmlib-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-device-provider-ddmlib-proto/31.3.2/android-device-provider-ddmlib-proto-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-device-provider-ddmlib-proto/31.3.2/android-device-provider-ddmlib-proto-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.214.78] failed: Read timed out
+   > Could not download android-device-provider-gradle-proto-31.3.2.jar (com.android.tools.utp:android-device-provider-gradle-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-device-provider-gradle-proto/31.3.2/android-device-provider-gradle-proto-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-device-provider-gradle-proto/31.3.2/android-device-provider-gradle-proto-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.214.78] failed: Read timed out
+   > Could not download android-test-plugin-host-additional-test-output-proto-31.3.2.jar (com.android.tools.utp:android-test-plugin-host-additional-test-output-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-additional-test-output-proto/31.3.2/android-test-plugin-host-additional-test-output-proto-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-additional-test-output-proto/31.3.2/android-test-plugin-host-additional-test-output-proto-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.214.78] failed: Read timed out
+   > Could not download android-test-plugin-host-coverage-proto-31.3.2.jar (com.android.tools.utp:android-test-plugin-host-coverage-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-coverage-proto/31.3.2/android-test-plugin-host-coverage-proto-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-coverage-proto/31.3.2/android-test-plugin-host-coverage-proto-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.214.78] failed: Read timed out
+   > Could not download android-test-plugin-host-emulator-control-proto-31.3.2.jar (com.android.tools.utp:android-test-plugin-host-emulator-control-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-emulator-control-proto/31.3.2/android-test-plugin-host-emulator-control-proto-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-emulator-control-proto/31.3.2/android-test-plugin-host-emulator-control-proto-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.214.78] failed: Read timed out
+   > Could not download android-test-plugin-host-logcat-proto-31.3.2.jar (com.android.tools.utp:android-test-plugin-host-logcat-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-logcat-proto/31.3.2/android-test-plugin-host-logcat-proto-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-logcat-proto/31.3.2/android-test-plugin-host-logcat-proto-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.75.238] failed: Read timed out
+   > Could not download android-test-plugin-host-apk-installer-proto-31.3.2.jar (com.android.tools.utp:android-test-plugin-host-apk-installer-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-apk-installer-proto/31.3.2/android-test-plugin-host-apk-installer-proto-31.3.2.jar'.   
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-apk-installer-proto/31.3.2/android-test-plugin-host-apk-installer-proto-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.75.238] failed: Read timed out
+   > Could not download android-test-plugin-host-retention-proto-31.3.2.jar (com.android.tools.utp:android-test-plugin-host-retention-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-retention-proto/31.3.2/android-test-plugin-host-retention-proto-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-host-retention-proto/31.3.2/android-test-plugin-host-retention-proto-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.75.238] failed: Read timed out
+   > Could not download android-test-plugin-result-listener-gradle-proto-31.3.2.jar (com.android.tools.utp:android-test-plugin-result-listener-gradle-proto:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-result-listener-gradle-proto/31.3.2/android-test-plugin-result-listener-gradle-proto-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/utp/android-test-plugin-result-listener-gradle-proto/31.3.2/android-test-plugin-result-listener-gradle-proto-31.3.2.jar'. 
+            > Connect to dl.google.com:443 [dl.google.com/172.217.20.46] failed: Read timed out
+   > Could not download builder-model-8.3.2.jar (com.android.tools.build:builder-model:8.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/builder-model/8.3.2/builder-model-8.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/builder-model/8.3.2/builder-model-8.3.2.jar'.      
+            > Connect to dl.google.com:443 [dl.google.com/172.217.20.46] failed: Read timed out
+   > Could not download dvlib-31.3.2.jar (com.android.tools:dvlib:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/dvlib/31.3.2/dvlib-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/dvlib/31.3.2/dvlib-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/172.217.20.46] failed: Read timed out
+   > Could not download common-31.3.2.jar (com.android.tools:common:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/common/31.3.2/common-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/common/31.3.2/common-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/172.217.20.46] failed: Read timed out
+   > Could not download jetifier-processor-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta10)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/jetifier/jetifier-processor/1.0.0-beta10/jetifier-processor-1.0.0-beta10.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/jetifier/jetifier-processor/1.0.0-beta10/jetifier-processor-1.0.0-beta10.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/172.217.20.46] failed: Read timed out
+   > Could not download jetifier-core-1.0.0-beta10.jar (com.android.tools.build.jetifier:jetifier-core:1.0.0-beta10)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/jetifier/jetifier-core/1.0.0-beta10/jetifier-core-1.0.0-beta10.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/jetifier/jetifier-core/1.0.0-beta10/jetifier-core-1.0.0-beta10.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.214.174] failed: Read timed out
+   > Could not download transform-api-2.0.0-deprecated-use-gradle-api.jar (com.android.tools.build:transform-api:2.0.0-deprecated-use-gradle-api)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/transform-api/2.0.0-deprecated-use-gradle-api/transform-api-2.0.0-deprecated-use-gradle-api.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/transform-api/2.0.0-deprecated-use-gradle-api/transform-api-2.0.0-deprecated-use-gradle-api.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/216.58.214.174] failed: Read timed out
+   > Could not download apkzlib-8.3.2.jar (com.android.tools.build:apkzlib:8.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/apkzlib/8.3.2/apkzlib-8.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/apkzlib/8.3.2/apkzlib-8.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.74.238] failed: Read timed out
+   > Could not download protos-31.3.2.jar (com.android.tools.analytics-library:protos:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/analytics-library/protos/31.3.2/protos-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/analytics-library/protos/31.3.2/protos-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.74.238] failed: Read timed out
+   > Could not download core-proto-0.0.9-alpha02.jar (com.google.testing.platform:core-proto:0.0.9-alpha02)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/google/testing/platform/core-proto/0.0.9-alpha02/core-proto-0.0.9-alpha02.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/google/testing/platform/core-proto/0.0.9-alpha02/core-proto-0.0.9-alpha02.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.74.238] failed: Read timed out
+   > Could not download signflinger-8.3.2.jar (com.android:signflinger:8.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/signflinger/8.3.2/signflinger-8.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/signflinger/8.3.2/signflinger-8.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.74.238] failed: Read timed out
+   > Could not download zipflinger-8.3.2.jar (com.android:zipflinger:8.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/zipflinger/8.3.2/zipflinger-8.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/zipflinger/8.3.2/zipflinger-8.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.74.238] failed: Read timed out
+   > Could not download annotations-31.3.2.jar (com.android.tools:annotations:31.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/annotations/31.3.2/annotations-31.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/annotations/31.3.2/annotations-31.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.75.238] failed: Read timed out
+   > Could not download apksig-8.3.2.jar (com.android.tools.build:apksig:8.3.2)
+      > Could not get resource 'https://dl.google.com/dl/android/maven2/com/android/tools/build/apksig/8.3.2/apksig-8.3.2.jar'.
+         > Could not GET 'https://dl.google.com/dl/android/maven2/com/android/tools/build/apksig/8.3.2/apksig-8.3.2.jar'.
+            > Connect to dl.google.com:443 [dl.google.com/142.250.75.238] failed: Read timed out
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+PS C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher> ping dl.google.com
+
+Pinging dl.google.com [142.251.39.206] with 32 bytes of data:
+Request timed out.
+Request timed out.
+Request timed out.
+Request timed out.
+
+Ping statistics for 142.251.39.206:
+    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),
+PS C:\Users\slabl\StudioProjects\TUI-ConsoleLauncher> ping dl.google.com
+
+Pinging dl.google.com [142.251.39.206] with 32 bytes of data:
+Request timed out.
+Request timed out.
+Request timed out.
+Request timed out.
+
+Ping statistics for 142.251.39.206:
+    Packets: Sent = 4, Received = 0, Lost = 4 (100% loss),
