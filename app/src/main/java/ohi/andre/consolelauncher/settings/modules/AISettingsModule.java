@@ -2,6 +2,7 @@ package ohi.andre.consolelauncher.settings.modules;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import ohi.andre.consolelauncher.settings.BaseSettingsModule;
 import ohi.andre.consolelauncher.settings.ISettingsModule;
@@ -16,6 +17,8 @@ import java.util.List;
  * This module uses encrypted storage for sensitive values like API keys.
  */
 public class AISettingsModule extends BaseSettingsModule {
+    
+    private static final String TAG = "AISettingsModule";
     
     public static final String MODULE_ID = "ai_settings";
     
