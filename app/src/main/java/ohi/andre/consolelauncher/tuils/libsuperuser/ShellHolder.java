@@ -55,9 +55,9 @@ public class ShellHolder {
         }
 
         try {
-            File homeDir = XMLPrefsManager.get(File.class, Behavior.home_path);
-            if (homeDir != null) {
-                interactive.addCommand("cd " + homeDir.getAbsolutePath());
+            String homePath = XMLPrefsManager.get(File.class, Behavior.home_path);
+            if (homePath != null && !homePath.isEmpty()) {
+                interactive.addCommand("cd " + homePath);
             }
         } catch (Exception e) {
             Log.w(TAG, "Failed to set home directory", e);
