@@ -279,7 +279,12 @@ public class SecureStorageManager {
             ).build();
             
             // Write encrypted content
-            outputStream = encryptedFile.openFileOutput();
+            try {
+                outputStream = encryptedFile.openFileOutput();
+            } catch (GeneralSecurityException e) {
+                Log.e(TAG, "Failed to open encrypted output: " + e.getMessage(), e);
+                return false;
+            }
             byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
             outputStream.write(contentBytes);
             outputStream.flush();
@@ -327,7 +332,12 @@ public class SecureStorageManager {
             ).build();
             
             // Read and decrypt content
-            inputStream = encryptedFile.openFileInput();
+            try {
+                inputStream = encryptedFile.openFileInput();
+            } catch (GeneralSecurityException e) {
+                Log.e(TAG, "Failed to open encrypted input: " + e.getMessage(), e);
+                return null;
+            }
             outputStream = new ByteArrayOutputStream();
             
             byte[] buffer = new byte[BUFFER_SIZE];

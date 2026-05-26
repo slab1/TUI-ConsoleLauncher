@@ -225,7 +225,7 @@ public class MonacoEditorActivityEnhanced extends Activity {
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setGeolocationEnabled(false);
-        webView.getSettings().setAllowContentUrlAccess(true);
+        webView.getSettings().setAllowContentAccess(true);
         
         // Enable WebView debugging
         if (BuildConfig.DEBUG) {
