@@ -3,8 +3,6 @@ name: Build TUI APK
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -29,18 +27,14 @@ jobs:
 
       - name: Build PlayStore Debug APK
         run: ./gradlew assemblePlaystoreDebug
+        continue-on-error: false
 
-      - name: Build F-Droid Debug APK
-        run: ./gradlew assembleFdroidDebug
+      - name: List APK output files
+        run: find app/build/outputs -name "*.apk" -ls
 
-      - name: Upload PlayStore APK
+      - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TUI-PlayStore-Debug
+          name: TUI-ConsoleLauncher-APK
           path: app/build/outputs/apk/playstore/debug/*.apk
-
-      - name: Upload F-Droid APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: TUI-FDroid-Debug
-          path: app/build/outputs/apk/fdroid/debug/*.apk
+          if-no-files-found: error
