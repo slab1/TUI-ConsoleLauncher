@@ -47,6 +47,11 @@ public abstract class BaseSettingsModule<T> implements ISettingsModule {
         this.moduleCategory = moduleCategory;
         this.currentSettings = new ConcurrentHashMap<>();
         this.sensitiveKeys = new HashSet<>();
+        this.executor = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r, "Settings-" + moduleId);
+            t.setDaemon(true);
+            return t;
+        });
     }
 
     @Override
