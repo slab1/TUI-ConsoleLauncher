@@ -62,8 +62,8 @@ jobs:
       - name: Clean build
         run: ./gradlew clean
 
-      - name: Build PlayStore Release APK
-        run: ./gradlew assemblePlaystoreRelease --no-daemon
+      - name: Build F-Droid Release APK
+        run: ./gradlew assembleFdroidRelease --no-daemon
 
       - name: APK verification
         run: |
@@ -71,12 +71,11 @@ jobs:
           find app/build/outputs -name "*.apk" -ls
           echo ""
           echo "=== SHA-256 Checksums ==="
-          sha256sum app/build/outputs/apk/playstore/release/*.apk
-          echo ""
+          sha256sum app/build/outputs/apk/fdroid/release/*.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: TUI-ConsoleLauncher-APK
-          path: app/build/outputs/apk/playstore/release/*.apk
+          path: app/build/outputs/apk/fdroid/release/*.apk
           if-no-files-found: error
