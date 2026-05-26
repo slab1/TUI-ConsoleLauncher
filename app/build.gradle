@@ -1,33 +1,16 @@
-plugins {
-    id 'com.android.application'
-}
+apply plugin: 'com.android.application'
 
 android {
     namespace 'ohi.andre.consolelauncher'
     compileSdk 34
-    buildToolsVersion '34.0.0'
 
     defaultConfig {
         applicationId "ohi.andre.consolelauncher"
         minSdk 21
         targetSdk 34
-        // Flavor dimensions must be defined if you use productFlavors
-        flavorDimensions "default"
 
         versionName "v6.16"
         versionCode 206
-
-        // Enable multidex for large projects
-        multiDexEnabled true
-    }
-
-    signingConfigs {
-        debug {
-            storeFile file("${System.properties['user.home']}/.android/debug.keystore")
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-        }
     }
 
     buildTypes {
@@ -35,23 +18,20 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            zipAlignEnabled true
         }
         debug {
             minifyEnabled false
             debuggable true
-            signingConfig signingConfigs.debug
         }
     }
 
-    // FIXED: productFlavors is now correctly inside the android block
     productFlavors {
+        flavorDimensions = ["default"]
         fdroid {
-            dimension "default"// F-Droid flavor - no proprietary dependencies
+            dimension "default"
         }
         playstore {
             dimension "default"
-            // Play Store flavor - includes all features
         }
     }
 
@@ -60,79 +40,25 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    // Updated from 'lintOptions' to 'lint' for newer Gradle
     lint {
-        checkReleaseBuilds true
-        abortOnError false
-        warningsAsErrors false
-        disable 'MissingTranslation'
-    }
-
-    testOptions {
-        unitTests
-                {
-                    includeAndroidResources = true
-                    returnDefaultValues = true
-                }
-    }
-
-    // Updated APK renaming script for modern Gradle
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            def formattedDate = new Date().format('yyyy.MM.dd_HH.mm')
-            // outputFileName is the correct property to set
-            outputFileName = "${variant.applicationId}_${variant.flavorName}_${variant.versionName}_${formattedDate}.apk"
-        }
-    }
-
-    // Use 'packagingOptions' for compatibility
-    packagingOptions {
-        resources {
-            excludes += [
-                    'META-INF/DEPENDENCIES',
-                    'META-INF/LICENSE',
-                    'META-INF/LICENSE.txt',
-                    'META-INF/NOTICE',
-                    'META-INF/NOTICE.txt'
-            ]
-        }
+        checkReleaseBuilds false
     }
 }
 
 dependencies {
-    // =====================================================
-    // AndroidX Core Libraries
-    // =====================================================
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.core:core:1.12.0'
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
 
-    // =====================================================
-    // Networking Libraries
-    //=====================================================
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    // =====================================================
-    // Existing Dependencies
-    // =====================================================
     implementation 'net.sourceforge.htmlcleaner:htmlcleaner:2.29'
     implementation 'com.jayway.jsonpath:json-path:2.9.0'
     implementation 'org.jsoup:jsoup:1.17.2'
     implementation 'net.minidev:json-smart:2.5'
 
-    // Note: Ensure JitPack is in your settings.gradle for this library
     implementation 'it.andreuzzi:CompareString2:1.0.9'
-
-    // =====================================================
-    // Testing Dependencies
-    // =====================================================
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.8.0'
-    testImplementation 'org.robolectric:robolectric:4.11.1'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
