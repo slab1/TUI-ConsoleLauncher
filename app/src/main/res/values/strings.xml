@@ -271,7 +271,10 @@
         \n-tutorial -> open the tutorial page
     </string>
     <string name="help_data">Toggle mobile data</string>
-    <string name="help_devutils">There\'s nothing interesting there</string>
+    <string name="help_devutils">Developer utilities
+        \n\nUsage:
+        \n-notify [title] [message] -> send a test notification
+        \n-check_notifications -> check notification access status</string>
     <string name="help_donate">Offer a coffee to the developer (PayPal only)</string>
     <string name="help_flash">Toggle the flashlight</string>
     <string name="help_help">Print the available commands, or info about a command
