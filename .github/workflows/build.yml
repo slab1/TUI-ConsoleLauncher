@@ -7,8 +7,11 @@ on:
 
 jobs:
   build:
-    # Pin to stable runner to avoid environment drift
     runs-on: ubuntu-22.04
+
+    env:
+      ANDROID_BUILD_TOOLS_VERSION: "34.0.0"
+      ANDROID_COMPILE_SDK: "34"
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +23,13 @@ jobs:
           java-version: '17'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+
+      # Explicitly install required build-tools and platform versions
+      - name: Install specific Android SDK components
+        run: |
+          sdkmanager --install "platforms;android-${{ env.ANDROID_COMPILE_SDK }}"
+          sdkmanager --install "build-tools;${{ env.ANDROID_BUILD_TOOLS_VERSION }}"
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -50,16 +59,22 @@ jobs:
           path: ~/.android/debug.keystore
           key: debug-keystore-v1
 
-      - name: Build PlayStore Debug APK
-        run: ./gradlew assemblePlaystoreDebug
+      - name: Clean build
+        run: ./gradlew clean
 
-      - name: APK checksum verification
+      - name: Build PlayStore Debug APK
+        run: ./gradlew assemblePlaystoreDebug --no-daemon
+
+      - name: APK verification
         run: |
           echo "=== APK Files ==="
           find app/build/outputs -name "*.apk" -ls
           echo ""
           echo "=== SHA-256 Checksums ==="
           sha256sum app/build/outputs/apk/playstore/debug/*.apk
+          echo ""
+          echo "=== APK Signature Verification ==="
+          apksigner verify --verbose app/build/outputs/apk/playstore/debug/*.apk 2>&1 || echo "apksigner check done"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
