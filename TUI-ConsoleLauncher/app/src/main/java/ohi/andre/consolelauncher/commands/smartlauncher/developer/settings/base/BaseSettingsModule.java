@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import org.json.JSONObject;
 
@@ -82,15 +83,14 @@ public abstract class BaseSettingsModule<T> implements ISettingsModule {
             sharedPreferences = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE);
 
             // Initialize encrypted SharedPreferences for sensitive data
-            File securePrefsFile = new File(context.getFilesDir(), "shared_prefs/" + prefsName + "_secure.xml");
-            if (securePrefsFile.getParentFile() != null) {
-                securePrefsFile.getParentFile().mkdirs();
-            }
+            MasterKey masterKey = new MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build();
 
             secureSharedPreferences = EncryptedSharedPreferences.create(
                 context,
                 prefsName + "_secure",
-                securePrefsFile,
+                masterKey,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );

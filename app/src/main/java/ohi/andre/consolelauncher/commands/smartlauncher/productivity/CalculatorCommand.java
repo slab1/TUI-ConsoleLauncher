@@ -20,7 +20,7 @@ public class CalculatorCommand implements CommandAbstraction {
         
         // Get the expression from arguments
         String expression = "";
-        for (Object arg : pack.mArgs) {
+        for (Object arg : pack.args) {
             if (arg instanceof String) {
                 expression += " " + arg;
             }

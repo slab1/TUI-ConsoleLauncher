@@ -279,7 +279,7 @@ public class SecureStorageManager {
             ).build();
             
             // Write encrypted content
-            outputStream = encryptedFile.openWriteOutputStream();
+            outputStream = encryptedFile.openFileOutput();
             byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
             outputStream.write(contentBytes);
             outputStream.flush();
@@ -327,7 +327,7 @@ public class SecureStorageManager {
             ).build();
             
             // Read and decrypt content
-            inputStream = encryptedFile.openReadStream();
+            inputStream = encryptedFile.openFileInput();
             outputStream = new ByteArrayOutputStream();
             
             byte[] buffer = new byte[BUFFER_SIZE];

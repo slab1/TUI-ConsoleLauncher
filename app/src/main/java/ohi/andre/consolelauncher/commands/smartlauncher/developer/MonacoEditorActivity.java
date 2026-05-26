@@ -21,6 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ohi.andre.consolelauncher.BuildConfig;
+import ohi.andre.consolelauncher.R;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

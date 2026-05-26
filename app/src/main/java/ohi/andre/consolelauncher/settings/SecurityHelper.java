@@ -25,7 +25,6 @@ public class SecurityHelper {
     
     private static final String TAG = "SecurityHelper";
     private static final String ENCRYPTED_PREFS_FILE_NAME = "tui_secure_prefs";
-    private static final String MASTER_KEY_ALIAS = "tui_master_key";
     
     private static volatile SharedPreferences encryptedPreferences;
     private static volatile boolean encryptionAvailable = true;
@@ -64,7 +63,6 @@ public class SecurityHelper {
         try {
             MasterKey masterKey = new MasterKey.Builder(context)
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .setKeyAlias(MASTER_KEY_ALIAS)
                 .build();
             
             SharedPreferences encryptedPrefs = EncryptedSharedPreferences.create(

@@ -1,6 +1,7 @@
 package ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.modules;
 
 import android.content.Context;
+import android.util.Log;
 import android.content.res.Configuration;
 
 import ohi.andre.consolelauncher.commands.smartlauncher.developer.settings.base.BaseSettingsModule;

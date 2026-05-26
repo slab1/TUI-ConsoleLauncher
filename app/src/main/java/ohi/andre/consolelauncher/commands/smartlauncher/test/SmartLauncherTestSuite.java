@@ -209,7 +209,6 @@ public class SmartLauncherTestSuite {
      */
     private ExecutePack createMockPack(String... args) {
         return new ExecutePack(null) {
-            @Override
             public String exec(ExecutePack pack) throws Exception {
                 return null;
             }

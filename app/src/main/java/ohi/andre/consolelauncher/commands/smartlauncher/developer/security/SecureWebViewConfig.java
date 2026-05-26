@@ -65,7 +65,7 @@ public class SecureWebViewConfig {
         settings.setGeolocationEnabled(false);
         settings.setDatabaseEnabled(false);
         settings.setDomStorageEnabled(true); // Required for editor state
-        settings.setAppCacheEnabled(false); // Disable app cache for security
+        // settings.setAppCacheEnabled(false); // Removed in modern Android SDK
         
         // Security hardening settings
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -91,7 +91,7 @@ public class SecureWebViewConfig {
         
         // Content security settings
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
-        settings.setDisplayHomeAsUpEnabled(true);
+        // settings.setDisplayHomeAsUpEnabled(true); // ActionBar method, not on WebSettings
         
         // Remove potentially dangerous JS interfaces
         removeDangerousInterfaces(webView);
@@ -110,14 +110,18 @@ public class SecureWebViewConfig {
     private static void enableSafeBrowsing(WebView webView, Context context) {
         if (Build.VERSION.SDK_INT >= MIN_SAFE_BROWSING_VERSION) {
             try {
-                // Safe Browsing is enabled by default on supported devices
-                // We verify it's active and log the status
-                Class<?> sbClass = Class.forName("android.webkit.SafeBrowsing");
-                java.lang.reflect.Method initMethod = sbClass.getMethod(
-                    "init", Context.class, android.webkit.SafeBrowsingCallback.class
-                );
-                
-                Log.d(TAG, "Safe Browsing API available and enabled");
+                // Safe Browsing is enabled by default on API 27+ devices.
+                // Use WebView.startSafeBrowsing() API to verify it's active.
+                WebView.startSafeBrowsing(context, new android.webkit.ValueCallback<Boolean>() {
+                    @Override
+                    public void onReceiveValue(Boolean success) {
+                        if (Boolean.TRUE.equals(success)) {
+                            Log.d(TAG, "Safe Browsing enabled successfully");
+                        } else {
+                            Log.w(TAG, "Safe Browsing failed to initialize");
+                        }
+                    }
+                });
             } catch (Exception e) {
                 Log.w(TAG, "Safe Browsing not available: " + e.getMessage());
             }

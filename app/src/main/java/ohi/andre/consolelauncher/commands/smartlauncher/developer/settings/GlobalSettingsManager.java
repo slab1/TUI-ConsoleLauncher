@@ -110,7 +110,7 @@ public class GlobalSettingsManager {
      */
     private void registerModules() {
         // Core modules
-        modules.put(EditorSettings.MODULE_ID, new EditorSettings());
+        modules.put(EditorSettings.MODULE_ID, new EditorSettingsModule());
         modules.put(GitSettings.MODULE_ID, new GitSettings());
         modules.put(FileManagerSettings.MODULE_ID, new FileManagerSettings());
         modules.put(TerminalSettings.MODULE_ID, new TerminalSettings());
@@ -126,7 +126,7 @@ public class GlobalSettingsManager {
 
     private void loadSettingsVersion() {
         if (modules.containsKey("editor")) {
-            EditorSettings editor = (EditorSettings) modules.get("editor");
+            ISettingsModule editor = modules.get("editor");
             Map<String, Object> settings = editor.getCurrentSettings();
             Object version = settings.get("settings_version");
             settingsVersion = version != null ? String.valueOf(version) : SETTINGS_VERSION;
@@ -465,6 +465,32 @@ public class GlobalSettingsManager {
      */
     public interface SettingsImportCallback {
         void onComplete(boolean success, String errorMessage);
+    }
+
+    /**
+     * Editor settings module - adapts EditorSettings data model to ISettingsModule interface
+     */
+    private static class EditorSettingsModule implements ISettingsModule {
+        private EditorSettings settings;
+
+        EditorSettingsModule() {
+            this.settings = EditorSettings.getDefaults();
+        }
+
+        @Override public String getModuleId() { return EditorSettings.MODULE_ID; }
+        @Override public String getModuleName() { return EditorSettings.MODULE_NAME; }
+        @Override public String getModuleCategory() { return EditorSettings.MODULE_CATEGORY; }
+        @Override public Map<String, Object> getDefaults() { return EditorSettings.getDefaults().toMap(); }
+        @Override public Set<String> getSensitiveKeys() { return EditorSettings.SENSITIVE_KEYS; }
+        @Override public ValidationResult validate(String key, Object value) { return ValidationResult.success(); }
+        @Override public void onImport(JSONObject data) {}
+        @Override public JSONObject onExport(boolean includeSensitive) { return settings.toJson(); }
+        @Override public void onSettingChanged(String key, Object value) {}
+        @Override public void resetToDefaults() { settings = EditorSettings.getDefaults(); }
+        @Override public Map<String, Object> getCurrentSettings() { return settings.toMap(); }
+        @Override public boolean isInitialized() { return true; }
+        @Override public void initialize(Context context) {}
+        @Override public void cleanup() {}
     }
 
     /**

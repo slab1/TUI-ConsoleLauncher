@@ -51,7 +51,15 @@ public class SecurityLogger {
         FILE_ACCESS("FILE", "File access events"),
         SUSPICIOUS_ACTIVITY("SUSPICIOUS", "Suspicious activity detected"),
         DEBUG_EVENT("DEBUG", "Debug/diagnostic events"),
-        CONFIGURATION("CONFIG", "Configuration changes")
+        CONFIGURATION("CONFIG", "Configuration changes");
+
+        public final String code;
+        public final String description;
+
+        SecurityEventType(String code, String description) {
+            this.code = code;
+            this.description = description;
+        }
     }
     
     // Severity levels

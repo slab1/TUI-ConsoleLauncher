@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKey;
 
 import org.json.JSONObject;
 
@@ -100,15 +101,14 @@ public class EditorSettingsManager {
             sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
             // Initialize Encrypted SharedPreferences for sensitive data
-            File securePrefsFile = new File(context.getFilesDir(), "shared_prefs/" + SECURE_PREFS_NAME + ".xml");
-            if (securePrefsFile.getParentFile() != null) {
-                securePrefsFile.getParentFile().mkdirs();
-            }
+            MasterKey masterKey = new MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build();
 
             secureSharedPreferences = EncryptedSharedPreferences.create(
                 context,
                 SECURE_PREFS_NAME,
-                securePrefsFile,
+                masterKey,
                 EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );

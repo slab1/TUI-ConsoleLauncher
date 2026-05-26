@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.view.Gravity;
 
 /**
  * SmartLauncherTestActivity - UI for running and viewing test results
@@ -21,9 +23,19 @@ public class SmartLauncherTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_smart_launcher_test);
         
-        testOutput = findViewById(R.id.test_output);
+        // Create TextView programmatically (no layout XML dependency)
+        testOutput = new TextView(this);
+        testOutput.setPadding(16, 16, 16, 16);
+        testOutput.setTextSize(12);
+        testOutput.setGravity(Gravity.START);
+        testOutput.setVerticalScrollBarEnabled(true);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT
+        );
+        testOutput.setLayoutParams(params);
+        setContentView(testOutput);
         
         // Initialize test suite
         testSuite = new SmartLauncherTestSuite(this);
@@ -51,11 +63,11 @@ public class SmartLauncherTestActivity extends AppCompatActivity {
                 System.setOut(originalOut);
                 
                 // Get test output
-                String testOutput = baos.toString();
+                String outputStr = baos.toString();
                 
                 // Display results
                 runOnUiThread(() -> {
-                    displayResults(testOutput, report);
+                    displayResults(outputStr, report);
                 });
                 
             } catch (Exception e) {
@@ -81,7 +93,7 @@ public class SmartLauncherTestActivity extends AppCompatActivity {
         
         // Add summary
         result.append("📊 Summary:\n");
-        result.append("---------\n");
+        result.append("--------\n");
         result.append("Total Tests: ").append(report.totalTests).append("\n");
         result.append("Passed: ").append(report.passedTests).append("\n");
         result.append("Failed: ").append(report.totalTests - report.passedTests).append("\n");
@@ -95,7 +107,7 @@ public class SmartLauncherTestActivity extends AppCompatActivity {
         
         // Add next steps
         result.append("\n🚀 Next Steps:\n");
-        result.append("-------------\n");
+        result.append("------------\n");
         result.append("1. If all tests pass, proceed to AI configuration\n");
         result.append("2. Use: ai config <your_api_key> <your_group_id>\n");
         result.append("3. Test AI with: ai test\n");

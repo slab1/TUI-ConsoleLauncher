@@ -18,6 +18,8 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import ohi.andre.consolelauncher.BuildConfig;
+import ohi.andre.consolelauncher.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
