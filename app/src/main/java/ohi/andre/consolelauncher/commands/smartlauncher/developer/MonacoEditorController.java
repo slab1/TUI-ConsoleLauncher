@@ -362,8 +362,12 @@ public class MonacoEditorController {
                 
             } catch (Exception e) {
                 Log.e(TAG, "Error handling LSP request", e);
-                JSONObject errorResponse = createErrorResponse(requestId, e.getMessage());
-                sendErrorToWebView(requestId, errorResponse);
+                try {
+                    JSONObject errorResponse = createErrorResponse(requestId, e.getMessage());
+                    sendErrorToWebView(requestId, errorResponse);
+                } catch (JSONException je) {
+                    Log.e(TAG, "Failed to create error response", je);
+                }
             }
         });
     }
