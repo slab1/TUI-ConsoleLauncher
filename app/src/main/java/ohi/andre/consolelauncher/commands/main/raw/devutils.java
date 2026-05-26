@@ -117,15 +117,6 @@ public class devutils extends ParamCommand {
 
     @Override
     protected String doThings(ExecutePack pack) {
-        try {
-            Object o = pack.get(Object.class, 0);
-            if(o != null && o.toString().length() > 0) {
-                String input = o.toString();
-                if(!input.startsWith("-") && Param.get(input) == null) {
-                    return "Invalid option: " + input + Tuils.NEWLINE + "Available: " + Tuils.toPlanString(Param.labels(), ", ");
-                }
-            }
-        } catch (Exception e) {}
         return null;
     }
 }

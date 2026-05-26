@@ -1,7 +1,6 @@
 package ohi.andre.consolelauncher.tuils.libsuperuser;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -17,8 +16,6 @@ import ohi.andre.consolelauncher.tuils.Tuils;
 
 public class ShellHolder {
 
-    private static final String TAG = "ShellHolder";
-
     private Context context;
 
     public ShellHolder(Context context) {
@@ -28,41 +25,17 @@ public class ShellHolder {
     Pattern p = Pattern.compile("^\\n");
 
     public Shell.Interactive build() {
-        Shell.Interactive interactive = null;
-
-        try {
-            interactive = new Shell.Builder()
-                    .setOnSTDOUTLineListener(line -> {
-                        line = p.matcher(line).replaceAll(Tuils.EMPTYSTRING);
-                        Tuils.sendOutput(context, line, TerminalManager.CATEGORY_OUTPUT);
-                    })
-                    .setOnSTDERRLineListener(line -> {
-                        line = p.matcher(line).replaceAll(Tuils.EMPTYSTRING);
-                        Tuils.sendOutput(context, line, TerminalManager.CATEGORY_OUTPUT);
-                    })
-                    .open();
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to build shell", e);
-        }
-
-        if (interactive == null) {
-            Log.e(TAG, "Shell could not be created");
-            interactive = new Shell.Builder()
-                    .setOnSTDOUTLineListener(line -> {})
-                    .setOnSTDERRLineListener(line -> {})
-                    .open();
-            return interactive;
-        }
-
-        try {
-            String homePath = XMLPrefsManager.get(File.class, Behavior.home_path);
-            if (homePath != null && !homePath.isEmpty()) {
-                interactive.addCommand("cd " + homePath);
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "Failed to set home directory", e);
-        }
-
+        Shell.Interactive interactive = new Shell.Builder()
+                .setOnSTDOUTLineListener(line -> {
+                    line = p.matcher(line).replaceAll(Tuils.EMPTYSTRING);
+                    Tuils.sendOutput(context, line, TerminalManager.CATEGORY_OUTPUT);
+                })
+                .setOnSTDERRLineListener(line -> {
+                    line = p.matcher(line).replaceAll(Tuils.EMPTYSTRING);
+                    Tuils.sendOutput(context, line, TerminalManager.CATEGORY_OUTPUT);
+                })
+                .open();
+        interactive.addCommand("cd " + XMLPrefsManager.get(File.class, Behavior.home_path));
         return interactive;
     }
 }
