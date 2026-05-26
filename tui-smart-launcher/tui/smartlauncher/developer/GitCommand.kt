@@ -2,14 +2,12 @@ package tui.smartlauncher.developer
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import tui.smartlauncher.core.CommandHandler
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
-import java.io.PrintWriter
 
 /**
  * Git Command - Basic Git operations for T-UI

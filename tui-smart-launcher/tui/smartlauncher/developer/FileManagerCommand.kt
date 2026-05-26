@@ -3,10 +3,10 @@ package tui.smartlauncher.developer
 import android.content.Context
 import android.os.Environment
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import tui.smartlauncher.core.CommandHandler
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,6 +24,12 @@ class FileManagerCommand : CommandHandler {
     private var currentDirectory: File = Environment.getExternalStorageDirectory()
     private val history = mutableListOf<File>()
     private var historyIndex = -1
+
+    // Bookmark persistence
+    private var context: Context? = null
+    private val prefsName = "tui_file_prefs"
+    private val bookmarksKey = "file_bookmarks"
+    private val gson = Gson()
 
     override fun getName(): String = "file"
 
@@ -47,10 +53,17 @@ class FileManagerCommand : CommandHandler {
         ║  file wc <file>       - Count lines/words/chars      ║
         ║  file find <pattern>  - Search for files             ║
         ║  file info <path>     - Show file information        ║
+        ║  file bookmark <name> - Bookmark current directory   ║
+        ║  file bookmark        - List all bookmarks           ║
+        ║  file bookmark rm <n> - Remove a bookmark            ║
+        ║  file bookmark clear  - Clear all bookmarks          ║
+        ║  file go <name>       - Go to bookmarked directory   ║
         ╚══════════════════════════════════════════════════════╝
     """.trimIndent()
 
     override fun execute(context: Context, args: List<String>): String {
+        this.context = context
+
         if (args.isEmpty()) {
             return listDirectory(currentDirectory)
         }
@@ -72,6 +85,8 @@ class FileManagerCommand : CommandHandler {
             "find", "search" -> findFiles(parameters)
             "info", "stat" -> fileInfo(parameters)
             "tree" -> showTree(parameters)
+            "bookmark", "bookmarks", "bm" -> handleBookmark(parameters)
+            "go", "goto" -> goToBookmark(parameters)
             else -> "Unknown file command: $command\n${getUsage()}"
         }
     }
@@ -144,6 +159,12 @@ class FileManagerCommand : CommandHandler {
             targetPath == "../" -> currentDirectory.parentFile
             targetPath.startsWith("/") -> File(targetPath)
             targetPath == "~" -> Environment.getExternalStorageDirectory()
+            targetPath.startsWith("@") -> {
+                val bookmarkName = targetPath.removePrefix("@")
+                val bookmarks = loadBookmarks()
+                val bookmarkPath = bookmarks[bookmarkName]
+                if (bookmarkPath != null) File(bookmarkPath) else return "Bookmark not found: $bookmarkName"
+            }
             else -> File(currentDirectory, targetPath)
         }
 
@@ -242,7 +263,7 @@ class FileManagerCommand : CommandHandler {
             if (newDir.mkdirs()) {
                 "Created directory: ${newDir.absolutePath}"
             } else {
-                "Failed to create directory: ${e.message}"
+                "Failed to create directory: unknown error"
             }
         } catch (e: Exception) {
             "Error creating directory: ${e.message}"
@@ -437,6 +458,130 @@ class FileManagerCommand : CommandHandler {
             }
         }
     }
+
+    // ──────────────────────────────────────────────
+    //  Bookmark Methods
+    // ──────────────────────────────────────────────
+
+    private fun loadBookmarks(): MutableMap<String, String> {
+        val ctx = context ?: return mutableMapOf()
+        val prefs = ctx.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+        val json = prefs.getString(bookmarksKey, null) ?: return mutableMapOf()
+        return try {
+            val type = object : TypeToken<MutableMap<String, String>>() {}.type
+            gson.fromJson(json, type) ?: mutableMapOf()
+        } catch (e: Exception) {
+            mutableMapOf()
+        }
+    }
+
+    private fun saveBookmarks(bookmarks: Map<String, String>) {
+        val ctx = context ?: return
+        val prefs = ctx.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+        prefs.edit().putString(bookmarksKey, gson.toJson(bookmarks)).apply()
+    }
+
+    private fun handleBookmark(args: List<String>): String {
+        if (args.isEmpty()) return listBookmarks()
+        return when (args[0]) {
+            "-r", "rm", "remove", "del", "delete" -> removeBookmark(args.drop(1))
+            "clear" -> clearBookmarks()
+            else -> addBookmark(args.joinToString(" "))
+        }
+    }
+
+    private fun listBookmarks(): String {
+        val bookmarks = loadBookmarks()
+        if (bookmarks.isEmpty()) {
+            return "No bookmarks saved.\nUse: file bookmark <name>  to bookmark the current directory"
+        }
+
+        val builder = StringBuilder()
+        builder.appendLine()
+        builder.appendLine("📑  Bookmarks")
+        builder.appendLine("─".repeat(60))
+        bookmarks.toSortedMap().forEach { (name, path) ->
+            val marker = if (File(path).absolutePath == currentDirectory.absolutePath) " ←" else ""
+            builder.appendLine("  $name  →  $path$marker")
+        }
+        builder.appendLine("─".repeat(60))
+        builder.appendLine("${bookmarks.size} bookmark(s)")
+        builder.appendLine()
+        builder.appendLine("Use: file go <name>  or  file cd @<name>  to jump to a bookmark")
+        builder.appendLine("Use: file bookmark rm <name>  to remove a bookmark")
+        return builder.toString()
+    }
+
+    private fun addBookmark(name: String): String {
+        if (name.isBlank()) return "Usage: file bookmark <name>"
+
+        val bookmarks = loadBookmarks()
+        val path = currentDirectory.absolutePath
+
+        if (name in bookmarks) {
+            bookmarks[name] = path
+            saveBookmarks(bookmarks)
+            return "Updated bookmark '$name' → $path"
+        }
+
+        bookmarks[name] = path
+        saveBookmarks(bookmarks)
+        return "Bookmarked '$name' → $path"
+    }
+
+    private fun removeBookmark(args: List<String>): String {
+        if (args.isEmpty()) return "Usage: file bookmark rm <name>"
+
+        val name = args[0]
+        val bookmarks = loadBookmarks()
+
+        return if (bookmarks.remove(name) != null) {
+            saveBookmarks(bookmarks)
+            "Removed bookmark: $name"
+        } else {
+            "Bookmark not found: $name"
+        }
+    }
+
+    private fun clearBookmarks(): String {
+        saveBookmarks(emptyMap())
+        return "All bookmarks cleared."
+    }
+
+    private fun goToBookmark(args: List<String>): String {
+        if (args.isEmpty()) return "Usage: file go <bookmark_name>"
+
+        val name = args[0]
+        val bookmarks = loadBookmarks()
+        val bookmarkPath = bookmarks[name]
+
+        if (bookmarkPath == null) {
+            val suggestions = bookmarks.keys
+                .filter { it.contains(name, ignoreCase = true) }
+            return if (suggestions.isEmpty()) {
+                "Bookmark not found: $name"
+            } else {
+                "Bookmark not found: $name\nDid you mean: ${suggestions.joinToString(", ")}"
+            }
+        }
+
+        val target = File(bookmarkPath)
+        if (!target.exists()) {
+            return "Bookmark target no longer exists: $bookmarkPath"
+        }
+        if (!target.isDirectory) {
+            return "Bookmark target is not a directory: $bookmarkPath"
+        }
+
+        // Navigate via changeDirectory logic
+        history.add(currentDirectory)
+        historyIndex = history.size - 1
+        currentDirectory = target
+
+        return "Changed to bookmark '$name' → ${target.absolutePath}"
+    }
+
+    // ──────────────────────────────────────────────
 
     /**
      * Shows file information

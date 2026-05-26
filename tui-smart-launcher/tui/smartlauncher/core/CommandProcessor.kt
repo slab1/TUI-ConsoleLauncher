@@ -123,6 +123,13 @@ class CommandProcessor(private val context: Context) {
     }
 
     /**
+     * Gets a registered command handler by name
+     */
+    fun getHandler(name: String): CommandHandler? {
+        return commandRegistry[name.lowercase()]
+    }
+
+    /**
      * Gets command suggestions based on partial input
      */
     fun getSuggestions(partial: String): List<String> {

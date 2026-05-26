@@ -3,6 +3,8 @@ package tui.smartlauncher.core
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 /**
  * Command History Manager - Stores and manages command history
@@ -21,8 +23,9 @@ class CommandHistory(private val context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(
         PREFS_NAME, Context.MODE_PRIVATE
     )
+    private val gson = Gson()
 
-    private data class HistoryEntry(
+    data class HistoryEntry(
         val command: String,
         val timestamp: Long,
         val success: Boolean
@@ -127,17 +130,7 @@ class CommandHistory(private val context: Context) {
      * Exports history as JSON
      */
     fun exportHistory(): String {
-        return buildString {
-            appendLine("[")
-            getHistory().forEachIndexed { index, entry ->
-                appendLine("  {")
-                appendLine("    \"command\": \"${entry.command.escapeJson()}\",")
-                appendLine("    \"timestamp\": ${entry.timestamp},")
-                appendLine("    \"success\": ${entry.success}")
-                appendLine("  }${if (index < getHistory().size - 1) "," else ""}")
-            }
-            appendLine("]")
-        }
+        return gson.toJson(getHistory())
     }
 
     /**
@@ -169,9 +162,7 @@ class CommandHistory(private val context: Context) {
     }
 
     private fun saveHistory(history: List<HistoryEntry>) {
-        val json = history.joinToString(",", "[", "]") { entry ->
-            "{\"cmd\":\"${entry.command.escapeJson()}\",\"ts\":${entry.timestamp},\"ok\":${entry.success}}"
-        }
+        val json = gson.toJson(history)
         prefs.edit().putString(KEY_HISTORY, json).apply()
     }
 
@@ -179,30 +170,12 @@ class CommandHistory(private val context: Context) {
         if (json == "[]" || json.isBlank()) return emptyList()
 
         return try {
-            val cleanJson = json.trim().removeSurrounding("[", "]")
-            if (cleanJson.isBlank()) return emptyList()
-
-            cleanJson.split("},{").mapIndexed { index, segment ->
-                val clean = segment.removeSurrounding("{", "}")
-                val parts = clean.split(",")
-                val cmdPart = parts.find { it.contains("cmd") }?.substringAfter(":")?.trim()?.removeSurrounding("\"") ?: ""
-                val tsPart = parts.find { it.contains("ts") }?.substringAfter(":")?.trim()?.toLongOrNull() ?: 0L
-                val okPart = parts.find { it.contains("ok") }?.substringAfter(":")?.trim()?.toBooleanStrictOrNull() ?: true
-
-                HistoryEntry(cmdPart, tsPart, okPart)
-            }
+            val type = object : TypeToken<List<HistoryEntry>>() {}.type
+            gson.fromJson(json, type) ?: emptyList()
         } catch (e: Exception) {
             Log.e(TAG, "Error parsing history JSON: ${e.message}")
             emptyList()
         }
-    }
-
-    private fun String.escapeJson(): String {
-        return this.replace("\\", "\\\\")
-            .replace("\"", "\\\"")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
-            .replace("\t", "\\t")
     }
 
     data class HistoryStats(

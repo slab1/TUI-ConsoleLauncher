@@ -3,7 +3,6 @@ package tui.smartlauncher.productivity
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.wifi.WifiManager
 import android.util.Log
 import tui.smartlauncher.core.CommandHandler
 import java.io.BufferedReader
@@ -13,9 +12,6 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
 import java.net.URLConnection
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import kotlin.concurrent.thread
 
 /**
  * Network Command - Network diagnostic tools

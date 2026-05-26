@@ -2,27 +2,19 @@ package tui.smartlauncher.productivity
 
 import android.app.ActivityManager
 import android.content.Context
-import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.wifi.WifiManager
 import android.os.BatteryManager
 import android.os.Environment
 import android.os.StatFs
 import android.util.Log
 import tui.smartlauncher.core.CommandHandler
 import java.io.BufferedReader
-import java.io.File
 import java.io.FileReader
-import java.io.InputStreamReader
-import java.net.InetAddress
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.regex.Pattern
 
 /**
  * System Command - Monitor and display system information
@@ -33,10 +25,6 @@ class SystemCommand : CommandHandler {
     companion object {
         private const val TAG = "SystemCommand"
     }
-
-    private val activityManager: ActivityManager by lazy { context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager }
-    private val batteryManager: BatteryManager by lazy { context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager }
-    private val connectivityManager: ConnectivityManager by lazy { context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
 
     override fun getName(): String = "system"
 
@@ -60,30 +48,37 @@ class SystemCommand : CommandHandler {
     """.trimIndent()
 
     override fun execute(context: Context, args: List<String>): String {
-        this.context = context
+        val services = SystemServices(context)
 
         if (args.isEmpty() || args[0] == "--all" || args[0] == "-a") {
-            return showFullOverview()
+            return showFullOverview(context, services)
         }
 
         return when (args[0].lowercase()) {
             "--cpu", "-c" -> showCpuInfo()
-            "--memory", "--mem", "-m" -> showMemoryInfo()
-            "--battery", "-b" -> showBatteryInfo()
+            "--memory", "--mem", "-m" -> showMemoryInfo(services)
+            "--battery", "-b" -> showBatteryInfo(context)
             "--storage", "-s" -> showStorageInfo()
-            "--process", "--proc", "-p" -> showProcessInfo()
-            "--network", "-n" -> showNetworkInfo()
+            "--process", "--proc", "-p" -> showProcessInfo(services)
+            "--network", "-n" -> showNetworkInfo(context)
             "--help", "-h" -> getUsage()
             else -> "Unknown option: ${args[0]}\n${getUsage()}"
         }
     }
 
-    private var context: Context? = null
+    /**
+     * Holds system service references obtained from context
+     */
+    private class SystemServices(context: Context) {
+        val activityManager: ActivityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val batteryManager: BatteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+        val connectivityManager: ConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
 
     /**
      * Shows complete system overview
      */
-    private fun showFullOverview(): String {
+    private fun showFullOverview(context: Context, services: SystemServices): String {
         return buildString {
             appendLine()
             appendLine("══════════════════════════════════════════════════════════════")
@@ -91,10 +86,10 @@ class SystemCommand : CommandHandler {
             appendLine("══════════════════════════════════════════════════════════════")
             appendLine()
             appendLine(showCpuInfo())
-            appendLine(showMemoryInfo())
-            appendLine(showBatteryInfo())
+            appendLine(showMemoryInfo(services))
+            appendLine(showBatteryInfo(context))
             appendLine(showStorageInfo())
-            appendLine(showNetworkInfo())
+            appendLine(showNetworkInfo(context))
         }
     }
 
@@ -148,10 +143,10 @@ class SystemCommand : CommandHandler {
     /**
      * Shows memory usage
      */
-    private fun showMemoryInfo(): String {
+    private fun showMemoryInfo(services: SystemServices): String {
         return try {
             val memInfo = ActivityManager.MemoryInfo()
-            activityManager.getMemoryInfo(memInfo)
+            services.activityManager.getMemoryInfo(memInfo)
 
             val totalMemory = memInfo.totalMem
             val availableMemory = memInfo.availMem
@@ -179,9 +174,9 @@ class SystemCommand : CommandHandler {
     /**
      * Shows battery status
      */
-    private fun showBatteryInfo(): String {
+    private fun showBatteryInfo(context: Context): String {
         return try {
-            val batteryIntent = context?.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            val batteryIntent = context.registerReceiver(null, IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
             val level = batteryIntent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
             val scale = batteryIntent?.getIntExtra(BatteryManager.EXTRA_SCALE, 100) ?: 100
             val percentage = if (scale > 0) (level * 100 / scale) else level
@@ -258,10 +253,11 @@ class SystemCommand : CommandHandler {
     /**
      * Shows network status
      */
-    private fun showNetworkInfo(): String {
+    private fun showNetworkInfo(context: Context): String {
         return try {
-            val network = connectivityManager.activeNetwork
-            val capabilities = connectivityManager.getNetworkCapabilities(network)
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val network = cm.activeNetwork
+            val capabilities = cm.getNetworkCapabilities(network)
 
             val connected = capabilities != null
             val connectionType = when {
@@ -291,9 +287,9 @@ class SystemCommand : CommandHandler {
     /**
      * Shows running processes
      */
-    private fun showProcessInfo(): String {
+    private fun showProcessInfo(services: SystemServices): String {
         return try {
-            val processes = activityManager.runningAppProcesses ?: emptyList()
+            val processes = services.activityManager.runningAppProcesses ?: emptyList()
 
             buildString {
                 appendLine("┌─────────────────────────────────────────────────────────────┐")
@@ -351,8 +347,4 @@ class SystemCommand : CommandHandler {
             "Error: ${e.message}"
         }
     }
-}
-
-private fun IntentFilter(pattern: String): android.content.IntentFilter {
-    return android.content.IntentFilter(pattern)
 }

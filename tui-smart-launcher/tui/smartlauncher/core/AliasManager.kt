@@ -3,7 +3,8 @@ package tui.smartlauncher.core
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import java.io.File
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 /**
  * Alias Manager - Handles user-defined command aliases
@@ -20,6 +21,7 @@ class AliasManager(private val context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(
         PREFS_NAME, Context.MODE_PRIVATE
     )
+    private val gson = Gson()
 
     // Default system aliases
     private val defaultAliases = mapOf(
@@ -192,9 +194,7 @@ class AliasManager(private val context: Context) {
     }
 
     private fun saveUserAliases(aliases: Map<String, String>) {
-        val json = aliases.entries.joinToString(",", "{", "}") { (k, v) ->
-            "\"$k\":\"$v\""
-        }
+        val json = gson.toJson(aliases)
         prefs.edit().putString(KEY_ALIASES, json).apply()
     }
 
@@ -202,19 +202,8 @@ class AliasManager(private val context: Context) {
         if (json == "{}" || json.isBlank()) return emptyMap()
 
         return try {
-            val cleanJson = json.trim().removeSurrounding("{", "}")
-            if (cleanJson.isBlank()) return emptyMap()
-
-            cleanJson.split(",").associate { pair ->
-                val parts = pair.split(":")
-                if (parts.size == 2) {
-                    val key = parts[0].trim().removeSurrounding("\"")
-                    val value = parts[1].trim().removeSurrounding("\"")
-                    key to value
-                } else {
-                    "" to ""
-                }
-            }.filter { it.first.isNotEmpty() }
+            val type = object : TypeToken<Map<String, String>>() {}.type
+            gson.fromJson(json, type) ?: emptyMap()
         } catch (e: Exception) {
             Log.e(TAG, "Error parsing aliases JSON: ${e.message}")
             emptyMap()
@@ -222,9 +211,7 @@ class AliasManager(private val context: Context) {
     }
 
     private fun buildJsonExport(aliases: Map<String, String>): String {
-        return aliases.entries.joinToString(",", "{", "}") { (k, v) ->
-            "\"$k\":\"$v\""
-        }
+        return gson.toJson(aliases)
     }
 
     sealed class ImportResult {

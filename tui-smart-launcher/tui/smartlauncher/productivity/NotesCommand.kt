@@ -3,6 +3,8 @@ package tui.smartlauncher.productivity
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -30,6 +32,7 @@ class NotesCommand : CommandHandler {
     )
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val gson = Gson()
 
     override fun getName(): String = "note"
 
@@ -64,7 +67,7 @@ class NotesCommand : CommandHandler {
 
         return when (command) {
             "create", "new", "add" -> createNote(parameters)
-            "list", "ls", "ls" -> listNotes()
+            "list", "ls", "all" -> listNotes()
             "show", "view", "get" -> showNote(parameters)
             "edit", "update", "modify" -> editNote(parameters)
             "delete", "del", "remove" -> deleteNote(parameters)
@@ -368,21 +371,8 @@ class NotesCommand : CommandHandler {
         if (json == "[]" || json.isBlank()) return emptyList()
 
         return try {
-            val cleanJson = json.trim().removeSurrounding("[", "]")
-            if (cleanJson.isBlank()) return emptyList()
-
-            cleanJson.split("},{").map { segment ->
-                val clean = segment.removeSurrounding("{", "}")
-                val parts = clean.split(",(?=\")".toRegex())
-
-                val id = parts.find { it.contains("id") }?.substringAfter(":")?.trim()?.removeSurrounding("\"") ?: ""
-                val title = parts.find { it.contains("title") }?.substringAfter(":")?.trim()?.removeSurrounding("\"") ?: ""
-                val content = parts.find { it.contains("content") }?.substringAfter(":")?.trim()?.removeSurrounding("\"") ?: ""
-                val created = parts.find { it.contains("created") }?.substringAfter(":")?.trim()?.toLongOrNull() ?: 0L
-                val updated = parts.find { it.contains("updated") }?.substringAfter(":")?.trim()?.toLongOrNull() ?: 0L
-
-                Note(id, title, content, created, updated, emptyList())
-            }
+            val type = object : TypeToken<List<Note>>() {}.type
+            gson.fromJson(json, type) ?: emptyList()
         } catch (e: Exception) {
             Log.e(TAG, "Error parsing notes: ${e.message}")
             emptyList()
@@ -390,25 +380,6 @@ class NotesCommand : CommandHandler {
     }
 
     private fun notesToJson(notes: List<Note>): String {
-        return notes.joinToString(",", "[", "]") { note ->
-            buildString {
-                append("{")
-                append("\"id\":\"${note.id}\",")
-                append("\"title\":\"${escape(note.title)}\",")
-                append("\"content\":\"${escape(note.content)}\",")
-                append("\"created\":${note.createdAt},")
-                append("\"updated\":${note.updatedAt},")
-                append("\"tags\":[${note.tags.map { "\"$it\"" }.joinToString(",")}]")
-                append("}")
-            }
-        }
-    }
-
-    private fun escape(input: String): String {
-        return input.replace("\\", "\\\\")
-            .replace("\"", "\\\"")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
-            .replace("\t", "\\t")
+        return gson.toJson(notes)
     }
 }
