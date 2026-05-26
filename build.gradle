@@ -1,12 +1,20 @@
 buildscript {
     repositories {
         google()
-        mavenCentral()}
+        mavenCentral()
+    }
     dependencies {
-        // CRITICAL: This must be 8.3.2 to work with Gradle 8.9
-        classpath 'com.android.tools.build:gradle:8.3.2'
+        classpath 'com.android.tools.build:gradle:8.2.1'
     }
 }
 
-task clean(type: Delete) {delete rootProject.buildDir
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
