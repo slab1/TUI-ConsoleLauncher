@@ -3,15 +3,15 @@ name: Build TUI APK
 on:
   push:
     branches: [ master ]
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Pin to stable runner to avoid environment drift
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -25,14 +25,43 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # Generate consistent debug keystore (cached for consistent signing)
+      - name: Generate or use cached debug keystore
+        run: |
+          KEYSTORE_DIR="$HOME/.android"
+          KEYSTORE_FILE="$KEYSTORE_DIR/debug.keystore"
+          mkdir -p "$KEYSTORE_DIR"
+          if [ -f "$KEYSTORE_FILE" ]; then
+            echo "Using existing debug keystore"
+          else
+            echo "Generating new debug keystore"
+            keytool -genkey -v -keystore "$KEYSTORE_FILE" \
+              -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass android -keypass android \
+              -dname "CN=Android Debug, O=Android, C=US"
+          fi
+          echo "Keystore fingerprint:"
+          keytool -list -v -keystore "$KEYSTORE_FILE" -storepass android 2>&1 | grep -E "SHA256:|MD5:|SHA1:" | head -3
+
+      # Cache the debug keystore for future builds
+      - name: Cache debug keystore
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: debug-keystore-v1
+
       - name: Build PlayStore Debug APK
         run: ./gradlew assemblePlaystoreDebug
-        continue-on-error: false
 
-      - name: List APK output files
-        run: find app/build/outputs -name "*.apk" -ls
+      - name: APK checksum verification
+        run: |
+          echo "=== APK Files ==="
+          find app/build/outputs -name "*.apk" -ls
+          echo ""
+          echo "=== SHA-256 Checksums ==="
+          sha256sum app/build/outputs/apk/playstore/debug/*.apk
 
-      - name: Upload APK as artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: TUI-ConsoleLauncher-APK
