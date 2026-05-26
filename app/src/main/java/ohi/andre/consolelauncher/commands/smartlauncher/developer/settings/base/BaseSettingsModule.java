@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -224,7 +225,9 @@ public abstract class BaseSettingsModule<T> implements ISettingsModule {
 
         Map<String, Object> defaults = getDefaults();
 
-        for (String key : data.keySet()) {
+        Iterator<String> keys = data.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
             try {
                 Object value = data.get(key);
 

@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -330,22 +331,22 @@ public class MonacoEditorController {
                 
                 switch (method) {
                     case "textDocument/completion":
-                        response = lspManager.handleCompletion(requestId, jsonParams);
+                        response = new JSONObject(lspManager.handleCompletion(requestId, jsonParams));
                         break;
                     case "textDocument/definition":
-                        response = lspManager.handleDefinition(requestId, jsonParams);
+                        response = new JSONObject(lspManager.handleDefinition(requestId, jsonParams));
                         break;
                     case "textDocument/hover":
-                        response = lspManager.handleHover(requestId, jsonParams);
+                        response = new JSONObject(lspManager.handleHover(requestId, jsonParams));
                         break;
                     case "textDocument/diagnostics":
-                        response = lspManager.handleDiagnostics(requestId, jsonParams);
+                        response = new JSONObject(lspManager.handleDiagnostics(requestId, jsonParams));
                         break;
                     case "initialize":
-                        response = lspManager.handleInitialize(requestId, jsonParams);
+                        response = new JSONObject(lspManager.handleInitialize(requestId, jsonParams));
                         break;
                     case "shutdown":
-                        response = lspManager.handleShutdown(requestId, jsonParams);
+                        response = new JSONObject(lspManager.handleShutdown(requestId, jsonParams));
                         break;
                     default:
                         Log.w(TAG, "Unknown LSP method: " + method);

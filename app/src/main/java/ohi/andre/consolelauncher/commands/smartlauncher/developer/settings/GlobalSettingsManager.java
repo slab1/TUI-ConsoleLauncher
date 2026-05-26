@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -232,7 +233,9 @@ public class GlobalSettingsManager {
 
                 // Import each module
                 JSONObject moduleImports = importData.getJSONObject("modules");
-                for (String moduleId : moduleImports.keySet()) {
+                Iterator<String> moduleKeys = moduleImports.keys();
+                while (moduleKeys.hasNext()) {
+                    String moduleId = moduleKeys.next();
                     ISettingsModule module = modules.get(moduleId);
                     if (module != null) {
                         JSONObject moduleData = moduleImports.getJSONObject(moduleId);

@@ -15,7 +15,10 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebSettings;
 import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import ohi.andre.consolelauncher.BuildConfig;
@@ -525,7 +528,7 @@ public class MonacoEditorActivityEnhanced extends Activity {
                         renameFile(path, newName);
                         break;
                     case "delete":
-                        deleteFile(path);
+                        deleteFileItem(path);
                         break;
                     default:
                         Log.w(TAG, "Unknown file operation: " + operation);
@@ -576,7 +579,7 @@ public class MonacoEditorActivityEnhanced extends Activity {
         });
     }
     
-    private void deleteFile(String path) {
+    private void deleteFileItem(String path) {
         fileSystem.remove(path);
         
         runOnUiThread(() -> {

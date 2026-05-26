@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -114,8 +115,7 @@ public class EditorSettingsManager {
             );
 
             // Initialize SecureStorageManager for additional encryption needs
-            secureStorageManager = new SecureStorageManager();
-            secureStorageManager.initialize(context);
+            secureStorageManager = new SecureStorageManager(context);
 
             // Load settings from storage
             loadSettingsSync();
@@ -346,9 +346,7 @@ public class EditorSettingsManager {
         builder.setInsertSpaces(settings.isInsertSpaces());
         builder.setLineNumbers(settings.getLineNumbers());
         builder.setRenderWhitespace(settings.isRenderWhitespace());
-        builder.setAutoClosingBrackets(settings.isAutoClosingBrackets());
-        builder.setCursorBlinking(settings.getCursorBlinking());
-        builder.setFoldingEnabled(settings.isFoldingEnabled());
+        // Removed non-existent Builder methods (autoClosingBrackets, cursorBlinking, foldingEnabled)
         builder.setAutoSave(settings.isAutoSave());
         builder.setAutoSaveDelay(settings.getAutoSaveDelay());
         builder.setFormatOnSave(settings.isFormatOnSave());
@@ -368,8 +366,7 @@ public class EditorSettingsManager {
             case "debugEnabled": builder.setDebugEnabled(value); break;
             case "sidebarVisible": builder.setSidebarVisible(value); break;
             case "renderWhitespace": builder.setRenderWhitespace(value); break;
-            case "autoClosingBrackets": builder.setAutoClosingBrackets(value); break;
-            case "foldingEnabled": builder.setFoldingEnabled(value); break;
+            // Removed autoClosingBrackets and foldingEnabled cases
         }
     }
 
@@ -386,9 +383,7 @@ public class EditorSettingsManager {
             case "theme": builder.setTheme(value); break;
             case "wordWrap": builder.setWordWrap(value); break;
             case "lineNumbers": builder.setLineNumbers(value); break;
-            case "cursorBlinking": builder.setCursorBlinking(value); break;
             case "lspServerPath": builder.setLspServerPath(value); break;
-            case "sidebarWidth": builder.setSidebarWidth(value); break;
             case "defaultEncoding": builder.setDefaultEncoding(value); break;
         }
     }
@@ -488,8 +483,10 @@ public class EditorSettingsManager {
                 Map<String, Object> settingsMap = new ConcurrentHashMap<>();
 
                 // Parse JSON to map
-                for (String key : json.keySet()) {
-                    Object value = json.get(key);
+                Iterator<String> keys = json.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    Object value = json.opt(key);
                     settingsMap.put(key, value);
                 }
 

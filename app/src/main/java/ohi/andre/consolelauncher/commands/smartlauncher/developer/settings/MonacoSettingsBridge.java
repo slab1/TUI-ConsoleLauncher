@@ -3,6 +3,8 @@ package ohi.andre.consolelauncher.commands.smartlauncher.developer.settings;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
+import java.util.Iterator;
+
 /**
  * MonacoSettingsBridge - JavaScript interface for settings management
  * Provides methods for the WebView to read and write editor settings
@@ -125,8 +127,10 @@ public class MonacoSettingsBridge {
             org.json.JSONObject json = new org.json.JSONObject(settingsJson);
             java.util.Map<String, Object> settingsMap = new java.util.HashMap<>();
 
-            for (String key : json.keySet()) {
-                Object value = json.get(key);
+            Iterator<String> keys = json.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                Object value = json.opt(key);
                 settingsMap.put(key, value);
             }
 
