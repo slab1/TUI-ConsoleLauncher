@@ -25,17 +25,27 @@ public class ShellHolder {
     Pattern p = Pattern.compile("^\\n");
 
     public Shell.Interactive build() {
-        Shell.Interactive interactive = new Shell.Builder()
-                .setOnSTDOUTLineListener(line -> {
-                    line = p.matcher(line).replaceAll(Tuils.EMPTYSTRING);
-                    Tuils.sendOutput(context, line, TerminalManager.CATEGORY_OUTPUT);
-                })
-                .setOnSTDERRLineListener(line -> {
-                    line = p.matcher(line).replaceAll(Tuils.EMPTYSTRING);
-                    Tuils.sendOutput(context, line, TerminalManager.CATEGORY_OUTPUT);
-                })
-                .open();
-        interactive.addCommand("cd " + XMLPrefsManager.get(File.class, Behavior.home_path));
+        Shell.Interactive interactive;
+        try {
+            interactive = new Shell.Builder()
+                    .setOnSTDOUTLineListener(line -> {
+                        line = p.matcher(line).replaceAll(Tuils.EMPTYSTRING);
+                        Tuils.sendOutput(context, line, TerminalManager.CATEGORY_OUTPUT);
+                    })
+                    .setOnSTDERRLineListener(line -> {
+                        line = p.matcher(line).replaceAll(Tuils.EMPTYSTRING);
+                        Tuils.sendOutput(context, line, TerminalManager.CATEGORY_OUTPUT);
+                    })
+                    .open();
+        } catch (Exception e) {
+            Tuils.sendOutput(context, "Warning: shell init failed (" + e.getMessage() + ")", TerminalManager.CATEGORY_OUTPUT);
+            return null;
+        }
+        try {
+            interactive.addCommand("cd " + XMLPrefsManager.get(File.class, Behavior.home_path));
+        } catch (Exception e) {
+            Tuils.sendOutput(context, "Warning: could not set home dir (" + e.getMessage() + ")", TerminalManager.CATEGORY_OUTPUT);
+        }
         return interactive;
     }
 }

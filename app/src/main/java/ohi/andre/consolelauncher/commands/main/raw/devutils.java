@@ -117,6 +117,15 @@ public class devutils extends ParamCommand {
 
     @Override
     protected String doThings(ExecutePack pack) {
-        return null;
+        // User provided an invalid param — show available options
+        StringBuilder sb = new StringBuilder("Invalid option.\nUsage: devutils -<param>\n\nAvailable parameters:\n");
+        for (String param : Param.labels()) {
+            sb.append("  ").append(param).append("\n");
+        }
+        sb.append("\nExamples:\n");
+        sb.append("  devutils -notify \"Title\" \"Message text\"\n");
+        sb.append("  devutils -check_notifications\n");
+        sb.append("\nRun 'help devutils' for detailed documentation.");
+        return sb.toString();
     }
 }
